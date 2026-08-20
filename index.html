@@ -12,6 +12,7 @@
             --bg-light: #1a1a2e;
             --accent: #ff6b35;
             --accent-volley: #00d4aa;
+            --accent-football: #e5aa2e;
             --text: #f0f0f5;
             --text-muted: #8a8a9a;
             --border: #2a2a3a;
@@ -274,6 +275,12 @@
         @media (max-width: 900px) {
             .products-grid { grid-template-columns: 1fr; }
         }
+        .product-card-centered {
+            grid-column: 1 / -1;
+            max-width: 580px;
+            width: 100%;
+            margin: 0 auto;
+        }
         .product-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -292,6 +299,7 @@
         }
         .mockup-basketball { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
         .mockup-volleyball { background: linear-gradient(135deg, #1a1a2e 0%, #0f2e2e 100%); }
+        .mockup-football { background: linear-gradient(135deg, #1a1a2e 0%, #12180f 100%); }
         .mockup-header {
             display: flex;
             align-items: center;
@@ -495,6 +503,13 @@
         }
         .btn-volleyball:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-volley); }
         .btn-volleyball[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .btn-football {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-football:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-football); }
+        .btn-football[disabled] { opacity: 0.5; cursor: not-allowed; }
         /* Price + stacked product buttons */
         .product-price {
             font-size: 1.4rem;
@@ -732,7 +747,7 @@
         <div class="section-header">
             <div class="section-label">Our Products</div>
             <h2>Built for the Sideline</h2>
-            <p>A coaching toolkit for basketball and volleyball teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+            <p>A coaching toolkit for basketball, volleyball, and football teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
@@ -770,6 +785,25 @@
                     </div>
                     <div class="product-price">Coming soon</div>
                     <button class="product-btn btn-volleyball" disabled>Coming Soon</button>
+                </div>
+            </div>
+            <!-- Football -->
+            <div class="product-card product-card-centered">
+                <div class="mockup mockup-football">
+                    <img src="images/football-cover.png" alt="Football Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
+                </div>
+                <div class="product-info">
+                    <h3>Football Notepad</h3>
+                    <p>Diagram plays, animate every route, and manage your roster and schedule — all in one sideline-ready notebook.</p>
+                    <div class="features">
+                        <span class="feature-tag">Whiteboard</span>
+                        <span class="feature-tag">Animate</span>
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Roster</span>
+                        <span class="feature-tag">Schedule</span>
+                    </div>
+                    <div class="product-price">Coming soon</div>
+                    <button class="product-btn btn-football" disabled>Coming Soon</button>
                 </div>
             </div>
         </div>
