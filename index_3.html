@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Notepad by ValenciaSolution — Your Whole Sideline in One App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-light: #1a1a2e;
+            --accent: #ff6b35;
+            --accent-volley: #00d4aa;
+            --text: #f0f0f5;
+            --text-muted: #8a8a9a;
+            --border: #2a2a3a;
+            --gradient: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
+        }
+        /* scroll-padding-top offsets the fixed nav so #anchor targets
+           don't land underneath the header. */
+        html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+        .logo span { color: var(--accent); }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta {
+            background: var(--accent);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .nav-cta:hover { background: #e55a2b; transform: translateY(-1px); }
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 107, 53, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(0, 212, 170, 0.06) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 900px; }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-volley) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #e55a2b; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3); }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        .scroll-indicator svg { width: 24px; height: 24px; stroke: var(--text-muted); }
+        /* Section styling */
+        section { padding: 100px 20px; }
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .section-label {
+            display: inline-block;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+        }
+        /* What We Do */
+        .services {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .services-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        @media (max-width: 900px) {
+            .services-grid { grid-template-columns: 1fr; }
+        }
+        .service-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 32px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-volley));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .service-card:hover::before { opacity: 1; }
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .icon-1 { background: rgba(255, 107, 53, 0.15); color: var(--accent); }
+        .icon-2 { background: rgba(0, 212, 170, 0.15); color: var(--accent-volley); }
+        .icon-3 { background: rgba(138, 138, 154, 0.15); color: var(--text-muted); }
+        .service-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .service-number {
+            position: absolute;
+            top: 20px; right: 24px;
+            font-size: 3rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.03);
+            line-height: 1;
+        }
+        /* Built for the Sideline */
+        .products { max-width: 1200px; margin: 0 auto; }
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        @media (max-width: 900px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .mockup {
+            height: 340px;
+            position: relative;
+            overflow: hidden;
+        }
+        .mockup-basketball { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        .mockup-volleyball { background: linear-gradient(135deg, #1a1a2e 0%, #0f2e2e 100%); }
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .mockup-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mockup-logo-icon {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .basketball-icon { background: var(--accent); }
+        .volleyball-icon { background: var(--accent-volley); }
+        .mockup-logo-text {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        .mockup-logo-text strong {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text);
+            letter-spacing: 0.02em;
+        }
+        .mockup-tabs {
+            display: flex;
+            gap: 3px;
+            padding: 10px 18px 0;
+        }
+        .mockup-tab {
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tab-active {
+            background: var(--accent);
+            color: #fff;
+        }
+        .tab-active-volley { background: var(--accent-volley); color: #0a0a0f; }
+        .tab-inactive {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+        .mockup-body { padding: 16px 18px; }
+        .mockup-court {
+            width: 100%;
+            height: 160px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .court-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .player {
+            position: absolute;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .player-x { background: var(--accent); }
+        .player-o { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); }
+        .player-v { background: var(--accent-volley); color: #0a0a0f; }
+        .player-vo { background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5); }
+        .mockup-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .stat-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        .volleyball-court {
+            width: 100%;
+            height: 160px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .mockup-lineup {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .lineup-player {
+            width: 28px; height: 36px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+        }
+        .lineup-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-volley);
+        }
+        .lineup-pos {
+            font-size: 0.45rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .product-info {
+            padding: 24px 28px 28px;
+        }
+        .product-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .product-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .feature-tag {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .product-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-basketball {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-basketball:hover { background: #e55a2b; }
+        .btn-volleyball {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-volleyball:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-volley); }
+        .btn-volleyball[disabled] { opacity: 0.5; cursor: not-allowed; }
+        /* Price + stacked product buttons */
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 14px;
+        }
+        .product-price span {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-top: 2px;
+            letter-spacing: 0.02em;
+        }
+        .product-btn + .product-btn { margin-top: 8px; }
+        .btn-basketball-buy {
+            background: linear-gradient(135deg, var(--accent) 0%, #e55a2b 100%);
+            color: #fff;
+        }
+        .btn-basketball-buy:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,107,53,0.35); }
+        .btn-basketball-clubs {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-basketball-clubs:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); }
+        /* Testimonials */
+        .reviews { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .reviews-inner { max-width: 1100px; margin: 0 auto; }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 900px) { .reviews-grid { grid-template-columns: 1fr; } }
+        .review-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 26px;
+            transition: all 0.3s;
+        }
+        .review-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        .review-card.is-placeholder { opacity: 0.55; border-style: dashed; }
+        .review-trophies { font-size: 1rem; letter-spacing: 3px; margin-bottom: 14px; }
+        .review-trophies .t-empty { filter: grayscale(1); opacity: 0.35; }
+        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; }
+        .review-author { color: var(--text); font-size: 0.9rem; font-weight: 700; }
+        .review-role { color: var(--text-muted); font-size: 0.82rem; font-weight: 400; }
+        /* Contact */
+        .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+        .contact-methods {
+            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 32px;
+        }
+        .contact-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+            padding: 24px 32px; min-width: 220px;
+        }
+        .contact-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
+        .contact-card a { color: var(--accent); text-decoration: none; font-size: 1.05rem; font-weight: 600; }
+        .contact-card a:hover { text-decoration: underline; }
+        /* Review feedback form */
+        .reviews-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+        .review-form-wrap { max-width: 640px; margin: 56px auto 0; }
+        .review-form-wrap > p { text-align: center; color: var(--text-muted); margin-bottom: 28px; }
+        .review-form {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+        .form-field { margin-bottom: 18px; }
+        .form-field label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text);
+        }
+        .form-field input::placeholder,
+        .form-field textarea::placeholder { color: #55556a; }
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus { outline: none; border-color: var(--accent); }
+        .form-field textarea { resize: vertical; min-height: 100px; }
+        .trophy-picker { display: flex; gap: 6px; }
+        .trophy-btn {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer;
+            filter: grayscale(1);
+            opacity: 0.35;
+            transition: all 0.15s;
+            padding: 4px;
+        }
+        .trophy-btn.is-active { filter: none; opacity: 1; transform: scale(1.05); }
+        .form-msg { font-size: 0.88rem; margin-top: 4px; margin-bottom: 14px; display: none; }
+        .form-msg.is-error { color: #ff6b6b; display: block; }
+        .form-msg.is-success { color: var(--accent-volley); display: block; }
+        .review-form .btn-primary { width: 100%; text-align: center; }
+        .form-note { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 14px; }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 12px;
+        }
+        footer a:hover { color: var(--text); }
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block; }
+            nav { padding: 16px 20px; flex-wrap: wrap; }
+            .hero { padding-top: 100px; }
+            /* Collapsed by default; .open is toggled by the nav script in <body>. */
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+                order: 3;
+                margin: 12px 0 0;
+                padding: 8px 0 4px;
+                border-top: 1px solid var(--border);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a {
+                display: block;
+                padding: 14px 4px;   /* >=44px touch target */
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Valencia<span>Solution</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+        </ul>
+        <a href="#products" class="nav-cta">Get Basketball Notepad</a>
+        <button class="mobile-menu-btn">☰</button>
+    </nav>
+    <!-- Section 1: Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Basketball Notepad · Coach's Toolkit</div>
+            <h1>Stop Coaching From <span>Scattered Notes.</span></h1>
+            <p>Basketball Notepad puts your playbook, lineups, live game stats, and season milestones in one app you carry onto every sideline. Pay once. Own it. No subscription eating your budget.</p>
+            <div class="hero-buttons">
+                <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="btn btn-primary">Try the Demo</a>
+                <a href="https://buy.stripe.com/14A7sK0KdbLibAB8PzeEo04" target="_blank" rel="noopener" class="btn btn-secondary">Buy Now — CA$49.99</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </div>
+    </section>
+    <!-- Section 2: What We Do -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <div class="section-label">Our Process</div>
+            <h2>How We Get You Live</h2>
+            <p>One team, start to finish. You don't manage five vendors — you make one call.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-number">01</div>
+                <div class="service-icon icon-1">💡</div>
+                <h3>Idea to Blueprint</h3>
+                <p>We take your raw idea and shape it into a clear, buildable plan. Scope, features, and timeline — locked in before we write a line of code. No surprises halfway through the build.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-number">02</div>
+                <div class="service-icon icon-2">🛠</div>
+                <h3>Build & Develop</h3>
+                <p>We design and build your web or mobile app, coaching tool, or digital product from the ground up. Clean code, mobile-first, built to scale — not a prototype that breaks the day real users show up.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-number">03</div>
+                <div class="service-icon icon-3">🚀</div>
+                <h3>Launch & Support</h3>
+                <p>We take it live and stick around to help you refine it after launch. No handoff headaches, no mystery invoices, no disappearing after the check clears.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Section 3: Built for the Sideline -->
+    <section class="products" id="products">
+        <div class="section-header">
+            <div class="section-label">Our Products</div>
+            <h2>Built for the Sideline</h2>
+            <p>A coaching toolkit for basketball and volleyball teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+        </div>
+        <div class="products-grid">
+            <!-- Basketball -->
+            <div class="product-card">
+                <div class="mockup mockup-basketball">
+                    <img src="images/basketball-cover.png" alt="Basketball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
+                </div>
+                <div class="product-info">
+                    <h3>Basketball Notepad</h3>
+                    <p>Everything you run on the sideline in one tool: X's and O's playbook, live game stats, lineup rotations, and season milestone tracking.</p>
+                    <div class="features">
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Live Stats</span>
+                        <span class="feature-tag">Lineups</span>
+                        <span class="feature-tag">Milestones</span>
+                    </div>
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Try the Demo</a>
+                    <a href="https://buy.stripe.com/14A7sK0KdbLibAB8PzeEo04" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Buy Now — CA$49.99</a>
+                    <a href="https://buy.stripe.com/00w9ASboR9Da9ste9TeEo03" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs">For Clubs — CA$499</a>
+                </div>
+            </div>
+            <!-- Volleyball -->
+            <div class="product-card">
+                <div class="mockup mockup-volleyball">
+                    <img src="images/volleyball-cover.png" alt="Volleyball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
+                </div>
+                <div class="product-info">
+                    <h3>Volleyball Notepad</h3>
+                    <p>Rotation management, serve receive patterns, lineup builder, and rally scoring with full season analytics.</p>
+                    <div class="features">
+                        <span class="feature-tag">Rotations</span>
+                        <span class="feature-tag">Lineups</span>
+                        <span class="feature-tag">Scoring</span>
+                        <span class="feature-tag">Analytics</span>
+                    </div>
+                    <div class="product-price">Coming soon</div>
+                    <button class="product-btn btn-volleyball" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 4: Contact -->
+    <section class="contact" id="contact">
+        <div class="contact-inner">
+            <div class="section-header">
+                <div class="section-label">Get in Touch</div>
+                <h2>Contact</h2>
+                <p>Got a question, need club pricing, or want a walkthrough before you buy? One email, real answer.</p>
+            </div>
+            <div class="contact-methods">
+                <div class="contact-card">
+                    <div class="label">Email</div>
+                    <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 5: Testimonials + Feedback Form (bottom of page, last section before footer) -->
+    <!-- ============================================================= -->
+    <!--  HOW TO ADD A REAL TESTIMONIAL BY HAND (optional):            -->
+    <!--  Copy one <div class="review-card"> ... </div> block below,   -->
+    <!--  paste it into #reviewsGrid, change the trophies/text/name.   -->
+    <!--  Trophies: filled = 🏆  empty = <span class="t-empty">🏆</span> -->
+    <!--  Reviews submitted through the form below are added here      -->
+    <!--  automatically (client-side) and also emailed to the team.    -->
+    <!-- ============================================================= -->
+    <section class="reviews" id="reviews">
+        <div class="reviews-inner">
+            <div class="section-header">
+                <div class="section-label">What Coaches Say</div>
+                <h2>Real Coaches. Real Feedback.</h2>
+                <p>No cherry-picking — this is what coaches say after using it on game day. Leave yours below.</p>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid">
+                <div class="reviews-empty" id="reviewsEmpty">
+                    No reviews posted yet — be the first coach to leave one below.
+                </div>
+            </div>
+            <div class="review-form-wrap">
+                <p>Tell us what the app got right (or wrong). It posts here immediately.</p>
+                <form class="review-form" id="reviewForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="revName">Your name</label>
+                            <input type="text" id="revName" name="name" placeholder="Coach Taylor" maxlength="80" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="revRole">Team / role</label>
+                            <input type="text" id="revRole" name="role" placeholder="U16 Girls Basketball" maxlength="80">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Rating</label>
+                        <div class="trophy-picker" id="trophyPicker" role="radiogroup" aria-label="Rating out of 5 trophies"></div>
+                        <input type="hidden" id="revRating" name="rating" value="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="revMessage">Your feedback</label>
+                        <textarea id="revMessage" name="message" placeholder="What did the toolkit help you do on the sideline?" minlength="10" maxlength="500" required></textarea>
+                    </div>
+                    <div class="form-field">
+                        <label for="revEmail">Email <span style="text-transform:none;font-weight:400;">(not published — only used if we follow up)</span></label>
+                        <input type="email" id="revEmail" name="email" placeholder="you@email.com" required>
+                    </div>
+                    <p class="form-msg is-error" id="reviewFormError"></p>
+                    <p class="form-msg is-success" id="reviewFormSuccess"></p>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                    <p class="form-note">Submitting also opens your email client to send a copy to our team — nothing sends without your confirmation.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>© 2026 ValenciaSolution. Built for coaches who care about the game.</p>
+        <p style="margin-top:8px">
+            <a href="#products">Products</a>
+            <a href="mailto:valenciasolution.net@gmail.com">Contact</a>
+            <a href="#reviews">Testimonials</a>
+        </p>
+    </footer>
+    <script>
+        /* Mobile nav toggle.
+           The markup shipped a hamburger button with no handler, so at <=900px
+           .nav-links was display:none with no way to reveal it -- the entire nav
+           was unreachable on phones. Vanilla JS, no dependencies, IIFE-scoped. */
+        (function () {
+            var btn   = document.querySelector('.mobile-menu-btn');
+            var links = document.querySelector('.nav-links');
+            if (!btn || !links) return;
+            links.id = 'primary-nav';
+            btn.setAttribute('aria-controls', 'primary-nav');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-label', 'Toggle navigation menu');
+            btn.setAttribute('type', 'button');
+            function setOpen(open) {
+                links.classList.toggle('open', open);
+                btn.setAttribute('aria-expanded', String(open));
+            }
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setOpen(!links.classList.contains('open'));
+            });
+            /* Close after tapping a link, otherwise the open panel covers the
+               section the anchor just scrolled to. */
+            links.addEventListener('click', function (e) {
+                if (e.target.closest('a')) setOpen(false);
+            });
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('nav')) setOpen(false);
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') setOpen(false);
+            });
+            /* Reset if the viewport grows past the breakpoint while open,
+               otherwise .open leaks into the desktop layout. */
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 900) setOpen(false);
+            });
+        })();
+    </script>
+    <script>
+        /* Testimonials feedback form.
+           No backend is wired up yet, so a submission does two things:
+           1. Renders the review as a card at the top of #reviewsGrid immediately.
+           2. Opens a mailto: draft to the team so there's a durable record.
+           To persist reviews server-side instead, replace the mailto handoff
+           below with a fetch() to a form backend (e.g. Formspree, Netlify
+           Forms, or a small serverless endpoint) and keep the DOM-injection
+           part as-is for the instant on-page confirmation. */
+        (function () {
+            var TEAM_EMAIL = 'valenciasolution.net@gmail.com';
+            var picker = document.getElementById('trophyPicker');
+            var ratingInput = document.getElementById('revRating');
+            var form = document.getElementById('reviewForm');
+            var grid = document.getElementById('reviewsGrid');
+            var emptyState = document.getElementById('reviewsEmpty');
+            var errorEl = document.getElementById('reviewFormError');
+            var successEl = document.getElementById('reviewFormSuccess');
+            if (!picker || !form) return;
+            var currentRating = 0;
+            for (var i = 1; i <= 5; i++) {
+                (function (value) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'trophy-btn';
+                    btn.textContent = '🏆';
+                    btn.setAttribute('role', 'radio');
+                    btn.setAttribute('aria-checked', 'false');
+                    btn.setAttribute('aria-label', value + ' trophy' + (value > 1 ? 's' : ''));
+                    btn.addEventListener('click', function () {
+                        currentRating = value;
+                        ratingInput.value = String(value);
+                        updateTrophies();
+                    });
+                    picker.appendChild(btn);
+                })(i);
+            }
+            function updateTrophies() {
+                var buttons = picker.querySelectorAll('.trophy-btn');
+                for (var j = 0; j < buttons.length; j++) {
+                    var active = (j + 1) <= currentRating;
+                    buttons[j].classList.toggle('is-active', active);
+                    buttons[j].setAttribute('aria-checked', String(active));
+                }
+            }
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.style.display = 'block';
+                successEl.style.display = 'none';
+            }
+            function escapeHtml(str) {
+                var div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+            function trophyString(rating) {
+                var filled = '🏆'.repeat(rating);
+                var empty = '<span class="t-empty">🏆</span>'.repeat(5 - rating);
+                return filled + empty;
+            }
+            function addReviewCard(data) {
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                var card = document.createElement('div');
+                card.className = 'review-card';
+                var roleHtml = data.role ? ' <span class="review-role">· ' + escapeHtml(data.role) + '</span>' : '';
+                card.innerHTML =
+                    '<div class="review-trophies">' + trophyString(data.rating) + '</div>' +
+                    '<div class="review-text">“' + escapeHtml(data.message) + '”</div>' +
+                    '<div class="review-author">' + escapeHtml(data.name) + roleHtml + '</div>';
+                grid.insertBefore(card, grid.firstChild);
+            }
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = form.name.value.trim();
+                var role = form.role.value.trim();
+                var message = form.message.value.trim();
+                var email = form.email.value.trim();
+                var rating = parseInt(ratingInput.value, 10);
+                if (!name) return showError('Please enter your name.');
+                if (!rating || rating < 1) return showError('Please pick a trophy rating.');
+                if (!message || message.length < 10) return showError('Please write at least a short sentence about your experience.');
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
+                errorEl.style.display = 'none';
+                addReviewCard({ name: name, role: role, rating: rating, message: message });
+                var subject = encodeURIComponent('New review from ' + name + ' (' + rating + ' trophies)');
+                var bodyLines = [
+                    'Name: ' + name,
+                    'Team/Role: ' + (role || '—'),
+                    'Rating: ' + rating + '/5',
+                    'Email: ' + email,
+                    '',
+                    'Message:',
+                    message
+                ];
+                var body = encodeURIComponent(bodyLines.join('\n'));
+                window.location.href = 'mailto:' + TEAM_EMAIL + '?subject=' + subject + '&body=' + body;
+                successEl.textContent = 'Thanks — your review is posted above, and your email client should open to send us a copy.';
+                successEl.style.display = 'block';
+                form.reset();
+                currentRating = 0;
+                ratingInput.value = '0';
+                updateTrophies();
+            });
+        })();
+    </script>
+</body>
+</html>
