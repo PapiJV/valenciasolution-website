@@ -13,6 +13,7 @@
             --accent: #ff6b35;
             --accent-volley: #00d4aa;
             --accent-football: #e5aa2e;
+            --accent-lacrosse: #4d8dff;
             --text: #f0f0f5;
             --text-muted: #8a8a9a;
             --border: #2a2a3a;
@@ -300,6 +301,7 @@
         .mockup-basketball { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
         .mockup-volleyball { background: linear-gradient(135deg, #1a1a2e 0%, #0f2e2e 100%); }
         .mockup-football { background: linear-gradient(135deg, #1a1a2e 0%, #12180f 100%); }
+        .mockup-lacrosse { background: linear-gradient(135deg, #1a1a2e 0%, #0f2419 100%); }
         .mockup-header {
             display: flex;
             align-items: center;
@@ -324,6 +326,7 @@
         }
         .basketball-icon { background: var(--accent); }
         .volleyball-icon { background: var(--accent-volley); }
+        .lacrosse-icon { background: var(--accent-lacrosse); }
         .mockup-logo-text {
             font-size: 0.65rem;
             font-weight: 700;
@@ -510,6 +513,13 @@
         }
         .btn-football:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-football); }
         .btn-football[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .btn-lacrosse {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-lacrosse:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-lacrosse); }
+        .btn-lacrosse[disabled] { opacity: 0.5; cursor: not-allowed; }
         /* Price + stacked product buttons */
         .product-price {
             font-size: 1.4rem;
@@ -747,7 +757,7 @@
         <div class="section-header">
             <div class="section-label">Our Products</div>
             <h2>Built for the Sideline</h2>
-            <p>A coaching toolkit for basketball, volleyball, and football teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+            <p>A coaching toolkit for basketball, volleyball, lacrosse, and football teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
@@ -787,8 +797,26 @@
                     <button class="product-btn btn-volleyball" disabled>Coming Soon</button>
                 </div>
             </div>
+            <!-- Lacrosse -->
+            <div class="product-card">
+                <div class="mockup mockup-lacrosse">
+                    <img src="images/lacrosse-cover.png" alt="Lacrosse Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
+                </div>
+                <div class="product-info">
+                    <h3>Lacrosse Notepad</h3>
+                    <p>Diagram X's and O's, animate player movement and dodges, and track live games and video — all in one sideline-ready notebook.</p>
+                    <div class="features">
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Animate</span>
+                        <span class="feature-tag">Roster</span>
+                        <span class="feature-tag">Video</span>
+                    </div>
+                    <div class="product-price">Coming soon</div>
+                    <button class="product-btn btn-lacrosse" disabled>Coming Soon</button>
+                </div>
+            </div>
             <!-- Football -->
-            <div class="product-card product-card-centered">
+            <div class="product-card">
                 <div class="mockup mockup-football">
                     <img src="images/football-cover.png" alt="Football Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
                 </div>
@@ -1004,7 +1032,7 @@
                 var roleHtml = data.role ? ' <span class="review-role">· ' + escapeHtml(data.role) + '</span>' : '';
                 card.innerHTML =
                     '<div class="review-trophies">' + trophyString(data.rating) + '</div>' +
-                    '<div class="review-text">“' + escapeHtml(data.message) + '”</div>' +
+                    '<div class="review-text">"' + escapeHtml(data.message) + '"</div>' +
                     '<div class="review-author">' + escapeHtml(data.name) + roleHtml + '</div>';
                 grid.insertBefore(card, grid.firstChild);
             }
