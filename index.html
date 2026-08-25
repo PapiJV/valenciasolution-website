@@ -37,18 +37,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 8px 40px;
             background: rgba(10, 10, 15, 0.9);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
         .logo {
-            font-size: 1.3rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--text);
+            display: flex;
+            align-items: center;
         }
-        .logo span { color: var(--accent); }
+        .logo img {
+            width: 120px;
+            height: 120px;
+            display: block;
+        }
         .nav-links {
             display: flex;
             gap: 32px;
@@ -80,7 +82,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 120px 20px 80px;
+            padding: 160px 20px 80px;
             position: relative;
             overflow: hidden;
         }
@@ -495,10 +497,10 @@
             border: none;
         }
         .btn-basketball {
-            background: var(--accent);
+            background: #000;
             color: #fff;
         }
-        .btn-basketball:hover { background: #e55a2b; }
+        .btn-basketball:hover { background: #1a1a1a; }
         .btn-volleyball {
             background: transparent;
             color: var(--text);
@@ -716,8 +718,9 @@
         }
         @media (max-width: 900px) {
             .mobile-menu-btn { display: block; }
-            nav { padding: 16px 20px; flex-wrap: wrap; }
-            .hero { padding-top: 100px; }
+            nav { padding: 8px 20px; flex-wrap: wrap; }
+            .logo img { width: 70px; height: 70px; }
+            .hero { padding-top: 120px; }
             /* Collapsed by default; .open is toggled by the nav script in <body>. */
             .nav-links {
                 display: none;
@@ -740,7 +743,7 @@
 </head>
 <body>
     <nav>
-        <div class="logo">Valencia<span>Solution</span></div>
+        <div class="logo"><img src="images/logo.png" alt="Valencia Solutions" width="120" height="120"></div>
         <ul class="nav-links">
             <li><a href="#hero">Home</a></li>
             <li><a href="#services">Services</a></li>
@@ -977,6 +980,7 @@
     </section>
     <footer>
         <p>© 2026 ValenciaSolution. Built for coaches who care about the game.</p>
+        <p style="margin-top:8px">🇨🇦 Crafted with dedication in Ontario Canada 🇨🇦</p>
         <p style="margin-top:8px">
             <a href="#products">Products</a>
             <a href="mailto:valenciasolution.net@gmail.com">Contact</a>
