@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coaching Notepads by ValenciaSolution — Your Whole Sideline in One App</title>
-    <meta name="description" content="Pay-once coaching apps for basketball, volleyball, lacrosse, football, baseball and curling. Practice plans, animated playbooks, live game tracking, and season stats — on any device, no subscription.">
+    <meta name="description" content="Pay-once coaching apps for basketball, volleyball, lacrosse, football, baseball, curling, hockey, cricket, soccer and rugby. Practice plans, animated playbooks, live game tracking, and season stats — on any device, no subscription.">
     <link rel="canonical" href="https://www.valenciasolution.net/">
     <link rel="icon" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
@@ -31,6 +31,10 @@
             --accent-lacrosse: #4d8dff;
             --accent-baseball: #d94a3d;
             --accent-curling: #7fb6d9;
+            --accent-hockey: #5ec8ff;
+            --accent-cricket: #8fd16a;
+            --accent-soccer: #3ecf8e;
+            --accent-rugby: #e8a33d;
             --text: #f0f0f5;
             --text-muted: #8a8a9a;
             --border: #2a2a3a;
@@ -323,6 +327,10 @@
         .mockup-lacrosse { background: linear-gradient(135deg, #1a1a2e 0%, #0f2419 100%); }
         .mockup-baseball { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
         .mockup-curling { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
+        .mockup-hockey { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
+        .mockup-cricket { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
+        .mockup-soccer { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
+        .mockup-rugby { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
         .mockup-header {
             display: flex;
             align-items: center;
@@ -623,6 +631,50 @@
             color: #0a0a0f;
         }
         .btn-curling-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-hockey {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-hockey:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-hockey); }
+        .btn-hockey-buy {
+            background: linear-gradient(135deg, var(--accent-hockey) 0%, #3aa6e0 100%);
+            color: #0a0a0f;
+        }
+        .btn-hockey-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-cricket {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-cricket:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-cricket); }
+        .btn-cricket-buy {
+            background: linear-gradient(135deg, var(--accent-cricket) 0%, #6fb04b 100%);
+            color: #0a0a0f;
+        }
+        .btn-cricket-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-soccer {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-soccer:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-soccer); }
+        .btn-soccer-buy {
+            background: linear-gradient(135deg, var(--accent-soccer) 0%, #2aa872 100%);
+            color: #0a0a0f;
+        }
+        .btn-soccer-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-rugby {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-rugby:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-rugby); }
+        .btn-rugby-buy {
+            background: linear-gradient(135deg, var(--accent-rugby) 0%, #c4832a 100%);
+            color: #0a0a0f;
+        }
+        .btn-rugby-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
         .promo-note {
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -1037,7 +1089,7 @@
         <div class="section-header">
             <div class="section-label">Our Products</div>
             <h2>Built for the Sideline</h2>
-            <p>A coaching toolkit for basketball, volleyball, lacrosse, football, baseball, and curling teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+            <p>A coaching toolkit for basketball, volleyball, lacrosse, football, baseball, curling, hockey, cricket, soccer, and rugby teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
@@ -1171,6 +1223,98 @@
                     </div>
                     <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Try the Demo</a>
                     <button type="button" class="product-btn btn-curling-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                </div>
+            </div>
+            <!-- Hockey -->
+            <div class="product-card" id="hockey">
+                <div class="mockup mockup-hockey">
+                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Hockey Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/hockey-cover.png" alt="Hockey Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Hockey Notepad</h3>
+                    <p>Place your skaters, draw routes and screens, and animate the play — then run bench cards, lines &amp; pairs, a synced live scoreboard and video review.</p>
+                    <div class="features">
+                        <span class="feature-tag">Whiteboard</span>
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Bench Card</span>
+                        <span class="feature-tag">Lines &amp; Pairs</span>
+                        <span class="feature-tag">Live Game</span>
+                        <span class="feature-tag">Video</span>
+                        <span class="feature-tag">Team Chat</span>
+                    </div>
+                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Try the Demo</a>
+                    <button type="button" class="product-btn btn-hockey-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                </div>
+            </div>
+            <!-- Cricket -->
+            <div class="product-card" id="cricket">
+                <div class="mockup mockup-cricket">
+                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Cricket Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/cricket-cover.png" alt="Cricket Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Cricket Notepad</h3>
+                    <p>Set your field, draw the bowler's line and fielder movement, and animate the plan — plus match plans, batting order, a synced live scorecard and video.</p>
+                    <div class="features">
+                        <span class="feature-tag">Field Board</span>
+                        <span class="feature-tag">Field Library</span>
+                        <span class="feature-tag">Match Plan</span>
+                        <span class="feature-tag">Batting Order</span>
+                        <span class="feature-tag">Live Scorecard</span>
+                        <span class="feature-tag">Video</span>
+                        <span class="feature-tag">Team Chat</span>
+                    </div>
+                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Try the Demo</a>
+                    <button type="button" class="product-btn btn-cricket-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                </div>
+            </div>
+            <!-- Soccer -->
+            <div class="product-card" id="soccer">
+                <div class="mockup mockup-soccer">
+                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Soccer Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/soccer-cover.png" alt="Soccer Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Soccer Notepad</h3>
+                    <p>Place your XI, draw runs, passes, shots and pressing lines, and animate the play — then manage your depth chart, fixtures, live scoreboard and video.</p>
+                    <div class="features">
+                        <span class="feature-tag">Whiteboard</span>
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Game Plan</span>
+                        <span class="feature-tag">XI &amp; Depth</span>
+                        <span class="feature-tag">Live Game</span>
+                        <span class="feature-tag">Video</span>
+                        <span class="feature-tag">Team Chat</span>
+                    </div>
+                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Try the Demo</a>
+                    <button type="button" class="product-btn btn-soccer-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                </div>
+            </div>
+            <!-- Rugby -->
+            <div class="product-card" id="rugby">
+                <div class="mockup mockup-rugby">
+                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Rugby Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/rugby-cover.png" alt="Rugby Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Rugby Notepad</h3>
+                    <p>Place your XV, draw runs, passes, kicks and ruck hits, and animate the play — lineouts, set pieces, depth chart, live scoreboard and video in one place.</p>
+                    <div class="features">
+                        <span class="feature-tag">Whiteboard</span>
+                        <span class="feature-tag">Playbook</span>
+                        <span class="feature-tag">Game Plan</span>
+                        <span class="feature-tag">XV &amp; Depth</span>
+                        <span class="feature-tag">Live Game</span>
+                        <span class="feature-tag">Video</span>
+                        <span class="feature-tag">Team Chat</span>
+                    </div>
+                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Try the Demo</a>
+                    <button type="button" class="product-btn btn-rugby-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
         </div>
@@ -1347,6 +1491,10 @@
                         <li><a href="#lacrosse">🥍 Lacrosse</a></li>
                         <li><a href="#baseball">⚾ Baseball</a></li>
                         <li><a href="#curling">🥌 Curling</a></li>
+                        <li><a href="#hockey">🏒 Hockey</a></li>
+                        <li><a href="#cricket">🏏 Cricket</a></li>
+                        <li><a href="#soccer">⚽ Soccer</a></li>
+                        <li><a href="#rugby">🏉 Rugby</a></li>
                     </ul>
                 </div>
                 <div class="ft-col">
