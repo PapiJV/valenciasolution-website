@@ -740,20 +740,27 @@
         @media (prefers-reduced-motion: reduce) {
             .trophy-btn, .trophy-btn.pop, .tm-done-trophy { animation: none; transition: none; }
         }
+        .price-terms { max-width: 760px; margin: 36px auto 0; text-align: center; color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+        .price-terms strong { color: var(--text); }
+        .price-terms a { color: var(--accent); }
+        .tm-disclosure { font-size: 0.85rem !important; margin-top: 14px; }
+        .review-free { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-volley); border: 1px solid rgba(0,212,170,0.4); border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
         /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-        }
-        footer a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin: 0 12px;
-        }
+        footer { background: #07070b; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; padding: 64px 20px 28px; }
+        .ft-inner { max-width: 1100px; margin: 0 auto; }
+        .ft-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
+        @media (max-width: 900px) { .ft-grid { grid-template-columns: 1fr 1fr; gap: 32px; } .ft-brand { grid-column: 1 / -1; } }
+        .ft-brand img { width: 64px; height: 64px; border-radius: 12px; display: block; margin-bottom: 14px; }
+        .ft-brand p { max-width: 320px; line-height: 1.6; }
+        .ft-brand .ft-made { margin-top: 12px; font-size: 0.85rem; }
+        .ft-col h4 { color: var(--text); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+        .ft-col ul { list-style: none; }
+        .ft-col li { margin-bottom: 10px; }
+        footer a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
         footer a:hover { color: var(--text); }
+        .ft-contact { font-style: normal; line-height: 1.7; overflow-wrap: anywhere; }
+        .ft-bottom { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 0.8rem; }
+        .ft-bottom p { line-height: 1.6; }
         /* Mobile menu */
         .mobile-menu-btn {
             display: none;
@@ -855,7 +862,7 @@
         </div>
         <div class="products-grid">
             <!-- Basketball -->
-            <div class="product-card">
+            <div class="product-card" id="basketball">
                 <div class="mockup mockup-basketball">
                     <img src="images/basketball-cover.png" alt="Basketball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;">
                 </div>
@@ -875,7 +882,7 @@
                 </div>
             </div>
             <!-- Volleyball -->
-            <div class="product-card">
+            <div class="product-card" id="volleyball">
                 <div class="mockup mockup-volleyball">
                     <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Volleyball Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/volleyball-cover.png" alt="Volleyball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
@@ -897,7 +904,7 @@
                 </div>
             </div>
             <!-- Lacrosse -->
-            <div class="product-card">
+            <div class="product-card" id="lacrosse">
                 <div class="mockup mockup-lacrosse">
                     <a href="https://lacrosse-notepad-demo-git-demo-papijvs-projects.vercel.app" target="_blank" rel="noopener" aria-label="Try the Lacrosse Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/lacrosse-cover.png" alt="Lacrosse Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
@@ -919,7 +926,7 @@
                 </div>
             </div>
             <!-- Football -->
-            <div class="product-card">
+            <div class="product-card" id="football">
                 <div class="mockup mockup-football">
                     <a href="https://football-notepad-git-demo-papijvs-projects.vercel.app" target="_blank" rel="noopener" aria-label="Try the Football Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/football-cover.png" alt="Football Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
@@ -944,7 +951,8 @@
                 </div>
             </div>
         </div>
-        <p style="text-align:center;color:var(--text-muted);font-size:0.95rem;margin-top:48px;">
+        <p class="price-terms">Prices in Canadian dollars (CAD). Applicable sales tax is calculated and added at checkout. One-time purchase — no subscription. After payment you're taken straight to your app. <strong>All sales are final</strong> — see our <a href="/terms">Terms of Sale</a>.</p>
+        <p style="text-align:center;color:var(--text-muted);font-size:0.95rem;margin-top:40px;">
             <strong style="color:var(--text);">Coming Soon</strong> &mdash; try the live demo:
             <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" style="color:var(--accent);">Hockey Notepad</a> &middot;
             <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" style="color:var(--accent);">Cricket Notepad</a> &middot;
@@ -988,6 +996,8 @@
     <!--  <div class="review-card">                                      -->
     <!--    <div class="review-trophies">🏆🏆🏆🏆🏆</div>                 -->
     <!--    <div class="review-product">🏀 Basketball Notepad</div>      -->
+    <!--    <span class="review-free">Free access</span>  <- REQUIRED  -->
+    <!--      if the coach/club got the app free (Competition Act).      -->
     <!--    <div class="review-headline">Headline here</div>             -->
     <!--    <div class="review-text">"Testimonial here"</div>            -->
     <!--    <div class="review-author">Coach Name                        -->
@@ -1000,6 +1010,7 @@
                 <div class="section-label">What Coaches Say</div>
                 <h2>Real Coaches. Real Feedback.</h2>
                 <p>The first coaches are running these apps through real seasons right now. Testimonials get posted here as they come in — no cherry-picking.</p>
+                <p class="tm-disclosure">Some coaches and clubs received free access to a Notepad. Their testimonials are marked <span class="review-free">Free access</span>. Testimonials are real coaches' own words and opinions; individual results vary.</p>
             </div>
             <div class="reviews-grid" id="reviewsGrid">
                 <div class="reviews-empty" id="reviewsEmpty">
@@ -1027,6 +1038,14 @@
                                 <label class="tm-chip"><input type="radio" name="product" value="Volleyball Notepad" data-icon="🏐"><span>🏐 Volleyball</span></label>
                                 <label class="tm-chip"><input type="radio" name="product" value="Football Notepad" data-icon="🏈"><span>🏈 Football</span></label>
                                 <label class="tm-chip"><input type="radio" name="product" value="Lacrosse Notepad" data-icon="🥍"><span>🥍 Lacrosse</span></label>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <div class="lbl" id="accessLabel">How did you get it?</div>
+                            <div class="tm-chips" role="radiogroup" aria-labelledby="accessLabel">
+                                <label class="tm-chip"><input type="radio" name="access" value="purchased"><span>Bought it</span></label>
+                                <label class="tm-chip"><input type="radio" name="access" value="free"><span>Free / club access</span></label>
                             </div>
                         </div>
 
@@ -1076,7 +1095,7 @@
                     <div class="tm-side-label">Live preview</div>
                     <div class="review-card tm-preview" id="tmPreview">
                         <div class="review-trophies" id="pvTrophies"></div>
-                        <div class="review-product" id="pvProduct" hidden></div>
+                        <div class="review-product" id="pvProduct" hidden></div> <span class="review-free" id="pvFree" hidden>Free access</span>
                         <div class="review-headline" id="pvHeadline" hidden></div>
                         <div class="review-text" id="pvText"></div>
                         <div class="review-author"><span id="pvName"></span> <span class="review-role" id="pvRole"></span></div>
@@ -1087,17 +1106,51 @@
         </div>
     </section>
     <footer>
-        <p>© 2026 ValenciaSolution. Built for coaches who care about the game.</p>
-        <p style="margin-top:8px">🇨🇦 Crafted with dedication in Ontario Canada 🇨🇦</p>
-        <p style="margin-top:8px">
-            <a href="#products">Products</a>
-            <a href="mailto:valenciasolution.net@gmail.com">Contact</a>
-            <a href="#reviews">Testimonials</a>
-            <a href="mailto:valenciasolution.net@gmail.com?subject=Unsubscribe">Unsubscribe</a>
-        </p>
-        <p style="margin-top:12px; font-size:0.8rem; opacity:0.85;">
-            ValenciaSolution &middot; 145&nbsp;Church&nbsp;Street, Unit&nbsp;5, Office&nbsp;908, Toronto,&nbsp;ON M5B&nbsp;1Y4, Canada
-        </p>
+        <div class="ft-inner">
+            <div class="ft-grid">
+                <div class="ft-brand">
+                    <img src="images/logo.png" alt="ValenciaSolution" width="64" height="64" loading="lazy">
+                    <p>Pay-once coaching apps for the sideline. Playbooks, live stats, lineups and film — built for coaches who care about the game.</p>
+                    <p class="ft-made">🇨🇦 Made in Toronto, Ontario</p>
+                </div>
+                <div class="ft-col">
+                    <h4>Notepads</h4>
+                    <ul>
+                        <li><a href="#basketball">🏀 Basketball</a></li>
+                        <li><a href="#volleyball">🏐 Volleyball</a></li>
+                        <li><a href="#football">🏈 Football</a></li>
+                        <li><a href="#lacrosse">🥍 Lacrosse</a></li>
+                    </ul>
+                </div>
+                <div class="ft-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#reviews">Testimonials</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <address class="ft-contact">
+                        <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net@gmail.com</a><br>
+                        <a href="tel:+16477942878">+1 (647) 794-2878</a>
+                    </address>
+                </div>
+                <div class="ft-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/terms">Terms of Sale</a></li>
+                        <li><a href="/terms#refunds">Refund Policy</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/privacy#emails">Email Preferences</a></li>
+                        <li><a href="mailto:valenciasolution.net@gmail.com?subject=Unsubscribe">Unsubscribe</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <p>© 2026 ValenciaSolution, a registered Ontario business name. All rights reserved.</p>
+                <p>145 Church Street, Unit 5, Office 908, Toronto, ON M5B 1Y4, Canada</p>
+                <p>Prices in CAD, plus applicable taxes. Payments processed securely by Stripe.</p>
+            </div>
+        </div>
     </footer>
     <script>
         /* Mobile nav toggle.
@@ -1227,6 +1280,8 @@
                 var p = product();
                 $('pvProduct').hidden = !p;
                 if (p) $('pvProduct').textContent = p.icon + ' ' + p.name;
+                var acc = form.querySelector('input[name="access"]:checked');
+                $('pvFree').hidden = !(acc && acc.value === 'free');
                 var h = val('headline');
                 $('pvHeadline').hidden = !h;
                 $('pvHeadline').textContent = h;
@@ -1283,6 +1338,7 @@
                 var data = {
                     rating: rating,
                     product: product() ? product().name : '',
+                    access: (form.querySelector('input[name="access"]:checked') || {}).value || '',
                     name: val('name'),
                     role: val('role'),
                     club: val('club'),
@@ -1304,6 +1360,7 @@
                     var body = [
                         'Rating: ' + data.rating + '/5 (' + RANKS[data.rating] + ')',
                         'Product: ' + (data.product || '—'),
+                        'Access: ' + (data.access === 'free' ? 'Free / club access' : data.access === 'purchased' ? 'Bought it' : '—'),
                         'Name: ' + data.name,
                         'Team/Role: ' + (data.role || '—'),
                         'Club: ' + (data.club || '—'),

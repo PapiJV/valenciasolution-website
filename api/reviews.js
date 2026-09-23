@@ -84,7 +84,7 @@ export default async function handler(req, res) {
       (r) => `<tr>
     <td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td>
     <td>${trophies(r.rating)}</td>
-    <td>${esc(r.product || "—")}</td>
+    <td>${esc(r.product || "—")}${r.access === "free" ? `<br><b style="color:#0a8">FREE ACCESS — must show tag</b>` : r.access === "purchased" ? `<br><span class="muted">Bought</span>` : ""}</td>
     <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}${r.club ? `<br><span class="muted">${esc(r.club)}</span>` : ""}</td>
     <td>${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${esc(r.message)}</td>
     <td>${r.consent === true ? "Yes" : r.consent === false ? "<b>No</b>" : "—"}</td>
