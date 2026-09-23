@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coaching Notepads by ValenciaSolution — Your Whole Sideline in One App</title>
-    <meta name="description" content="Pay-once coaching apps for basketball, volleyball, lacrosse and football. Practice plans, animated playbooks, live game tracking, and season stats — on any device, no subscription.">
+    <meta name="description" content="Pay-once coaching apps for basketball, volleyball, lacrosse, football, baseball and curling. Practice plans, animated playbooks, live game tracking, and season stats — on any device, no subscription.">
     <link rel="canonical" href="https://www.valenciasolution.net/">
     <link rel="icon" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
@@ -29,6 +29,8 @@
             --accent-volley: #00d4aa;
             --accent-football: #e5aa2e;
             --accent-lacrosse: #4d8dff;
+            --accent-baseball: #d94a3d;
+            --accent-curling: #7fb6d9;
             --text: #f0f0f5;
             --text-muted: #8a8a9a;
             --border: #2a2a3a;
@@ -319,6 +321,8 @@
         .mockup-volleyball { background: linear-gradient(135deg, #1a1a2e 0%, #0f2e2e 100%); }
         .mockup-football { background: linear-gradient(135deg, #1a1a2e 0%, #12180f 100%); }
         .mockup-lacrosse { background: linear-gradient(135deg, #1a1a2e 0%, #0f2419 100%); }
+        .mockup-baseball { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
+        .mockup-curling { background: linear-gradient(135deg, #1a1a2e 0%, #13201a 100%); }
         .mockup-header {
             display: flex;
             align-items: center;
@@ -597,6 +601,28 @@
             border: 1px solid var(--border);
         }
         .btn-lacrosse-clubs:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-lacrosse); }
+        .btn-baseball {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-baseball:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-baseball); }
+        .btn-baseball-buy {
+            background: linear-gradient(135deg, var(--accent-baseball) 0%, #b8392e 100%);
+            color: #fff;
+        }
+        .btn-baseball-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
+        .btn-curling {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-curling:hover { background: rgba(255,255,255,0.05); border-color: var(--accent-curling); }
+        .btn-curling-buy {
+            background: linear-gradient(135deg, var(--accent-curling) 0%, #5b95bd 100%);
+            color: #0a0a0f;
+        }
+        .btn-curling-buy[disabled] { opacity: 0.55; cursor: not-allowed; }
         .promo-note {
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -1011,7 +1037,7 @@
         <div class="section-header">
             <div class="section-label">Our Products</div>
             <h2>Built for the Sideline</h2>
-            <p>A coaching toolkit for basketball, volleyball, lacrosse, and football teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+            <p>A coaching toolkit for basketball, volleyball, lacrosse, football, baseball, and curling teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
@@ -1101,6 +1127,50 @@
                     <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Buy Now — CA$49.99</a>
                     <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs">For Clubs — CA$499</a>
                     <p class="promo-note">Code <strong>HUT10</strong> for $10 off · <strong>HUT20</strong> for $20 off clubs</p>
+                </div>
+            </div>
+            <!-- Baseball -->
+            <div class="product-card" id="baseball">
+                <div class="mockup mockup-baseball">
+                    <a href="/baseball-demo" target="_blank" rel="noopener" aria-label="Try the Baseball Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/baseball-cover.png" alt="Baseball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Baseball Notepad</h3>
+                    <p>Diagram plays on a to-scale diamond, animate every throw, hit and run, and track the count, bases, pitch counts and a full batting line per player — live.</p>
+                    <div class="features">
+                        <span class="feature-tag">Diamond Board</span>
+                        <span class="feature-tag">Animate</span>
+                        <span class="feature-tag">Pitch Count</span>
+                        <span class="feature-tag">Live Stats</span>
+                        <span class="feature-tag">Roster</span>
+                        <span class="feature-tag">Video</span>
+                    </div>
+                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Try the Demo</a>
+                    <button type="button" class="product-btn btn-baseball-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                </div>
+            </div>
+            <!-- Curling -->
+            <div class="product-card" id="curling">
+                <div class="mockup mockup-curling">
+                    <a href="/curling-demo" target="_blank" rel="noopener" aria-label="Try the Curling Notepad demo" style="display:block;width:100%;height:100%;">
+                        <img src="images/curling-cover.png" alt="Curling Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
+                    </a>
+                </div>
+                <div class="product-info">
+                    <h3>Curling Notepad</h3>
+                    <p>Place stones on a to-scale sheet, draw curl paths and takeouts that count the end, and keep the linescore, hammer and thinking time — plus every player's shooting percentage.</p>
+                    <div class="features">
+                        <span class="feature-tag">Sheet Board</span>
+                        <span class="feature-tag">Animate</span>
+                        <span class="feature-tag">Linescore</span>
+                        <span class="feature-tag">Hammer</span>
+                        <span class="feature-tag">Shot %</span>
+                        <span class="feature-tag">Video</span>
+                    </div>
+                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Try the Demo</a>
+                    <button type="button" class="product-btn btn-curling-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
         </div>
@@ -1273,6 +1343,8 @@
                         <li><a href="#volleyball">🏐 Volleyball</a></li>
                         <li><a href="#football">🏈 Football</a></li>
                         <li><a href="#lacrosse">🥍 Lacrosse</a></li>
+                        <li><a href="#baseball">⚾ Baseball</a></li>
+                        <li><a href="#curling">🥌 Curling</a></li>
                     </ul>
                 </div>
                 <div class="ft-col">
