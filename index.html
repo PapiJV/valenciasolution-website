@@ -745,6 +745,67 @@
         .price-terms a { color: var(--accent); }
         .tm-disclosure { font-size: 0.85rem !important; margin-top: 14px; }
         .review-free { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-volley); border: 1px solid rgba(0,212,170,0.4); border-radius: 999px; padding: 2px 9px; vertical-align: middle; }
+        /* Free launch offer */
+        .hero-offer {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(229,170,46,0.14); border: 1px solid rgba(229,170,46,0.45);
+            color: #ffd27a; padding: 8px 18px; border-radius: 100px;
+            font-size: 0.88rem; font-weight: 700; text-decoration: none; margin: 0 0 18px;
+            transition: transform 0.15s, background 0.15s;
+        }
+        .hero-offer:hover { transform: translateY(-1px); background: rgba(229,170,46,0.22); }
+        .free { position: relative; overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            background: radial-gradient(90% 120% at 0% 0%, rgba(229,170,46,0.12) 0%, rgba(229,170,46,0) 55%),
+                        radial-gradient(80% 120% at 100% 100%, rgba(255,107,53,0.12) 0%, rgba(255,107,53,0) 55%), var(--bg); }
+        .free-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 48px; align-items: center; }
+        @media (max-width: 900px) { .free-inner { grid-template-columns: 1fr; gap: 32px; } }
+        .free-tag { display: inline-block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #1a1205; background: var(--accent-football); padding: 5px 12px; border-radius: 6px; margin-bottom: 18px; }
+        .free h2 { font-size: clamp(2.1rem, 5vw, 3.3rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 16px; }
+        .free h2 s { color: var(--text-muted); font-weight: 700; text-decoration-thickness: 3px; }
+        .free h2 em { font-style: normal; color: var(--accent-football); }
+        .free-lead { color: var(--text-muted); font-size: 1.08rem; margin-bottom: 26px; max-width: 520px; }
+        .countdown { display: flex; gap: 10px; margin-bottom: 22px; }
+        .cd-box { min-width: 70px; text-align: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 8px 8px; }
+        .cd-num { display: block; font-size: 1.9rem; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1.1; }
+        .cd-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 600; }
+        @media (max-width: 420px) { .cd-box { min-width: 0; flex: 1; } .cd-num { font-size: 1.5rem; } }
+        .spots { max-width: 420px; margin-bottom: 24px; }
+        .spots-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        .spots-row strong { color: var(--accent-football); }
+        .spots-bar { height: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+        .spots-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-football), var(--accent)); border-radius: 99px; transition: width 0.8s ease; }
+        .free-perks { list-style: none; display: grid; gap: 10px; }
+        .free-perks li { display: flex; gap: 10px; align-items: flex-start; color: var(--text); }
+        .free-perks li span { flex-shrink: 0; }
+        .free-card { background: var(--bg-card); border: 1px solid rgba(229,170,46,0.35); border-radius: 20px; padding: 30px; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+        @media (max-width: 600px) { .free-card { padding: 22px 18px; } }
+        .free-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; }
+        .free-card .sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 22px; }
+        .sport-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        @media (max-width: 480px) { .sport-pick { grid-template-columns: repeat(2, 1fr); } }
+        .sport-opt { position: relative; }
+        .sport-opt input { position: absolute; opacity: 0; pointer-events: none; }
+        .sport-opt span { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 6px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-light); cursor: pointer; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); transition: all 0.15s; }
+        .sport-opt span b { font-size: 1.8rem; line-height: 1; }
+        .sport-opt span:hover { border-color: var(--text-muted); color: var(--text); }
+        .sport-opt input:checked + span { border-color: var(--accent-football); color: #fff; background: rgba(229,170,46,0.14); box-shadow: 0 0 0 1px var(--accent-football) inset; }
+        .sport-opt input:focus-visible + span { outline: 2px solid var(--accent-football); outline-offset: 2px; }
+        .free-card .btn-primary { width: 100%; text-align: center; font-size: 1.08rem; background: linear-gradient(135deg, var(--accent-football), var(--accent)); }
+        .free-card .btn-primary[disabled] { opacity: 0.6; cursor: wait; }
+        .free-fine { font-size: 0.76rem; color: var(--text-muted); margin-top: 14px; line-height: 1.55; }
+        .free-fine a { color: var(--text-muted); }
+        .hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+        .free-done { text-align: center; padding: 8px 0; }
+        .free-done .big { font-size: 3.2rem; line-height: 1; animation: trophyPop 0.6s cubic-bezier(.3,1.6,.5,1); }
+        .free-done h3 { font-size: 1.5rem; margin: 12px 0 6px; }
+        .free-done p { color: var(--text-muted); margin-bottom: 18px; }
+        .free-done .btn-primary { display: block; margin-bottom: 12px; }
+        .free-link { display: flex; gap: 8px; margin-bottom: 14px; }
+        .free-link input { flex: 1; min-width: 0; background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 0.85rem; }
+        .free-link button { background: var(--bg-light); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0 14px; font-weight: 600; cursor: pointer; }
+        .free-closed { text-align: center; padding: 20px 0; }
+        .free-closed h3 { margin-bottom: 8px; }
+        .free-closed p { color: var(--text-muted); margin-bottom: 18px; }
         /* Footer */
         footer { background: #07070b; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem; padding: 64px 20px 28px; }
         .ft-inner { max-width: 1100px; margin: 0 auto; }
@@ -805,12 +866,13 @@
             <li><a href="#contact">Contact</a></li>
             <li><a href="#reviews">Reviews</a></li>
         </ul>
-        <a href="#products" class="nav-cta">Get Notepad</a>
+        <a href="#free" class="nav-cta">Claim Free Notepad</a>
         <button class="mobile-menu-btn">☰</button>
     </nav>
     <!-- Section 1: Hero -->
     <section class="hero" id="hero">
         <div class="hero-content">
+            <a class="hero-offer" href="#free">🎁 Limited time: get a Notepad free. First 100 coaches →</a><br>
             <div class="hero-badge">Coach's Toolkit</div>
             <h1>Stop Coaching From <span>Scattered Notes.</span></h1>
             <p>Every Notepad app puts your playbook, lineups, live game stats, and season milestones in one app you carry onto every sideline. Pay once. Own it. No subscription eating your budget.</p>
@@ -823,6 +885,97 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
+        </div>
+    </section>
+    <!-- Free launch offer: ends Oct 31, 2026 11:59 pm ET or at 100 sign-ups (enforced by /api/register) -->
+    <section class="free" id="free">
+        <div class="free-inner">
+            <div>
+                <div class="free-tag">Limited-time launch offer</div>
+                <h2>Get a Notepad <s>CA$49.99</s> <em>free.</em><br>Keep it forever.</h2>
+                <p class="free-lead">We're putting Notepads in the hands of the first 100 coaches. Register, pick your sport, and start using the full app today. No card, no trial clock, no catch.</p>
+                <div class="countdown" id="countdown" aria-label="Time left in offer">
+                    <div class="cd-box"><span class="cd-num" id="cdD">--</span><span class="cd-lbl">Days</span></div>
+                    <div class="cd-box"><span class="cd-num" id="cdH">--</span><span class="cd-lbl">Hrs</span></div>
+                    <div class="cd-box"><span class="cd-num" id="cdM">--</span><span class="cd-lbl">Min</span></div>
+                    <div class="cd-box"><span class="cd-num" id="cdS">--</span><span class="cd-lbl">Sec</span></div>
+                </div>
+                <div class="spots" id="spots" hidden>
+                    <div class="spots-row"><span><strong id="spotsLeft">–</strong> of 100 free spots left</span><span id="spotsClaimed"></span></div>
+                    <div class="spots-bar"><div class="spots-fill" id="spotsFill"></div></div>
+                </div>
+                <ul class="free-perks">
+                    <li><span>✅</span>The full app, not a trial: playbook, live stats, lineups, video</li>
+                    <li><span>💳</span>No credit card. Nothing to cancel.</li>
+                    <li><span>♾️</span>Yours to keep after the offer ends</li>
+                </ul>
+            </div>
+
+            <div class="free-card" id="freeCard">
+                <form id="freeForm" novalidate>
+                    <h3>Claim your free Notepad</h3>
+                    <p class="sub">Takes 30 seconds. Your app opens right after.</p>
+                    <div class="form-field">
+                        <div class="lbl" id="sportLbl">Pick your sport <span class="req">*</span></div>
+                        <div class="sport-pick" role="radiogroup" aria-labelledby="sportLbl">
+                            <label class="sport-opt"><input type="radio" name="sport" value="basketball"><span><b>🏀</b>Basketball</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="volleyball"><span><b>🏐</b>Volleyball</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="football"><span><b>🏈</b>Football</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="lacrosse"><span><b>🥍</b>Lacrosse</span></label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="frName">Your name <span class="req">*</span></label>
+                            <input type="text" id="frName" name="name" maxlength="80" autocomplete="name" placeholder="Coach Taylor" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="frEmail">Email <span class="req">*</span></label>
+                            <input type="email" id="frEmail" name="email" maxlength="120" autocomplete="email" placeholder="you@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label for="frRole">Role</label>
+                            <input type="text" id="frRole" name="role" maxlength="80" placeholder="Head Coach, U14">
+                        </div>
+                        <div class="form-field">
+                            <label for="frClub">Club / team</label>
+                            <input type="text" id="frClub" name="club" maxlength="100" autocomplete="organization" placeholder="Riverside Hawks">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="frCity">City <span class="hint">(optional)</span></label>
+                        <input type="text" id="frCity" name="city" maxlength="80" autocomplete="address-level2" placeholder="Toronto, ON">
+                    </div>
+                    <div class="hp" aria-hidden="true"><label for="frWebsite">Website</label><input type="text" id="frWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+                    <label class="tm-consent">
+                        <input type="checkbox" id="frOptIn" name="marketingOptIn">
+                        <span>Yes, email me Notepad updates, tips and offers from ValenciaSolution. I can unsubscribe any time. <span class="hint">(optional)</span></span>
+                    </label>
+                    <p class="form-msg" id="freeErr" role="alert"></p>
+                    <button type="submit" class="btn btn-primary" id="freeBtn">Claim my free Notepad 🎁</button>
+                    <p class="free-fine">One free Notepad (individual licence) per coach. Offer ends Oct 31, 2026 at 11:59 pm ET or when 100 coaches have registered, whichever comes first. See the <a href="/terms#free-offer">offer terms</a> and our <a href="/privacy">Privacy Policy</a>.</p>
+                </form>
+
+                <div class="free-done" id="freeDone" hidden>
+                    <div class="big" id="freeDoneIcon">🏀</div>
+                    <h3 id="freeDoneTitle">You're in, Coach.</h3>
+                    <p id="freeDoneMsg">Your free Notepad is ready. Save this link: it's your app.</p>
+                    <a class="btn btn-primary" id="freeOpen" href="#" target="_blank" rel="noopener">Open my Notepad →</a>
+                    <div class="free-link">
+                        <input type="text" id="freeUrl" readonly aria-label="Your app link">
+                        <button type="button" id="freeCopy">Copy</button>
+                    </div>
+                    <p class="free-fine">Tip: on your phone, open the app and choose "Add to Home Screen" so it's always one tap away on the sideline.</p>
+                </div>
+
+                <div class="free-closed" id="freeClosed" hidden>
+                    <h3 id="freeClosedTitle">This offer has ended</h3>
+                    <p id="freeClosedMsg">All free spots are gone. You can still try any Notepad free in the demo, or get the full app below.</p>
+                    <a class="btn btn-primary" href="#products">See the Notepads</a>
+                </div>
+            </div>
         </div>
     </section>
     <!-- Section 2: What's Inside -->
@@ -1389,6 +1542,152 @@
                     body: JSON.stringify(data)
                 }).then(function (res) { finish(!!(res && res.ok)); })
                   .catch(function () { finish(false); });
+            });
+        })();
+    </script>
+    <script>
+        /* Free launch offer: countdown, live spots, registration (/api/register). */
+        (function () {
+            var ENDS_AT = Date.parse('2026-11-01T03:59:59Z'); // Oct 31, 2026 11:59:59 pm ET
+            var CAP = 100;
+            var APPS = {
+                basketball: { icon: '🏀', name: 'Basketball Notepad', url: 'https://basketball-notepad-do-not-erase-1.vercel.app/' },
+                volleyball: { icon: '🏐', name: 'Volleyball Notepad', url: 'https://volleyball-notepad-exclusive1sole.vercel.app/' },
+                football:   { icon: '🏈', name: 'Football Notepad',   url: 'https://football-notepad.vercel.app/' },
+                lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' }
+            };
+            var $ = function (id) { return document.getElementById(id); };
+            var form = $('freeForm');
+            if (!form) return;
+            var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+            function closeOffer(title, msg) {
+                form.hidden = true;
+                $('freeDone').hidden = true;
+                $('freeClosed').hidden = false;
+                if (title) $('freeClosedTitle').textContent = title;
+                if (msg) $('freeClosedMsg').textContent = msg;
+                var hb = document.querySelector('.hero-offer');
+                if (hb) { hb.style.display = 'none'; if (hb.nextElementSibling && hb.nextElementSibling.tagName === 'BR') hb.nextElementSibling.style.display = 'none'; }
+                var cta = document.querySelector('.nav-cta');
+                if (cta) { cta.textContent = 'Get Notepad'; cta.setAttribute('href', '#products'); }
+            }
+
+            var timer;
+            function tick() {
+                var ms = ENDS_AT - Date.now();
+                if (ms <= 0) {
+                    ['cdD', 'cdH', 'cdM', 'cdS'].forEach(function (id) { $(id).textContent = '00'; });
+                    clearInterval(timer);
+                    if (!$('freeDone').hidden) return;
+                    closeOffer('This offer has ended', 'The free launch offer closed on Oct 31, 2026. You can still try any Notepad in the free demo, or get the full app below.');
+                    return;
+                }
+                var s = Math.floor(ms / 1000);
+                $('cdD').textContent = pad(Math.floor(s / 86400));
+                $('cdH').textContent = pad(Math.floor(s % 86400 / 3600));
+                $('cdM').textContent = pad(Math.floor(s % 3600 / 60));
+                $('cdS').textContent = pad(s % 60);
+            }
+            tick();
+            timer = setInterval(tick, 1000);
+
+            function showSpots(st) {
+                if (!st || typeof st.spotsLeft !== 'number') return;
+                $('spots').hidden = false;
+                $('spotsLeft').textContent = st.spotsLeft;
+                $('spotsClaimed').textContent = st.claimed + ' claimed';
+                $('spotsFill').style.width = Math.min(100, (st.claimed / (st.cap || CAP)) * 100) + '%';
+                if (!st.open && $('freeDone').hidden) {
+                    closeOffer(st.spotsLeft <= 0 ? 'All 100 free spots are claimed' : 'This offer has ended', null);
+                }
+            }
+            fetch('/api/register', { cache: 'no-store' })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(showSpots)
+                .catch(function () {});
+
+            function err(msg, focusEl) {
+                $('freeErr').textContent = msg;
+                $('freeErr').classList.add('is-error');
+                if (focusEl) focusEl.focus();
+            }
+            function showDone(sport, url, already) {
+                var app = APPS[sport];
+                form.hidden = true;
+                $('freeDone').hidden = false;
+                $('freeDoneIcon').textContent = app.icon;
+                $('freeDoneTitle').textContent = already ? 'Welcome back, Coach.' : 'You’re in, Coach.';
+                $('freeDoneMsg').textContent = (already ? 'You already claimed ' : 'Your free ') + app.name + (already ? '. Here’s your link again. ' : ' is ready. ') + 'Save this link: it’s your app.';
+                $('freeOpen').href = url;
+                $('freeOpen').textContent = 'Open ' + app.name + ' →';
+                $('freeUrl').value = url;
+                $('freeCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            $('freeCopy').addEventListener('click', function () {
+                var inp = $('freeUrl');
+                inp.select();
+                var done = function () { $('freeCopy').textContent = 'Copied'; setTimeout(function () { $('freeCopy').textContent = 'Copy'; }, 1800); };
+                if (navigator.clipboard) navigator.clipboard.writeText(inp.value).then(done, function () { document.execCommand('copy'); done(); });
+                else { document.execCommand('copy'); done(); }
+            });
+            form.addEventListener('input', function () { $('freeErr').classList.remove('is-error'); $('freeErr').textContent = ''; });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var sportEl = form.querySelector('input[name="sport"]:checked');
+                var data = {
+                    sport: sportEl ? sportEl.value : '',
+                    name: form.elements.name.value.trim(),
+                    email: form.elements.email.value.trim(),
+                    role: form.elements.role.value.trim(),
+                    club: form.elements.club.value.trim(),
+                    city: form.elements.city.value.trim(),
+                    website: form.elements.website.value,
+                    marketingOptIn: $('frOptIn').checked
+                };
+                if (!data.sport) return err('Pick your sport first.', form.querySelector('input[name="sport"]'));
+                if (!data.name) return err('Please enter your name.', $('frName'));
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) return err('Please enter a valid email.', $('frEmail'));
+                if (Date.now() > ENDS_AT) return closeOffer('This offer has ended', null);
+
+                var btn = $('freeBtn');
+                btn.disabled = true;
+                btn.textContent = 'Claiming…';
+                fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(function (r) {
+                    return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, body: j }; });
+                }).then(function (res) {
+                    btn.disabled = false;
+                    btn.textContent = 'Claim my free Notepad 🎁';
+                    if (res.status === 200 && res.body.ok) {
+                        var sp = APPS[res.body.sport] ? res.body.sport : data.sport;
+                        showDone(sp, APPS[sp].url, !!res.body.already);
+                        if (typeof res.body.spotsLeft === 'number') showSpots(res.body);
+                    } else if (res.status === 410) {
+                        closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'All 100 free spots are claimed' : 'This offer has ended', null);
+                    } else if (res.status === 400) {
+                        err(res.body.error || 'Please check your details.');
+                    } else if (res.status === 501) {
+                        /* Storage not connected yet: never block the coach. Deliver the
+                           app and hand the team a record by email instead. */
+                        showDone(data.sport, APPS[data.sport].url, false);
+                        var body = ['Free Notepad sign-up', 'Sport: ' + data.sport, 'Name: ' + data.name, 'Email: ' + data.email,
+                            'Role: ' + (data.role || '-'), 'Club: ' + (data.club || '-'), 'City: ' + (data.city || '-'),
+                            'Email updates opt-in: ' + (data.marketingOptIn ? 'Yes' : 'No')].join('\n');
+                        window.location.href = 'mailto:valenciasolution.net@gmail.com?subject=' +
+                            encodeURIComponent('Free Notepad sign-up: ' + data.name) + '&body=' + encodeURIComponent(body);
+                    } else {
+                        err('Something went wrong on our end. Please try again, or email valenciasolution.net@gmail.com and we’ll set you up.');
+                    }
+                }).catch(function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Claim my free Notepad 🎁';
+                    err('Couldn’t reach our server. Check your connection and try again.');
+                });
             });
         })();
     </script>
