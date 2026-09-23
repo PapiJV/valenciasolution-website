@@ -43,6 +43,10 @@ export default async function handler(req, res) {
   }
   const name = String((body && body.name) || "").trim().slice(0, 80);
   const role = String((body && body.role) || "").trim().slice(0, 80);
+  const club = String((body && body.club) || "").trim().slice(0, 100);
+  const product = String((body && body.product) || "").trim().slice(0, 40);
+  const headline = String((body && body.headline) || "").trim().slice(0, 90);
+  const consent = Boolean(body && body.consent === true);
   const message = String((body && body.message) || "").trim().slice(0, 800);
   const email = String((body && body.email) || "").trim().slice(0, 120);
   const rating = Math.max(1, Math.min(5, parseInt((body && body.rating), 10) || 0));
@@ -53,7 +57,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const entry = { name, role, message, email, rating, at: new Date().toISOString() };
+    const entry = { name, role, club, product, headline, message, email, rating, consent, at: new Date().toISOString() };
     await redisPipeline([
       ["RPUSH", "site:reviews", JSON.stringify(entry)],
       ["LTRIM", "site:reviews", String(-MAX_REVIEWS), "-1"],

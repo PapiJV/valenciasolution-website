@@ -611,103 +611,135 @@
         /* Testimonials */
         .reviews { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
         .reviews-inner { max-width: 1100px; margin: 0 auto; }
-        .reviews-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
+        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         @media (max-width: 900px) { .reviews-grid { grid-template-columns: 1fr; } }
         .review-card {
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 28px 26px;
-            transition: all 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .review-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-        .review-card.is-placeholder { opacity: 0.55; border-style: dashed; }
-        .review-trophies { font-size: 1rem; letter-spacing: 3px; margin-bottom: 14px; }
-        .review-trophies .t-empty { filter: grayscale(1); opacity: 0.35; }
-        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; }
+        .review-trophies { font-size: 1.05rem; letter-spacing: 3px; margin-bottom: 14px; }
+        .t-empty { filter: grayscale(1); opacity: 0.3; }
+        .review-product { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; margin-bottom: 12px; }
+        .review-headline { color: var(--text); font-size: 1.08rem; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
+        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; }
         .review-author { color: var(--text); font-size: 0.9rem; font-weight: 700; }
         .review-role { color: var(--text-muted); font-size: 0.82rem; font-weight: 400; }
-        /* Contact */
-        .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
-        .contact-methods {
-            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 32px;
-        }
-        .contact-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
-            padding: 24px 32px; min-width: 220px;
-        }
-        .contact-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
-        .contact-card a { color: var(--accent); text-decoration: none; font-size: 1.05rem; font-weight: 600; }
-        .contact-card a:hover { text-decoration: underline; }
-        /* Review feedback form */
         .reviews-empty {
             grid-column: 1 / -1;
             text-align: center;
             border: 1px dashed var(--border);
             border-radius: 16px;
-            padding: 48px 24px;
+            padding: 40px 24px;
             color: var(--text-muted);
         }
-        .review-form-wrap { max-width: 640px; margin: 56px auto 0; }
-        .review-form-wrap > p { text-align: center; color: var(--text-muted); margin-bottom: 28px; }
-        .review-form {
-            background: var(--bg);
+        /* Contact */
+        .contact-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+        .contact-methods { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+        .contact-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 32px; min-width: 220px; }
+        .contact-card .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
+        .contact-card a { color: var(--accent); text-decoration: none; font-size: 1.05rem; font-weight: 600; }
+        .contact-card a:hover { text-decoration: underline; }
+        /* Testimonial composer */
+        .tm-wrap { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+        @media (max-width: 900px) { .tm-wrap { grid-template-columns: 1fr; } }
+        .tm-form { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; }
+        @media (max-width: 600px) { .tm-form { padding: 22px 18px; } }
+        .tm-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 4px; }
+        .tm-sub { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 26px; }
+        .tm-rating {
+            text-align: center;
+            background: radial-gradient(120% 140% at 50% 0%, rgba(229,170,46,0.14) 0%, rgba(229,170,46,0) 60%), var(--bg-light);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 32px;
+            padding: 22px 12px 18px;
+            margin-bottom: 22px;
         }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-        .form-field { margin-bottom: 18px; }
-        .form-field label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .form-field input,
-        .form-field select,
-        .form-field textarea {
-            width: 100%;
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px 14px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            color: var(--text);
-        }
-        .form-field input::placeholder,
-        .form-field textarea::placeholder { color: #55556a; }
-        .form-field input:focus,
-        .form-field select:focus,
-        .form-field textarea:focus { outline: none; border-color: var(--accent); }
-        .form-field textarea { resize: vertical; min-height: 100px; }
-        .trophy-picker { display: flex; gap: 6px; }
+        .tm-rating-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 10px; }
+        .trophy-picker { display: flex; justify-content: center; gap: 4px; }
         .trophy-btn {
             background: none;
             border: none;
-            font-size: 1.6rem;
+            font-size: clamp(2.1rem, 7vw, 2.8rem);
             line-height: 1;
             cursor: pointer;
+            padding: 6px;
+            border-radius: 12px;
             filter: grayscale(1);
-            opacity: 0.35;
-            transition: all 0.15s;
-            padding: 4px;
+            opacity: 0.28;
+            transition: transform 0.18s cubic-bezier(.3,1.6,.5,1), opacity 0.15s, filter 0.15s;
         }
-        .trophy-btn.is-active { filter: none; opacity: 1; transform: scale(1.05); }
-        .form-msg { font-size: 0.88rem; margin-top: 4px; margin-bottom: 14px; display: none; }
+        .trophy-btn:focus-visible { outline: 2px solid var(--accent-football); outline-offset: 2px; }
+        .trophy-btn.is-lit { filter: none; opacity: 1; transform: translateY(-3px) scale(1.08); }
+        .trophy-btn.is-preview { filter: none; opacity: 0.7; }
+        .trophy-btn.pop { animation: trophyPop 0.42s cubic-bezier(.3,1.6,.5,1); }
+        @keyframes trophyPop { 0% { transform: scale(0.7); } 60% { transform: translateY(-6px) scale(1.25); } 100% { transform: translateY(-3px) scale(1.08); } }
+        .tm-rank { margin-top: 10px; min-height: 1.5em; font-weight: 800; font-size: 1rem; color: var(--accent-football); letter-spacing: 0.02em; }
+        .tm-rank.is-idle { color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
+        .tm-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tm-chip { position: relative; }
+        .tm-chip input { position: absolute; opacity: 0; pointer-events: none; }
+        .tm-chip span {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 14px; border-radius: 999px;
+            border: 1px solid var(--border); background: var(--bg-light);
+            font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
+            cursor: pointer; transition: all 0.15s;
+        }
+        .tm-chip span:hover { border-color: var(--text-muted); color: var(--text); }
+        .tm-chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .tm-chip input:checked + span { color: #fff; border-color: var(--accent); background: rgba(255,107,53,0.16); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; gap: 0; } }
+        .form-field { margin-bottom: 18px; }
+        .form-field > label, .form-field > .lbl {
+            display: flex; align-items: baseline; gap: 4px;
+            font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--text-muted); margin-bottom: 8px;
+        }
+        .form-field .req { color: var(--accent); }
+        .form-field .hint, .tm-count { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; }
+        .form-field input[type=text], .form-field input[type=email], .form-field textarea {
+            width: 100%;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .form-field input::placeholder, .form-field textarea::placeholder { color: #55556a; }
+        .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,107,53,0.15); }
+        .form-field textarea { resize: vertical; min-height: 130px; line-height: 1.55; }
+        .form-field.has-error input, .form-field.has-error textarea { border-color: #ff6b6b; }
+        .tm-count { text-transform: none; letter-spacing: 0; font-weight: 500; font-variant-numeric: tabular-nums; }
+        .tm-count.is-low { color: var(--accent-football); }
+        .tm-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--text-muted); margin: 4px 0 20px; cursor: pointer; }
+        .tm-consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+        .form-msg { font-size: 0.9rem; margin: 0 0 14px; display: none; }
         .form-msg.is-error { color: #ff6b6b; display: block; }
-        .form-msg.is-success { color: var(--accent-volley); display: block; }
-        .review-form .btn-primary { width: 100%; text-align: center; }
+        .tm-form .btn-primary { width: 100%; text-align: center; font-size: 1.05rem; }
+        .tm-form .btn-primary[disabled] { opacity: 0.6; cursor: wait; transform: none; box-shadow: none; }
         .form-note { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 14px; }
+        .tm-side { position: sticky; top: 110px; }
+        @media (max-width: 900px) { .tm-side { position: static; } }
+        .tm-side-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+        .tm-preview { border-color: rgba(229,170,46,0.35); box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+        .tm-preview:hover { transform: none; }
+        .tm-preview .is-ph { color: var(--text-muted); font-style: italic; font-weight: 400; }
+        .tm-side-note { font-size: 0.82rem; color: var(--text-muted); margin-top: 14px; line-height: 1.55; }
+        .tm-done { text-align: center; padding: 20px 6px; }
+        .tm-done-trophy { font-size: 3.4rem; line-height: 1; animation: trophyPop 0.6s cubic-bezier(.3,1.6,.5,1); }
+        .tm-done h3 { font-size: 1.4rem; font-weight: 800; margin: 14px 0 8px; }
+        .tm-done p { color: var(--text-muted); margin-bottom: 22px; }
+        @media (prefers-reduced-motion: reduce) {
+            .trophy-btn, .trophy-btn.pop, .tm-done-trophy { animation: none; transition: none; }
+        }
         /* Footer */
         footer {
             text-align: center;
@@ -944,59 +976,113 @@
             </div>
         </div>
     </section>
-    <!-- Section 5: Testimonials + Feedback Form (bottom of page, last section before footer) -->
+    <!-- Section 5: Testimonials + Testimonial composer (last section before footer) -->
     <!-- ============================================================= -->
-    <!--  HOW TO ADD A REAL TESTIMONIAL BY HAND (optional):            -->
-    <!--  Copy one <div class="review-card"> ... </div> block below,   -->
-    <!--  paste it into #reviewsGrid, change the trophies/text/name.   -->
-    <!--  Trophies: filled = 🏆  empty = <span class="t-empty">🏆</span> -->
-    <!--  Reviews submitted through the form go to /api/review (stored)  -->
-    <!--  and, as a fallback, open an email draft to the team. They are  -->
-    <!--  NOT auto-published — paste the good ones into #reviewsGrid.     -->
+    <!--  HOW TO PUBLISH A TESTIMONIAL BY HAND:                         -->
+    <!--  Copy the <div class="review-card"> template below into        -->
+    <!--  #reviewsGrid and delete #reviewsEmpty.                         -->
+    <!--  Trophies: filled = 🏆   empty = <span class="t-empty">🏆</span>  -->
+    <!--  Submissions land in /api/reviews?key=... (private list). Only  -->
+    <!--  publish entries where "OK to publish" = yes.                   -->
+    <!--                                                                 -->
+    <!--  <div class="review-card">                                      -->
+    <!--    <div class="review-trophies">🏆🏆🏆🏆🏆</div>                 -->
+    <!--    <div class="review-product">🏀 Basketball Notepad</div>      -->
+    <!--    <div class="review-headline">Headline here</div>             -->
+    <!--    <div class="review-text">"Testimonial here"</div>            -->
+    <!--    <div class="review-author">Coach Name                        -->
+    <!--      <span class="review-role">· Team · Club</span></div>       -->
+    <!--  </div>                                                         -->
     <!-- ============================================================= -->
     <section class="reviews" id="reviews">
         <div class="reviews-inner">
             <div class="section-header">
                 <div class="section-label">What Coaches Say</div>
                 <h2>Real Coaches. Real Feedback.</h2>
-                <p>These are new apps and the first coaches are running them through real seasons right now. Reviews get posted here as they come in — no cherry-picking.</p>
+                <p>The first coaches are running these apps through real seasons right now. Testimonials get posted here as they come in — no cherry-picking.</p>
             </div>
             <div class="reviews-grid" id="reviewsGrid">
                 <div class="reviews-empty" id="reviewsEmpty">
-                    First reviews are coming in from coaches using it this season — yours could be one of them.
+                    First testimonials are coming in from coaches using it this season — yours could be the first one on the wall.
                 </div>
             </div>
-            <div class="review-form-wrap">
-                <p>Used it on the sideline? Tell us what it got right (or wrong).</p>
-                <form class="review-form" id="reviewForm" novalidate>
-                    <div class="form-row">
+
+            <div class="tm-wrap">
+                <form class="tm-form" id="reviewForm" novalidate>
+                    <div id="tmFields">
+                        <div class="tm-title">Hand out your trophies</div>
+                        <p class="tm-sub">Used a Notepad on the sideline? Rate it and tell other coaches what it did for your team.</p>
+
+                        <div class="tm-rating">
+                            <div class="tm-rating-label" id="trophyLabel">Your rating <span class="req">*</span></div>
+                            <div class="trophy-picker" id="trophyPicker" role="radiogroup" aria-labelledby="trophyLabel"></div>
+                            <div class="tm-rank is-idle" id="trophyRank" aria-live="polite">Tap a trophy</div>
+                            <input type="hidden" id="revRating" name="rating" value="0">
+                        </div>
+
                         <div class="form-field">
-                            <label for="revName">Your name</label>
-                            <input type="text" id="revName" name="name" placeholder="Coach Taylor" maxlength="80" required>
+                            <div class="lbl" id="productLabel">Which Notepad did you use?</div>
+                            <div class="tm-chips" role="radiogroup" aria-labelledby="productLabel">
+                                <label class="tm-chip"><input type="radio" name="product" value="Basketball Notepad" data-icon="🏀"><span>🏀 Basketball</span></label>
+                                <label class="tm-chip"><input type="radio" name="product" value="Volleyball Notepad" data-icon="🏐"><span>🏐 Volleyball</span></label>
+                                <label class="tm-chip"><input type="radio" name="product" value="Football Notepad" data-icon="🏈"><span>🏈 Football</span></label>
+                                <label class="tm-chip"><input type="radio" name="product" value="Lacrosse Notepad" data-icon="🥍"><span>🥍 Lacrosse</span></label>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="revName">Your name <span class="req">*</span></label>
+                                <input type="text" id="revName" name="name" placeholder="Coach Taylor" maxlength="80" autocomplete="name" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="revRole">Team / role</label>
+                                <input type="text" id="revRole" name="role" placeholder="Head Coach, U16 Girls" maxlength="80">
+                            </div>
                         </div>
                         <div class="form-field">
-                            <label for="revRole">Team / role</label>
-                            <input type="text" id="revRole" name="role" placeholder="U16 Girls Basketball" maxlength="80">
+                            <label for="revClub">Club / organization <span class="hint">(optional)</span></label>
+                            <input type="text" id="revClub" name="club" placeholder="Riverside Basketball Club, Toronto" maxlength="100" autocomplete="organization">
                         </div>
+                        <div class="form-field">
+                            <label for="revHeadline">Headline <span class="hint">(one line)</span></label>
+                            <input type="text" id="revHeadline" name="headline" placeholder="Finally ditched the clipboard" maxlength="90">
+                        </div>
+                        <div class="form-field">
+                            <label for="revMessage">Your testimonial <span class="req">*</span> <span class="tm-count" id="revCount">0 / 600</span></label>
+                            <textarea id="revMessage" name="message" placeholder="What did the Notepad help you do — practice plans, live stats, subs, film? What changed for your team?" maxlength="600" required></textarea>
+                        </div>
+                        <div class="form-field">
+                            <label for="revEmail">Email <span class="req">*</span> <span class="hint">never published</span></label>
+                            <input type="email" id="revEmail" name="email" placeholder="you@email.com" maxlength="120" autocomplete="email" required>
+                        </div>
+                        <label class="tm-consent">
+                            <input type="checkbox" id="revConsent" name="consent" checked>
+                            <span>OK to publish my name, team and testimonial on valenciasolution.net.</span>
+                        </label>
+                        <p class="form-msg" id="reviewFormError" role="alert"></p>
+                        <button type="submit" class="btn btn-primary" id="revSubmit">Submit Testimonial 🏆</button>
+                        <p class="form-note">We read every one. Testimonials are reviewed before they go on the wall.</p>
                     </div>
-                    <div class="form-field">
-                        <label>Rating</label>
-                        <div class="trophy-picker" id="trophyPicker" role="radiogroup" aria-label="Rating out of 5 trophies"></div>
-                        <input type="hidden" id="revRating" name="rating" value="0">
+                    <div class="tm-done" id="tmDone" hidden>
+                        <div class="tm-done-trophy">🏆</div>
+                        <h3>Thanks, coach.</h3>
+                        <p id="tmDoneMsg">Your testimonial is in. We'll review it and post it here.</p>
+                        <button type="button" class="btn btn-secondary" id="tmAgain">Write another</button>
                     </div>
-                    <div class="form-field">
-                        <label for="revMessage">Your feedback</label>
-                        <textarea id="revMessage" name="message" placeholder="What did the toolkit help you do on the sideline?" minlength="10" maxlength="500" required></textarea>
-                    </div>
-                    <div class="form-field">
-                        <label for="revEmail">Email <span style="text-transform:none;font-weight:400;">(not published — only used if we follow up)</span></label>
-                        <input type="email" id="revEmail" name="email" placeholder="you@email.com" required>
-                    </div>
-                    <p class="form-msg is-error" id="reviewFormError"></p>
-                    <p class="form-msg is-success" id="reviewFormSuccess"></p>
-                    <button type="submit" class="btn btn-primary">Submit Review</button>
-                    <p class="form-note">Submitting also opens your email client to send a copy to our team — nothing sends without your confirmation.</p>
                 </form>
+
+                <aside class="tm-side" aria-label="Live preview">
+                    <div class="tm-side-label">Live preview</div>
+                    <div class="review-card tm-preview" id="tmPreview">
+                        <div class="review-trophies" id="pvTrophies"></div>
+                        <div class="review-product" id="pvProduct" hidden></div>
+                        <div class="review-headline" id="pvHeadline" hidden></div>
+                        <div class="review-text" id="pvText"></div>
+                        <div class="review-author"><span id="pvName"></span> <span class="review-role" id="pvRole"></span></div>
+                    </div>
+                    <p class="tm-side-note">This is how your testimonial will look on the wall. Your email is never shown.</p>
+                </aside>
             </div>
         </div>
     </section>
@@ -1054,126 +1140,198 @@
         })();
     </script>
     <script>
-        /* Testimonials feedback form.
-           No backend is wired up yet, so a submission does two things:
-           1. Renders the review as a card at the top of #reviewsGrid immediately.
-           2. Opens a mailto: draft to the team so there's a durable record.
-           To persist reviews server-side instead, replace the mailto handoff
-           below with a fetch() to a form backend (e.g. Formspree, Netlify
-           Forms, or a small serverless endpoint) and keep the DOM-injection
-           part as-is for the instant on-page confirmation. */
+        /* Testimonial composer: 5-trophy rating, live preview, POST /api/review.
+           Falls back to a mailto: draft only if the endpoint is unavailable. */
         (function () {
             var TEAM_EMAIL = 'valenciasolution.net@gmail.com';
-            var picker = document.getElementById('trophyPicker');
-            var ratingInput = document.getElementById('revRating');
-            var form = document.getElementById('reviewForm');
-            var grid = document.getElementById('reviewsGrid');
-            var emptyState = document.getElementById('reviewsEmpty');
-            var errorEl = document.getElementById('reviewFormError');
-            var successEl = document.getElementById('reviewFormSuccess');
-            if (!picker || !form) return;
-            var currentRating = 0;
+            var MAX = 600;
+            var RANKS = ['', 'Bench Warmer', 'Role Player', 'Starter', 'All-Star', 'MVP'];
+            var $ = function (id) { return document.getElementById(id); };
+            var form = $('reviewForm');
+            var picker = $('trophyPicker');
+            if (!form || !picker) return;
+            var ratingInput = $('revRating'), rankEl = $('trophyRank');
+            var errorEl = $('reviewFormError'), submitBtn = $('revSubmit');
+            var countEl = $('revCount');
+            var rating = 0;
+            var buttons = [];
+
+            function trophyHtml(n) {
+                return '🏆'.repeat(n) + '<span class="t-empty">🏆</span>'.repeat(5 - n);
+            }
+            function paint(n, isPreview) {
+                for (var i = 0; i < buttons.length; i++) {
+                    var on = i < n;
+                    buttons[i].classList.toggle('is-lit', on && !isPreview);
+                    buttons[i].classList.toggle('is-preview', on && isPreview);
+                    if (!isPreview) {
+                        buttons[i].setAttribute('aria-checked', String(i + 1 === n));
+                        buttons[i].tabIndex = (n ? i + 1 === n : i === 0) ? 0 : -1;
+                    }
+                }
+                rankEl.textContent = n ? RANKS[n] + ' · ' + n + '/5' : 'Tap a trophy';
+                rankEl.classList.toggle('is-idle', !n);
+            }
+            function setRating(n, focus) {
+                rating = n;
+                ratingInput.value = String(n);
+                paint(n, false);
+                for (var i = 0; i < n; i++) {
+                    (function (b, d) {
+                        b.classList.remove('pop');
+                        void b.offsetWidth;
+                        b.style.animationDelay = d + 'ms';
+                        b.classList.add('pop');
+                    })(buttons[i], i * 45);
+                }
+                if (focus) buttons[n - 1].focus();
+                clearError();
+                renderPreview();
+            }
             for (var i = 1; i <= 5; i++) {
-                (function (value) {
-                    var btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'trophy-btn';
-                    btn.textContent = '🏆';
-                    btn.setAttribute('role', 'radio');
-                    btn.setAttribute('aria-checked', 'false');
-                    btn.setAttribute('aria-label', value + ' trophy' + (value > 1 ? 's' : ''));
-                    btn.addEventListener('click', function () {
-                        currentRating = value;
-                        ratingInput.value = String(value);
-                        updateTrophies();
+                (function (v) {
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'trophy-btn';
+                    b.textContent = '🏆';
+                    b.setAttribute('role', 'radio');
+                    b.setAttribute('aria-label', v + ' of 5 trophies — ' + RANKS[v]);
+                    b.addEventListener('click', function () { setRating(v); });
+                    b.addEventListener('mouseenter', function () { paint(v, true); rankEl.textContent = RANKS[v] + ' · ' + v + '/5'; rankEl.classList.remove('is-idle'); });
+                    b.addEventListener('keydown', function (e) {
+                        var k = e.key;
+                        if (k === 'ArrowRight' || k === 'ArrowUp') { e.preventDefault(); setRating(Math.min(5, (rating || 0) + 1), true); }
+                        else if (k === 'ArrowLeft' || k === 'ArrowDown') { e.preventDefault(); setRating(Math.max(1, (rating || 2) - 1), true); }
+                        else if (k === 'Home') { e.preventDefault(); setRating(1, true); }
+                        else if (k === 'End') { e.preventDefault(); setRating(5, true); }
                     });
-                    picker.appendChild(btn);
+                    buttons.push(b);
+                    picker.appendChild(b);
                 })(i);
             }
-            function updateTrophies() {
-                var buttons = picker.querySelectorAll('.trophy-btn');
-                for (var j = 0; j < buttons.length; j++) {
-                    var active = (j + 1) <= currentRating;
-                    buttons[j].classList.toggle('is-active', active);
-                    buttons[j].setAttribute('aria-checked', String(active));
-                }
+            picker.addEventListener('mouseleave', function () { paint(rating, false); });
+            paint(0, false);
+
+            function val(name) { var el = form.elements[name]; return el ? String(el.value || '').trim() : ''; }
+            function product() {
+                var el = form.querySelector('input[name="product"]:checked');
+                return el ? { name: el.value, icon: el.getAttribute('data-icon') } : null;
             }
-            function showError(msg) {
+            function setText(id, text, placeholder) {
+                var el = $(id);
+                el.textContent = text || placeholder || '';
+                el.classList.toggle('is-ph', !text && !!placeholder);
+            }
+            function renderPreview() {
+                $('pvTrophies').innerHTML = trophyHtml(rating);
+                var p = product();
+                $('pvProduct').hidden = !p;
+                if (p) $('pvProduct').textContent = p.icon + ' ' + p.name;
+                var h = val('headline');
+                $('pvHeadline').hidden = !h;
+                $('pvHeadline').textContent = h;
+                var m = val('message');
+                setText('pvText', m ? '“' + m + '”' : '', '“Your testimonial shows up here as you type.”');
+                setText('pvName', val('name'), 'Your name');
+                var role = [val('role'), val('club')].filter(Boolean).join(' · ');
+                $('pvRole').textContent = role ? '· ' + role : '';
+                var len = $('revMessage').value.length;
+                countEl.textContent = len + ' / ' + MAX;
+                countEl.classList.toggle('is-low', len > MAX - 60);
+            }
+            form.addEventListener('input', function (e) {
+                if (e.target.closest('.form-field')) e.target.closest('.form-field').classList.remove('has-error');
+                renderPreview();
+            });
+            form.addEventListener('change', renderPreview);
+            renderPreview();
+
+            function clearError() { errorEl.textContent = ''; errorEl.classList.remove('is-error'); }
+            function fail(msg, fieldId) {
                 errorEl.textContent = msg;
-                errorEl.style.display = 'block';
-                successEl.style.display = 'none';
-            }
-            function escapeHtml(str) {
-                var div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
-            function trophyString(rating) {
-                var filled = '🏆'.repeat(rating);
-                var empty = '<span class="t-empty">🏆</span>'.repeat(5 - rating);
-                return filled + empty;
-            }
-            function addReviewCard(data) {
-                if (emptyState) {
-                    emptyState.remove();
+                errorEl.classList.add('is-error');
+                if (fieldId) {
+                    var f = $(fieldId);
+                    f.closest('.form-field').classList.add('has-error');
+                    f.focus();
+                } else {
+                    (buttons[0]).focus();
                 }
-                var card = document.createElement('div');
-                card.className = 'review-card';
-                var roleHtml = data.role ? ' <span class="review-role">· ' + escapeHtml(data.role) + '</span>' : '';
-                card.innerHTML =
-                    '<div class="review-trophies">' + trophyString(data.rating) + '</div>' +
-                    '<div class="review-text">"' + escapeHtml(data.message) + '"</div>' +
-                    '<div class="review-author">' + escapeHtml(data.name) + roleHtml + '</div>';
-                grid.insertBefore(card, grid.firstChild);
             }
+            function done(msg) {
+                $('tmFields').hidden = true;
+                $('tmDone').hidden = false;
+                $('tmDoneMsg').textContent = msg;
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            function resetForm() {
+                form.reset();
+                $('revConsent').checked = true;
+                rating = 0;
+                ratingInput.value = '0';
+                paint(0, false);
+                clearError();
+                renderPreview();
+                $('tmDone').hidden = true;
+                $('tmFields').hidden = false;
+            }
+            $('tmAgain').addEventListener('click', resetForm);
+
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var name = form.name.value.trim();
-                var role = form.role.value.trim();
-                var message = form.message.value.trim();
-                var email = form.email.value.trim();
-                var rating = parseInt(ratingInput.value, 10);
-                if (!name) return showError('Please enter your name.');
-                if (!rating || rating < 1) return showError('Please pick a trophy rating.');
-                if (!message || message.length < 10) return showError('Please write at least a short sentence about your experience.');
-                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
-                errorEl.style.display = 'none';
-                addReviewCard({ name: name, role: role, rating: rating, message: message });
-                var payload = { name: name, role: role, rating: rating, message: message, email: email };
+                clearError();
+                var data = {
+                    rating: rating,
+                    product: product() ? product().name : '',
+                    name: val('name'),
+                    role: val('role'),
+                    club: val('club'),
+                    headline: val('headline'),
+                    message: val('message'),
+                    email: val('email'),
+                    consent: $('revConsent').checked
+                };
+                if (!data.rating) return fail('Pick a trophy rating first.');
+                if (!data.name) return fail('Please enter your name.', 'revName');
+                if (data.message.length < 20) return fail('Tell us a little more — at least a sentence or two.', 'revMessage');
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return fail('Please enter a valid email address.', 'revEmail');
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending…';
 
                 function mailtoFallback() {
-                    var subject = encodeURIComponent('New review from ' + name + ' (' + rating + ' trophies)');
-                    var bodyLines = [
-                        'Name: ' + name, 'Team/Role: ' + (role || '—'), 'Rating: ' + rating + '/5',
-                        'Email: ' + email, '', 'Message:', message
-                    ];
-                    window.location.href = 'mailto:' + TEAM_EMAIL + '?subject=' + subject +
-                        '&body=' + encodeURIComponent(bodyLines.join('\n'));
+                    var subject = encodeURIComponent('Testimonial from ' + data.name + ' (' + data.rating + '/5 trophies)');
+                    var body = [
+                        'Rating: ' + data.rating + '/5 (' + RANKS[data.rating] + ')',
+                        'Product: ' + (data.product || '—'),
+                        'Name: ' + data.name,
+                        'Team/Role: ' + (data.role || '—'),
+                        'Club: ' + (data.club || '—'),
+                        'Email: ' + data.email,
+                        'OK to publish: ' + (data.consent ? 'Yes' : 'No'),
+                        '',
+                        'Headline: ' + (data.headline || '—'),
+                        '',
+                        data.message
+                    ].join('\n');
+                    window.location.href = 'mailto:' + TEAM_EMAIL + '?subject=' + subject + '&body=' + encodeURIComponent(body);
                 }
-
-                /* Try the server endpoint first (durable). If it isn't wired up
-                   yet or the request fails, fall back to an email draft. */
+                function finish(ok) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Testimonial 🏆';
+                    if (ok) {
+                        done('Your testimonial is in. We’ll review it and post it on the wall.');
+                    } else {
+                        mailtoFallback();
+                        done('Your email app should open with your testimonial ready to send — hit send and we’ve got it.');
+                    }
+                }
                 fetch('/api/review', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(function (res) {
-                    if (res && res.ok) {
-                        successEl.textContent = 'Thanks — your review is in. We read every one and post the ones that go up here.';
-                    } else {
-                        mailtoFallback();
-                        successEl.textContent = 'Thanks — your review is posted above, and your email client should open to send us a copy.';
-                    }
-                    successEl.style.display = 'block';
-                }).catch(function () {
-                    mailtoFallback();
-                    successEl.textContent = 'Thanks — your review is posted above, and your email client should open to send us a copy.';
-                    successEl.style.display = 'block';
-                });
-                form.reset();
-                currentRating = 0;
-                ratingInput.value = '0';
-                updateTrophies();
+                    body: JSON.stringify(data)
+                }).then(function (res) { finish(!!(res && res.ok)); })
+                  .catch(function () { finish(false); });
             });
         })();
     </script>

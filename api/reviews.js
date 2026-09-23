@@ -84,8 +84,10 @@ export default async function handler(req, res) {
       (r) => `<tr>
     <td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td>
     <td>${trophies(r.rating)}</td>
-    <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}</td>
-    <td>${esc(r.message)}</td>
+    <td>${esc(r.product || "—")}</td>
+    <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}${r.club ? `<br><span class="muted">${esc(r.club)}</span>` : ""}</td>
+    <td>${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${esc(r.message)}</td>
+    <td>${r.consent === true ? "Yes" : r.consent === false ? "<b>No</b>" : "—"}</td>
     <td><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
   </tr>`,
     )
@@ -101,12 +103,12 @@ export default async function handler(req, res) {
   table{border-collapse:collapse;width:100%;margin-top:16px;background:#fff}
   th,td{border:1px solid #e2e2ec;padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f0f0f6;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-  td:nth-child(4){min-width:260px}
+  td:nth-child(5){min-width:260px}
 </style>
 <h1>Collected reviews — ${reviews.length}</h1>
 <div class="muted">Newest first. Not published anywhere — paste the good ones into index.html by hand.</div>
 ${reviews.length ? `<table>
-  <tr><th>When</th><th>Rating</th><th>Coach</th><th>Review</th><th>Email</th></tr>
+  <tr><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>OK to publish</th><th>Email</th></tr>
   ${trs}
 </table>` : "<p>No reviews collected yet.</p>"}`);
 }
