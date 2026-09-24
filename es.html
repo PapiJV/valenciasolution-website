@@ -8,6 +8,7 @@
     <link rel="canonical" href="https://www.valenciasolution.net/es">
     <link rel="alternate" hreflang="en" href="https://www.valenciasolution.net/">
     <link rel="alternate" hreflang="es" href="https://www.valenciasolution.net/es">
+    <link rel="alternate" hreflang="fr" href="https://www.valenciasolution.net/fr">
     <link rel="alternate" hreflang="x-default" href="https://www.valenciasolution.net/">
     <link rel="icon" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
@@ -936,6 +937,32 @@
                 font-size: 1rem;
             }
         }
+        /* Language switcher (EN / ES / FR). On phones it lives inside the
+           hamburger panel so it doesn't crowd the logo and CTA. */
+        .lang-switch {
+            display: flex;
+            gap: 2px;
+            padding: 3px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .lang-switch a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 5px 9px;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .lang-switch a:hover { color: var(--text); }
+        .lang-switch a[aria-current="page"] { background: var(--bg-light); color: var(--text); }
+        @media (max-width: 600px) {
+            .lang-switch { display: none; order: 4; width: 100%; justify-content: center; margin: 4px 0 8px; }
+            .nav-links.open ~ .lang-switch { display: flex; }
+            .lang-switch a { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -948,6 +975,11 @@
             <li><a href="#contact">Contacto</a></li>
             <li><a href="#reviews">Opiniones</a></li>
         </ul>
+        <div class="lang-switch" aria-label="Idioma">
+            <a href="/" hreflang="en" lang="en">EN</a>
+            <a href="/es" hreflang="es" lang="es" aria-current="page">ES</a>
+            <a href="/fr" hreflang="fr" lang="fr">FR</a>
+        </div>
         <a href="#free" class="nav-cta">Obtén tu Notepad gratis</a>
         <button class="mobile-menu-btn">☰</button>
     </nav>
