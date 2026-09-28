@@ -20,6 +20,12 @@
     <link rel="stylesheet" crossorigin href="/curling-demo/assets/index-CtbPsVuj.css">
   </head>
   <body>
+    <div id="demo-banner" style="background:#E0872C;color:#241505;text-align:center;padding:8px 16px;font-family:'Inter',sans-serif;font-weight:700;font-size:12.5px;">
+      DEMO: sample team &amp; stats. Changes stay in this browser only.
+      <a href="https://www.valenciasolution.net/#curling" style="color:#241505;text-decoration:underline;font-weight:700;">Get Curling Notepad</a>
+      &middot;
+      <button type="button" onclick="try{localStorage.removeItem('curlingNotepad.appState.v1')}catch(e){}location.reload()" style="background:none;border:0;padding:0;color:#241505;text-decoration:underline;font:inherit;font-weight:700;cursor:pointer;">Reset demo</button>
+    </div>
     <div id="root"></div>
   </body>
 </html>
