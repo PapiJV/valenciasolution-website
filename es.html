@@ -1799,6 +1799,7 @@
         (function () {
             var ENDS_AT = Date.parse('2026-11-01T03:59:59Z'); // Oct 31, 2026 11:59:59 pm ET
             var CAP = 100;
+            var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
             var APPS = {
                 basketball: { icon: '🏀', name: 'Basketball Notepad', url: 'https://basketball-notepad-do-not-erase-1.vercel.app/' },
                 volleyball: { icon: '🏐', name: 'Volleyball Notepad', url: 'https://volleyball-notepad-exclusive1sole.vercel.app/' },
@@ -1843,7 +1844,7 @@
 
             function showSpots(st) {
                 if (!st || typeof st.spotsLeft !== 'number') return;
-                $('spots').hidden = false;
+                $('spots').hidden = st.claimed < SHOW_COUNT_AT;
                 $('spotsLeft').textContent = st.spotsLeft;
                 $('spotsClaimed').textContent = st.claimed + ' reclamados';
                 $('spotsFill').style.width = Math.min(100, (st.claimed / (st.cap || CAP)) * 100) + '%';
