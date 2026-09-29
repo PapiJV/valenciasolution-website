@@ -1464,7 +1464,10 @@
                         </div>
                         <div class="form-field">
                             <label for="revHeadline">Headline <span class="hint">(one line)</span></label>
-                            <input type="text" id="revHeadline" name="headline" placeholder="Finally ditched the clipboard" maxlength="90">
+                            <input type="text" id="revHeadline" name="headline" placeholder="Finally ditched the clipboard" maxlength="90"></div>
+                        <div class="form-field">
+                            <label for="revMedia">Photo/video link <span class="hint">(optional)</span></label>
+                            <input type="url" id="revMedia" name="media" placeholder="Link to a photo or video (Google Drive, Dropbox, YouTube, etc.)" maxlength="500">
                         </div>
                         <div class="form-field">
                             <label for="revMessage">Your testimonial <span class="req">*</span> <span class="tm-count" id="revCount">0 / 600</span></label>
@@ -1748,6 +1751,7 @@
                     role: val('role'),
                     club: val('club'),
                     headline: val('headline'),
+                    media: val('media'),
                     message: val('message'),
                     email: val('email'),
                     consent: $('revConsent').checked

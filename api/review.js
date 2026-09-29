@@ -50,6 +50,7 @@ export default async function handler(req, res) {
   const access = ["purchased", "free"].includes(body && body.access) ? body.access : "";
   const message = String((body && body.message) || "").trim().slice(0, 800);
   const email = String((body && body.email) || "").trim().slice(0, 120);
+  const media = String((body && body.media) || "").trim().slice(0, 500);
   const rating = Math.max(1, Math.min(5, parseInt((body && body.rating), 10) || 0));
 
   if (!name || message.length < 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const entry = { name, role, club, product, headline, message, email, rating, consent, access, at: new Date().toISOString() };
+    const entry = { name, role, club, product, headline, message, email, media, rating, consent, access, at: new Date().toISOString() };
     await redisPipeline([
       ["RPUSH", "site:reviews", JSON.stringify(entry)],
       ["LTRIM", "site:reviews", String(-MAX_REVIEWS), "-1"],
