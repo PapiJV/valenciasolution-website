@@ -1466,8 +1466,8 @@
                             <label for="revHeadline">Headline <span class="hint">(one line)</span></label>
                             <input type="text" id="revHeadline" name="headline" placeholder="Finally ditched the clipboard" maxlength="90"></div>
                         <div class="form-field">
-                            <label for="revMedia">Photo/video link <span class="hint">(optional)</span></label>
-                            <input type="url" id="revMedia" name="media" placeholder="Link to a photo or video (Google Drive, Dropbox, YouTube, etc.)" maxlength="500">
+                            <label for="revMedia">Photo/video <span class="hint">(optional, under 4MB)</span></label>
+                            <input type="file" id="revMedia" name="media" accept="image/*,video/*">
                         </div>
                         <div class="form-field">
                             <label for="revMessage">Your testimonial <span class="req">*</span> <span class="tm-count" id="revCount">0 / 600</span></label>
@@ -1740,7 +1740,7 @@
             }
             $('tmAgain').addEventListener('click', resetForm);
 
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 clearError();
                 var data = {
@@ -1751,7 +1751,7 @@
                     role: val('role'),
                     club: val('club'),
                     headline: val('headline'),
-                    media: val('media'),
+                    media: '',
                     message: val('message'),
                     email: val('email'),
                     consent: $('revConsent').checked
@@ -1760,6 +1760,28 @@
                 if (!data.name) return fail('Please enter your name.', 'revName');
                 if (data.message.length < 20) return fail('Tell us a little more — at least a sentence or two.', 'revMessage');
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return fail('Please enter a valid email address.', 'revEmail');
+                var mediaFile = $('revMedia').files[0];
+                if (mediaFile) {
+                    if (mediaFile.size > 4 * 1024 * 1024) return fail('Photo/video must be under 4MB - try a smaller file.', 'revMedia');
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Uploading...';
+                    try {
+                        var fd = new FormData();
+                        fd.append('file', mediaFile);
+                        var upRes = await fetch('/api/upload', { method: 'POST', body: fd });
+                        var upJson = await upRes.json();
+                        if (!upRes.ok || !upJson.url) {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Submit Testimonial';
+                            return fail('Could not upload your file. Try a smaller one or skip it.', 'revMedia');
+                        }
+                        data.media = upJson.url;
+                    } catch (err) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit Testimonial';
+                        return fail('Could not upload your file. Try a smaller one or skip it.', 'revMedia');
+                    }
+                }
 
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Sending…';
@@ -1891,8 +1913,8 @@
             form.addEventListener('input', function () { $('freeErr').classList.remove('is-error'); $('freeErr').textContent = ''; });
 
             form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                var sportEl = form.querySelector('input[name="sport"]:checked');
+                    e.preventDefault();
+                    var sportEl = form.querySelector('input[name="sport"]:checked');
                 var data = {
                     sport: sportEl ? sportEl.value : '',
                     name: form.elements.name.value.trim(),

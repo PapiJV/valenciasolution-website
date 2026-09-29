@@ -1,0 +1,7 @@
+{
+  "name": "valenciasolution-website",
+  "private": true,
+  "dependencies": {
+    "@vercel/blob": "latest"
+  }
+}
