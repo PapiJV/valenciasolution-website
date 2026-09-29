@@ -1766,9 +1766,18 @@
                     submitBtn.disabled = true;
                     submitBtn.textContent = 'Uploading...';
                     try {
-                        var fd = new FormData();
-                        fd.append('file', mediaFile);
-                        var upRes = await fetch('/api/upload', { method: 'POST', body: fd });
+                        var dataUrl = await new Promise(function (resolve, reject) {
+                            var reader = new FileReader();
+                            reader.onload = function () { resolve(reader.result); };
+                            reader.onerror = reject;
+                            reader.readAsDataURL(mediaFile);
+                        });
+                        var base64 = dataUrl.split(',')[1];
+                        var upRes = await fetch('/api/upload', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ filename: mediaFile.name, contentType: mediaFile.type, dataBase64: base64 })
+                        });
                         var upJson = await upRes.json();
                         if (!upRes.ok || !upJson.url) {
                             submitBtn.disabled = false;

@@ -1,22 +1,27 @@
-export const config = { runtime: "edge" };
-
-export default async function handler(request) {
-  if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed." }), { status: 405 });
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    res.status(405).json({ error: "Method not allowed." });
+    return;
   }
   try {
     const { put } = await import("@vercel/blob");
-    const form = await request.formData();
-    const file = form.get("file");
-    if (!file || typeof file === "string") {
-      return new Response(JSON.stringify({ error: "No file provided." }), { status: 400 });
+    const body = req.body || {};
+    const filename = String(body.filename || "upload").slice(0, 200);
+    const contentType = String(body.contentType || "application/octet-stream");
+    const dataBase64 = String(body.dataBase64 || "");
+    if (!dataBase64) {
+      res.status(400).json({ error: "No file data provided." });
+      return;
     }
-    if (file.size > 4 * 1024 * 1024) {
-      return new Response(JSON.stringify({ error: "File too large (max 4MB)." }), { status: 400 });
+    const buffer = Buffer.from(dataBase64, "base64");
+    if (buffer.length > 4 * 1024 * 1024) {
+      res.status(400).json({ error: "File too large (max 4MB)." });
+      return;
     }
-    const blob = await put(file.name, file, { access: "public", addRandomSuffix: true });
-    return new Response(JSON.stringify({ url: blob.url }), { status: 200, headers: { "Content-Type": "application/json" } });
+    const blob = await put(filename, buffer, { access: "public", contentType, addRandomSuffix: true });
+    res.status(200).json({ url: blob.url });
   } catch (e) {
-    return new Response(JSON.stringify({ error: "Upload failed." }), { status: 502 });
+    res.status(502).json({ error: "Upload failed." });
   }
 }
