@@ -802,6 +802,35 @@
         .form-field.has-error input, .form-field.has-error textarea { border-color: #ff6b6b; }
         .tm-count { text-transform: none; letter-spacing: 0; font-weight: 500; font-variant-numeric: tabular-nums; }
         .tm-count.is-low { color: var(--accent-football); }
+        [hidden] { display: none !important; }
+        .tm-file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        .form-field > .tm-file-pick {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 14px; border-radius: 10px;
+            border: 1px dashed var(--border); background: var(--bg-light);
+            color: var(--text-muted); font-size: 0.95rem; font-weight: 600;
+            text-transform: none; letter-spacing: 0; margin-bottom: 0;
+            cursor: pointer; transition: border-color 0.15s, color 0.15s;
+        }
+        .tm-file-pick:hover { border-color: var(--text-muted); color: var(--text); }
+        .tm-file-input:focus-visible + .tm-file-pick { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .form-field.has-error .tm-file-pick { border-color: #ff6b6b; }
+        .tm-file { display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-light); }
+        .tm-file-thumb { width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: var(--bg); }
+        .tm-file-thumb img, .tm-file-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .tm-file-meta { min-width: 0; flex: 1; }
+        .tm-file-name { font-size: 0.9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tm-file-size { font-size: 0.8rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+        .tm-file-remove {
+            flex-shrink: 0; background: none; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-muted); font: inherit; font-size: 0.85rem; font-weight: 600;
+            padding: 8px 12px; cursor: pointer; transition: all 0.15s;
+        }
+        .tm-file-remove:hover { color: #ff6b6b; border-color: #ff6b6b; }
+        .tm-file-remove:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .tm-file-remove[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .review-media { margin: 0 0 16px; border-radius: 12px; overflow: hidden; background: var(--bg); }
+        .review-media img, .review-media video { display: block; width: 100%; max-height: 320px; object-fit: cover; }
         .tm-consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--text-muted); margin: 4px 0 20px; cursor: pointer; }
         .tm-consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
         .form-msg { font-size: 0.9rem; margin: 0 0 14px; display: none; }
@@ -1397,6 +1426,10 @@
     <!--    <span class="review-free">Free access</span>  <- REQUIRED  -->
     <!--      if the coach/club got the app free (Competition Act).      -->
     <!--    <div class="review-headline">Headline here</div>             -->
+    <!--    (OPTIONAL) If they shared a photo or video, paste its Media   -->
+    <!--    URL from /api/reviews into ONE of these two lines:            -->
+    <!--    <div class="review-media"><img src="MEDIA_URL" alt="Coach Name's team" loading="lazy"></div> -->
+    <!--    <div class="review-media"><video src="MEDIA_URL" controls playsinline preload="metadata"></video></div> -->
     <!--    <div class="review-text">"Testimonial here"</div>            -->
     <!--    <div class="review-author">Coach Name                        -->
     <!--      <span class="review-role">· Team · Club</span></div>       -->
@@ -1466,6 +1499,19 @@
                             <input type="text" id="revHeadline" name="headline" placeholder="Por fin dejé la tabla de papel" maxlength="90">
                         </div>
                         <div class="form-field">
+                            <div class="lbl">Foto/video <span class="hint">(opcional, hasta 100MB)</span></div>
+                            <input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/*,video/*">
+                            <label for="revMedia" class="tm-file-pick" id="revMediaPick">📷 Agrega una foto o video</label>
+                            <div class="tm-file" id="revMediaChosen" hidden>
+                                <div class="tm-file-thumb" id="revMediaThumb"></div>
+                                <div class="tm-file-meta">
+                                    <div class="tm-file-name" id="revMediaName"></div>
+                                    <div class="tm-file-size" id="revMediaSize"></div>
+                                </div>
+                                <button type="button" class="tm-file-remove" id="revMediaRemove" aria-label="Quitar foto o video">✕ Quitar</button>
+                            </div>
+                        </div>
+                        <div class="form-field">
                             <label for="revMessage">Tu testimonio <span class="req">*</span> <span class="tm-count" id="revCount">0 / 600</span></label>
                             <textarea id="revMessage" name="message" placeholder="¿En qué te ayudó el Notepad — planes de práctica, estadísticas en vivo, cambios, video? ¿Qué cambió para tu equipo?" maxlength="600" required></textarea>
                         </div>
@@ -1495,6 +1541,7 @@
                         <div class="review-trophies" id="pvTrophies"></div>
                         <div class="review-product" id="pvProduct" hidden></div> <span class="review-free" id="pvFree" hidden>Acceso gratuito</span>
                         <div class="review-headline" id="pvHeadline" hidden></div>
+                        <div class="review-media" id="pvMedia" hidden></div>
                         <div class="review-text" id="pvText"></div>
                         <div class="review-author"><span id="pvName"></span> <span class="review-role" id="pvRole"></span></div>
                     </div>
@@ -1705,6 +1752,55 @@
             form.addEventListener('change', renderPreview);
             renderPreview();
 
+            /* Photo/video: thumbnail + Remove in the form, full media in the preview card. */
+            var MEDIA_MAX_MB = 100; // keep in sync with MAX_BYTES in api/upload.js
+            var mediaInput = $('revMedia'), mediaFile = null, mediaUrl = '';
+            function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+            function mediaEl(controls) {
+                var isVideo = /^video\//.test(mediaFile.type);
+                var el = document.createElement(isVideo ? 'video' : 'img');
+                el.src = isVideo ? mediaUrl + '#t=0.1' : mediaUrl; // #t: show a real first frame, not black
+                if (isVideo) { el.muted = true; el.playsInline = true; el.preload = 'metadata'; el.controls = controls; }
+                else el.alt = '';
+                return el;
+            }
+            function renderMedia() {
+                var has = !!mediaFile;
+                $('revMediaPick').hidden = has;
+                $('revMediaChosen').hidden = !has;
+                $('pvMedia').hidden = !has;
+                $('revMediaThumb').textContent = '';
+                $('pvMedia').textContent = '';
+                if (!has) return;
+                $('revMediaName').textContent = mediaFile.name;
+                $('revMediaSize').textContent = fmtSize(mediaFile.size);
+                $('revMediaThumb').appendChild(mediaEl(false));
+                $('pvMedia').appendChild(mediaEl(true));
+            }
+            function clearMedia() {
+                if (mediaUrl) URL.revokeObjectURL(mediaUrl);
+                mediaFile = null;
+                mediaUrl = '';
+                mediaInput.value = '';
+                renderMedia();
+            }
+            mediaInput.addEventListener('change', function () {
+                var f = mediaInput.files[0];
+                clearError();
+                mediaInput.closest('.form-field').classList.remove('has-error');
+                if (!f) return; // picker cancelled - keep whatever was chosen before
+                if (!/^(image|video)\//.test(f.type)) { clearMedia(); return fail('Ese archivo no es una foto ni un video.', 'revMedia'); }
+                if (f.size > MEDIA_MAX_MB * 1048576) { clearMedia(); return fail('La foto/video debe pesar menos de ' + MEDIA_MAX_MB + 'MB - prueba con un clip más corto.', 'revMedia'); }
+                if (mediaUrl) URL.revokeObjectURL(mediaUrl);
+                mediaFile = f;
+                mediaUrl = URL.createObjectURL(f);
+                renderMedia();
+            });
+            $('revMediaRemove').addEventListener('click', function () {
+                clearMedia();
+                mediaInput.focus(); // keyboard users can hit Enter/Space to pick again
+            });
+
             function clearError() { errorEl.textContent = ''; errorEl.classList.remove('is-error'); }
             function fail(msg, fieldId) {
                 errorEl.textContent = msg;
@@ -1730,13 +1826,14 @@
                 ratingInput.value = '0';
                 paint(0, false);
                 clearError();
+                clearMedia();
                 renderPreview();
                 $('tmDone').hidden = true;
                 $('tmFields').hidden = false;
             }
             $('tmAgain').addEventListener('click', resetForm);
 
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 clearError();
                 var data = {
@@ -1747,6 +1844,7 @@
                     role: val('role'),
                     club: val('club'),
                     headline: val('headline'),
+                    media: '',
                     message: val('message'),
                     email: val('email'),
                     consent: $('revConsent').checked
@@ -1756,6 +1854,30 @@
                 if (data.message.length < 20) return fail('Cuéntanos un poco más — al menos una o dos oraciones.', 'revMessage');
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return fail('Por favor ingresa un correo electrónico válido.', 'revEmail');
 
+                if (mediaFile) {
+                    // Straight from the browser to Vercel Blob; /api/upload only signs the request.
+                    submitBtn.disabled = true;
+                    $('revMediaRemove').disabled = true;
+                    submitBtn.textContent = 'Subiendo… 0%';
+                    try {
+                        var blobClient = await import('/js/blob-upload.js');
+                        var safeName = mediaFile.name.replace(/[^\w.\-]+/g, '_').slice(-80) || 'upload';
+                        var blob = await blobClient.upload('testimonials/' + safeName, mediaFile, {
+                            access: 'public',
+                            handleUploadUrl: '/api/upload',
+                            contentType: mediaFile.type,
+                            multipart: mediaFile.size > 8 * 1048576,
+                            onUploadProgress: function (p) { submitBtn.textContent = 'Subiendo… ' + Math.round(p.percentage) + '%'; }
+                        });
+                        data.media = blob.url;
+                    } catch (err) {
+                        submitBtn.disabled = false;
+                        $('revMediaRemove').disabled = false;
+                        submitBtn.textContent = 'Enviar testimonio 🏆';
+                        return fail('No pudimos subir tu foto/video. Revisa tu conexión e inténtalo de nuevo, o quítala y envía sin ella.', 'revMedia');
+                    }
+                    $('revMediaRemove').disabled = false;
+                }
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Enviando…';
 
@@ -1772,6 +1894,7 @@
                         'OK to publish: ' + (data.consent ? 'Yes' : 'No'),
                         '',
                         'Headline: ' + (data.headline || '—'),
+                        'Photo/video: ' + (data.media || '—'),
                         '',
                         data.message
                     ].join('\n');
