@@ -1,12 +1,19 @@
 // Private admin view of collected reviews (from /api/review -> Upstash list
 // site:reviews). Entries contain reviewer emails, so this is gated by a key.
 //
-//   GET /api/reviews?key=YOUR_KEY            -> readable HTML table
-//   GET /api/reviews?key=YOUR_KEY&format=json -> { count, reviews }
+//   GET  /api/reviews?key=YOUR_KEY             -> HTML table with Approve / Hide
+//   GET  /api/reviews?key=YOUR_KEY&format=json -> { count, reviews }
+//   POST /api/reviews  { key, id, action: "approve" | "hide" | "pending" }
+//
+// Approved entries (with "OK to publish" ticked) appear on the public wall via
+// /api/testimonials. Status lives in the hash site:reviews:status, keyed by
+// the entry id (or its `at` timestamp for entries saved before ids existed).
 //
 // Env: REVIEWS_ADMIN_KEY  (set any random string in the Vercel project).
 //      KV_REST_API_URL / KV_REST_API_TOKEN  (or UPSTASH_REDIS_REST_*).
 // Fails closed: if REVIEWS_ADMIN_KEY is unset the route is unavailable.
+
+const STATUS_KEY = "site:reviews:status";
 
 function redisCreds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -30,9 +37,68 @@ const esc = (s) =>
   String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+const parseRows = (rows) =>
+  rows
+    .map((s) => {
+      try {
+        return JSON.parse(s);
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+
+const storageError = (res, e) => {
+  if (e.message === "NOT_CONFIGURED") {
+    res.status(501).json({ error: "Upstash store isn't connected to this project yet." });
+    return;
+  }
+  res.status(502).json({ error: "Storage request failed." });
+};
+
+async function setStatus(req, res, adminKey) {
+  let body = req.body;
+  if (typeof body === "string") {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      body = null;
+    }
+  }
+  res.setHeader("Cache-Control", "no-store");
+  if (!body || String(body.key || "") !== adminKey) {
+    res.status(401).json({ error: "Unauthorized." });
+    return;
+  }
+  const id = String(body.id || "").slice(0, 80);
+  const action = String(body.action || "");
+  if (!id || !["approve", "hide", "pending"].includes(action)) {
+    res.status(400).json({ error: "Missing id or unknown action." });
+    return;
+  }
+  try {
+    const entry = parseRows((await redis(["LRANGE", "site:reviews", "0", "-1"])) || []).find(
+      (r) => (r.id || r.at) === id,
+    );
+    if (!entry) {
+      res.status(404).json({ error: "Review not found." });
+      return;
+    }
+    if (action === "approve" && entry.consent !== true) {
+      res.status(409).json({ error: "This coach didn't give permission to publish." });
+      return;
+    }
+    if (action === "pending") await redis(["HDEL", STATUS_KEY, id]);
+    else await redis(["HSET", STATUS_KEY, id, action === "approve" ? "approved" : "hidden"]);
+    res.status(200).json({ ok: true, id, status: action === "pending" ? "" : action === "approve" ? "approved" : "hidden" });
+  } catch (e) {
+    storageError(res, e);
+  }
+}
+
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
     res.status(405).json({ error: "Method not allowed." });
     return;
   }
@@ -42,33 +108,29 @@ export default async function handler(req, res) {
     res.status(501).json({ error: "REVIEWS_ADMIN_KEY is not set." });
     return;
   }
+  if (req.method === "POST") {
+    await setStatus(req, res, adminKey);
+    return;
+  }
   if (String(req.query.key || "") !== adminKey) {
     res.setHeader("Cache-Control", "no-store");
     res.status(401).json({ error: "Unauthorized." });
     return;
   }
 
-  let rows;
+  let rows, statusFlat;
   try {
     rows = (await redis(["LRANGE", "site:reviews", "0", "-1"])) || [];
+    statusFlat = (await redis(["HGETALL", STATUS_KEY])) || [];
   } catch (e) {
-    if (e.message === "NOT_CONFIGURED") {
-      res.status(501).json({ error: "Upstash store isn't connected to this project yet." });
-      return;
-    }
-    res.status(502).json({ error: "Storage request failed." });
+    storageError(res, e);
     return;
   }
+  const status = {};
+  for (let i = 0; i + 1 < statusFlat.length; i += 2) status[statusFlat[i]] = statusFlat[i + 1];
 
-  const reviews = rows
-    .map((s) => {
-      try {
-        return JSON.parse(s);
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean)
+  const reviews = parseRows(rows)
+    .map((r) => ({ ...r, wall: status[r.id || r.at] || "" }))
     .reverse(); // newest first
 
   res.setHeader("Cache-Control", "no-store");
@@ -89,17 +151,28 @@ export default async function handler(req, res) {
       : `<img src="${esc(url)}" alt="" loading="lazy">`;
     return `<a href="${esc(url)}" target="_blank" rel="noopener">${thumb}</a><input class="url" value="${esc(url)}" readonly onclick="this.select()">`;
   };
+  const wallCell = (r) => {
+    const id = esc(r.id || r.at);
+    if (r.consent !== true) return `<span class="st st-no">Can't publish</span><div class="muted">No permission given</div>`;
+    const label = r.wall === "approved" ? "On the wall" : r.wall === "hidden" ? "Hidden" : "Waiting";
+    return `<span class="st st-${r.wall || "pending"}">${label}</span>
+      <div class="acts">
+        <button data-id="${id}" data-action="approve"${r.wall === "approved" ? " disabled" : ""}>Approve</button>
+        <button data-id="${id}" data-action="hide"${r.wall === "hidden" ? " disabled" : ""}>Hide</button>
+      </div>`;
+  };
   const trophies = (n) => "🏆".repeat(Math.max(0, Math.min(5, Number(n) || 0)));
+  const waiting = reviews.filter((r) => r.consent === true && !r.wall).length;
   const trs = reviews
     .map(
       (r) => `<tr>
+    <td>${wallCell(r)}</td>
     <td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td>
     <td>${trophies(r.rating)}</td>
-    <td>${esc(r.product || "—")}${r.access === "free" ? `<br><b style="color:#0a8">FREE ACCESS — must show tag</b>` : r.access === "purchased" ? `<br><span class="muted">Bought</span>` : ""}</td>
+    <td>${esc(r.product || "—")}${r.access === "free" ? `<br><b style="color:#0a8">FREE ACCESS — tag shown on wall</b>` : r.access === "purchased" ? `<br><span class="muted">Bought</span>` : ""}</td>
     <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}${r.club ? `<br><span class="muted">${esc(r.club)}</span>` : ""}</td>
     <td>${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${esc(r.message)}</td>
     <td>${mediaCell(r.media)}</td>
-    <td>${r.consent === true ? "Yes" : r.consent === false ? "<b>No</b>" : "—"}</td>
     <td><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
   </tr>`,
     )
@@ -107,6 +180,7 @@ export default async function handler(req, res) {
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.status(200).send(`<!doctype html><meta charset="utf-8">
+<meta name="robots" content="noindex">
 <title>Reviews (${reviews.length})</title>
 <style>
   body{font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:24px;color:#1a1a2e;background:#f7f7fb}
@@ -115,14 +189,50 @@ export default async function handler(req, res) {
   table{border-collapse:collapse;width:100%;margin-top:16px;background:#fff}
   th,td{border:1px solid #e2e2ec;padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f0f0f6;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-  td:nth-child(5){min-width:260px}
-  td:nth-child(6) img, td:nth-child(6) video{display:block;width:140px;max-height:110px;object-fit:cover;border-radius:6px;background:#eee}
-  td:nth-child(6) .url{width:140px;margin-top:6px;font-size:11px}
+  td:nth-child(1){min-width:150px}
+  td:nth-child(6){min-width:260px}
+  td:nth-child(7) img, td:nth-child(7) video{display:block;width:140px;max-height:110px;object-fit:cover;border-radius:6px;background:#eee}
+  td:nth-child(7) .url{width:140px;margin-top:6px;font-size:11px}
+  .st{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eee}
+  .st-approved{background:#d8f5e6;color:#066}
+  .st-hidden{background:#f3e3e3;color:#944}
+  .st-pending{background:#fff1cc;color:#8a5a00}
+  .st-no{background:#eee;color:#777}
+  .acts{margin-top:8px;display:flex;gap:6px}
+  .acts button{font:inherit;font-size:12px;font-weight:600;padding:5px 10px;border-radius:6px;border:1px solid #c9c9d6;background:#fff;cursor:pointer}
+  .acts button[data-action=approve]:not([disabled]){background:#0a8;border-color:#0a8;color:#fff}
+  .acts button[disabled]{opacity:.4;cursor:default}
 </style>
 <h1>Collected reviews — ${reviews.length}</h1>
-<div class="muted">Newest first. Not published anywhere — paste the good ones into index.html by hand (copy the Media URL into the card's review-media line).</div>
+<div class="muted">Newest first. <b>${waiting}</b> waiting for review. Approve puts a testimonial on the public wall (EN/FR/ES) within about a minute; Hide takes it off. Emails are never shown publicly.</div>
 ${reviews.length ? `<table>
-  <tr><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>Media</th><th>OK to publish</th><th>Email</th></tr>
+  <tr><th>Wall</th><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>Media</th><th>Email</th></tr>
   ${trs}
-</table>` : "<p>No reviews collected yet.</p>"}`);
+</table>` : "<p>No reviews collected yet.</p>"}
+<script>
+  var KEY = new URLSearchParams(location.search).get('key') || '';
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.acts button');
+    if (!b || b.disabled) return;
+    var cell = b.closest('td');
+    cell.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+    fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: KEY, id: b.dataset.id, action: b.dataset.action })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) throw new Error(x.j.error || 'Failed');
+        var st = x.j.status, pill = cell.querySelector('.st');
+        pill.className = 'st st-' + (st || 'pending');
+        pill.textContent = st === 'approved' ? 'On the wall' : st === 'hidden' ? 'Hidden' : 'Waiting';
+        cell.querySelector('[data-action=approve]').disabled = st === 'approved';
+        cell.querySelector('[data-action=hide]').disabled = st === 'hidden';
+      })
+      .catch(function (err) {
+        alert('Could not update: ' + err.message);
+        cell.querySelectorAll('button').forEach(function (x) { x.disabled = false; });
+      });
+  });
+</script>`);
 }

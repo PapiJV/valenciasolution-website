@@ -1,6 +1,7 @@
 // Stores a coach review submitted from the site's feedback form.
 // Upstash Redis (same store as the notepad apps). Reviews are NOT auto-
-// published — they land in a list for the team to read and hand-pick from.
+// published — they wait in site:reviews until approved on the admin page
+// (/api/reviews), then /api/testimonials serves them to the wall.
 //
 // Env (either naming): KV_REST_API_URL / KV_REST_API_TOKEN (the Vercel
 // Upstash integration) or UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN.
@@ -59,7 +60,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const entry = { name, role, club, product, headline, message, email, media, rating, consent, access, at: new Date().toISOString() };
+    const id = `r_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const entry = { id, name, role, club, product, headline, message, email, media, rating, consent, access, at: new Date().toISOString() };
     await redisPipeline([
       ["RPUSH", "site:reviews", JSON.stringify(entry)],
       ["LTRIM", "site:reviews", String(-MAX_REVIEWS), "-1"],
