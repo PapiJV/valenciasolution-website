@@ -78,6 +78,17 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Only render https links (Vercel Blob URLs); anything else is shown as text.
+  const mediaCell = (u) => {
+    const url = String(u || "");
+    if (!url) return "—";
+    if (!/^https:\/\//i.test(url)) return esc(url);
+    const isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp|avi|mkv)(\?|$)/i.test(url);
+    const thumb = isVideo
+      ? `<video src="${esc(url)}" preload="metadata" muted playsinline controls></video>`
+      : `<img src="${esc(url)}" alt="" loading="lazy">`;
+    return `<a href="${esc(url)}" target="_blank" rel="noopener">${thumb}</a><input class="url" value="${esc(url)}" readonly onclick="this.select()">`;
+  };
   const trophies = (n) => "🏆".repeat(Math.max(0, Math.min(5, Number(n) || 0)));
   const trs = reviews
     .map(
@@ -87,6 +98,7 @@ export default async function handler(req, res) {
     <td>${esc(r.product || "—")}${r.access === "free" ? `<br><b style="color:#0a8">FREE ACCESS — must show tag</b>` : r.access === "purchased" ? `<br><span class="muted">Bought</span>` : ""}</td>
     <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}${r.club ? `<br><span class="muted">${esc(r.club)}</span>` : ""}</td>
     <td>${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${esc(r.message)}</td>
+    <td>${mediaCell(r.media)}</td>
     <td>${r.consent === true ? "Yes" : r.consent === false ? "<b>No</b>" : "—"}</td>
     <td><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
   </tr>`,
@@ -104,11 +116,13 @@ export default async function handler(req, res) {
   th,td{border:1px solid #e2e2ec;padding:8px 10px;text-align:left;vertical-align:top}
   th{background:#f0f0f6;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
   td:nth-child(5){min-width:260px}
+  td:nth-child(6) img, td:nth-child(6) video{display:block;width:140px;max-height:110px;object-fit:cover;border-radius:6px;background:#eee}
+  td:nth-child(6) .url{width:140px;margin-top:6px;font-size:11px}
 </style>
 <h1>Collected reviews — ${reviews.length}</h1>
-<div class="muted">Newest first. Not published anywhere — paste the good ones into index.html by hand.</div>
+<div class="muted">Newest first. Not published anywhere — paste the good ones into index.html by hand (copy the Media URL into the card's review-media line).</div>
 ${reviews.length ? `<table>
-  <tr><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>OK to publish</th><th>Email</th></tr>
+  <tr><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>Media</th><th>OK to publish</th><th>Email</th></tr>
   ${trs}
 </table>` : "<p>No reviews collected yet.</p>"}`);
 }
