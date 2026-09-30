@@ -2,6 +2,6 @@
   "name": "valenciasolution-website",
   "private": true,
   "dependencies": {
-    "@vercel/blob": "latest"
+    "@vercel/blob": "2.8.0"
   }
 }
