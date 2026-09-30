@@ -1413,7 +1413,9 @@
     </section>
     <!-- Section 5: Testimonials + Testimonial composer (last section before footer) -->
     <!-- ============================================================= -->
-    <!--  HOW TO PUBLISH A TESTIMONIAL BY HAND:                         -->
+    <!--  The wall fills itself: approve testimonials at               -->
+    <!--  /api/reviews?key=... and they load from /api/testimonials.   -->
+    <!--  To pin one by hand instead:                                   -->
     <!--  Copy the <div class="review-card"> template below into        -->
     <!--  #reviewsGrid and delete #reviewsEmpty.                         -->
     <!--  Trophies: filled = 🏆   empty = <span class="t-empty">🏆</span>  -->
@@ -1641,6 +1643,60 @@
             window.addEventListener('resize', function () {
                 if (window.innerWidth > 900) setOpen(false);
             });
+        })();
+    </script>
+    <script>
+        /* Testimonial wall: approved testimonials from /api/testimonials (approve them at /api/reviews?key=...). */
+        (function () {
+            var grid = document.getElementById('reviewsGrid');
+            if (!grid || !window.fetch) return;
+            var lang = (document.documentElement.lang || 'en').slice(0, 2);
+            var freeEl = document.getElementById('pvFree');
+            var FREE = freeEl ? freeEl.textContent : 'Free access';
+            function quote(m) { return lang === 'fr' ? '« ' + m + ' »' : '“' + m + '”'; }
+            function productLabel(name) {
+                var inputs = document.querySelectorAll('input[name="product"]');
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].value === name) return inputs[i].parentNode.textContent.trim();
+                }
+                return name;
+            }
+            function el(tag, cls, text) {
+                var e = document.createElement(tag);
+                if (cls) e.className = cls;
+                if (text) e.textContent = text;
+                return e;
+            }
+            function card(t) {
+                var c = el('div', 'review-card');
+                var n = Math.max(1, Math.min(5, t.rating | 0));
+                c.innerHTML = '<div class="review-trophies">' + '🏆'.repeat(n) + '<span class="t-empty">🏆</span>'.repeat(5 - n) + '</div>';
+                if (t.product) c.appendChild(el('div', 'review-product', productLabel(t.product)));
+                if (t.access === 'free') { c.appendChild(document.createTextNode(' ')); c.appendChild(el('span', 'review-free', FREE)); }
+                if (t.headline) c.appendChild(el('div', 'review-headline', t.headline));
+                if (/^https:\/\//.test(t.media || '')) {
+                    var m = el('div', 'review-media');
+                    var isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp)(\?|$)/i.test(t.media);
+                    var v = el(isVideo ? 'video' : 'img');
+                    if (isVideo) { v.src = t.media + '#t=0.1'; v.controls = true; v.playsInline = true; v.preload = 'metadata'; }
+                    else { v.src = t.media; v.alt = ''; v.loading = 'lazy'; }
+                    m.appendChild(v);
+                    c.appendChild(m);
+                }
+                c.appendChild(el('div', 'review-text', quote(t.message)));
+                var a = el('div', 'review-author', t.name);
+                var role = [t.role, t.club].filter(Boolean).join(' · ');
+                if (role) { a.appendChild(document.createTextNode(' ')); a.appendChild(el('span', 'review-role', '· ' + role)); }
+                c.appendChild(a);
+                return c;
+            }
+            fetch('/api/testimonials').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+                var list = d && d.testimonials;
+                if (!list || !list.length) return;
+                var empty = document.getElementById('reviewsEmpty');
+                if (empty) empty.remove();
+                list.forEach(function (t) { grid.appendChild(card(t)); });
+            }).catch(function () { /* keep the empty-state message */ });
         })();
     </script>
     <script>
