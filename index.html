@@ -710,6 +710,7 @@
         .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; }
         .review-author { color: var(--text); font-size: 0.9rem; font-weight: 700; }
         .review-role { color: var(--text-muted); font-size: 0.82rem; font-weight: 400; }
+        .reviews-more { text-align: center; margin-top: 28px; }
         .reviews-empty {
             grid-column: 1 / -1;
             text-align: center;
@@ -1444,11 +1445,12 @@
                 <p>The first coaches are running these apps through real seasons right now. Testimonials get posted here as they come in — no cherry-picking.</p>
                 <p class="tm-disclosure">Some coaches and clubs received free access to a Notepad. Their testimonials are marked <span class="review-free">Free access</span>. Testimonials are real coaches' own words and opinions; individual results vary.</p>
             </div>
-            <div class="reviews-grid" id="reviewsGrid">
+            <div class="reviews-grid" id="reviewsGrid" data-limit="3">
                 <div class="reviews-empty" id="reviewsEmpty">
                     First testimonials are coming in from coaches using it this season — yours could be the first one on the wall.
                 </div>
             </div>
+            <p class="reviews-more" id="reviewsMore" hidden><a href="/testimonials" class="btn btn-secondary">Read all testimonials →</a></p>
 
             <div class="tm-wrap">
                 <form class="tm-form" id="reviewForm" novalidate>
@@ -1577,7 +1579,7 @@
                     <h4>Company</h4>
                     <ul>
                         <li><a href="#features">Features</a></li>
-                        <li><a href="#reviews">Testimonials</a></li>
+                        <li><a href="/testimonials">Testimonials</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                     <address class="ft-contact">
@@ -1652,12 +1654,15 @@
             var freeEl = document.getElementById('pvFree');
             var FREE = freeEl ? freeEl.textContent : 'Free access';
             function quote(m) { return lang === 'fr' ? '« ' + m + ' »' : '“' + m + '”'; }
+            var ICONS = { Basketball: '🏀', Volleyball: '🏐', Football: '🏈', Lacrosse: '🥍', Baseball: '⚾', Curling: '🥌', Hockey: '🏒', Cricket: '🏏', Soccer: '⚽', Rugby: '🏉' };
+            var LIMIT = parseInt(grid.getAttribute('data-limit'), 10) || 0;
             function productLabel(name) {
                 var inputs = document.querySelectorAll('input[name="product"]');
                 for (var i = 0; i < inputs.length; i++) {
                     if (inputs[i].value === name) return inputs[i].parentNode.textContent.trim();
                 }
-                return name;
+                var icon = ICONS[String(name).split(' ')[0]];
+                return icon ? icon + ' ' + name : name;
             }
             function el(tag, cls, text) {
                 var e = document.createElement(tag);
@@ -1693,7 +1698,9 @@
                 if (!list || !list.length) return;
                 var empty = document.getElementById('reviewsEmpty');
                 if (empty) empty.remove();
-                list.forEach(function (t) { grid.appendChild(card(t)); });
+                (LIMIT ? list.slice(0, LIMIT) : list).forEach(function (t) { grid.appendChild(card(t)); });
+                var more = document.getElementById('reviewsMore');
+                if (more) more.hidden = false;
             }).catch(function () { /* keep the empty-state message */ });
         })();
     </script>
