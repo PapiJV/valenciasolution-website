@@ -1997,6 +1997,14 @@
             if (!form) return;
             var pad = function (n) { return (n < 10 ? '0' : '') + n; };
 
+            // QR deep link: ?sport=basketball preselects the sport and jumps straight to the form.
+            var wanted = (new URLSearchParams(location.search).get('sport') || '').toLowerCase();
+            var preset = APPS[wanted] && form.querySelector('input[name="sport"][value="' + wanted + '"]');
+            if (preset) {
+                preset.checked = true;
+                window.addEventListener('load', function () { $('freeCard').scrollIntoView({ behavior: 'instant', block: 'start' }); });
+            }
+
             function closeOffer(title, msg) {
                 form.hidden = true;
                 $('freeDone').hidden = true;
