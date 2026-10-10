@@ -238,6 +238,16 @@
         @media (max-width: 900px) {
             .services-grid { grid-template-columns: 1fr; }
         }
+
+        /* Scanner section + 4-step flow (copy refresh) */
+        .services-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .scanner-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 24px; }
+        .scanner-note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+        .scanner-note strong { color: var(--text); }
+        .icon-4 { background: rgba(255, 196, 0, 0.15); color: #ffc400; }
+        .feature-tag.scan-tag { background: rgba(255, 107, 53, 0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+        @media (max-width: 1100px) { .services-grid.grid-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 900px) { .services-grid.grid-4 { grid-template-columns: 1fr; } }
         .service-card {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -1017,11 +1027,11 @@
         <div class="hero-content">
             <a class="hero-offer" href="#free">🎁 Limited time: get a Notepad free. First 100 coaches →</a><br>
             <div class="hero-badge">Coach's Toolkit</div>
-            <h1>Stop Coaching From <span>Scattered Notes.</span></h1>
-            <p>Every Notepad app puts your playbook, lineups, live game stats, and season milestones in one app you carry onto every sideline. Pay once. Own it. No subscription eating your budget.</p>
+            <h1>Point your camera. <span>Know every player.</span></h1>
+            <p>Your Notepad reads jersey numbers on the fly, puts names on screen while you record, and pulls up each player's stats with a tap. Practice plans, live stats and season numbers in the same app, built for the sideline. <strong>Pay once. Own it. No subscription.</strong></p>
             <div class="hero-buttons">
-                <a href="#products" class="btn btn-primary">Explore the Notepads</a>
-                <a href="#products" class="btn btn-secondary">View Pricing</a>
+                <a href="#free" class="btn btn-primary">Try the scanner free →</a>
+                <a href="#products" class="btn btn-secondary">Find your sport</a>
             </div>
         </div>
         <div class="scroll-indicator">
@@ -1029,6 +1039,42 @@
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
         </div>
+    </section>
+    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse) -->
+    <section class="services scanner" id="scanner">
+        <div class="section-header">
+            <div class="section-label">Jersey Scanner</div>
+            <h2>Your camera is now your assistant coach</h2>
+            <p>Record practice or a game and your Notepad does the tagging for you.</p>
+        </div>
+        <div class="scanner-grid">
+            <div class="service-card">
+                <div class="service-icon icon-1">🔢</div>
+                <h3>Jersey scan</h3>
+                <p>Reads jersey numbers and matches them to your roster. Tap a player for their info and season stats.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-2">🏷️</div>
+                <h3>Live names</h3>
+                <p>Names follow players on screen while you record, so every clip is labelled as it happens.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-3">📋</div>
+                <h3>Roster from film</h3>
+                <p>Just hit record. Your Notepad builds the roster from the numbers it sees.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-4">🎯</div>
+                <h3>Follow-cam</h3>
+                <p>The camera keeps the action in frame, so you can coach instead of filming.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-1">🎬</div>
+                <h3>Highlights &amp; film swap</h3>
+                <p>Cut highlights, build playlists, and trade film with other teams.</p>
+            </div>
+        </div>
+        <p class="scanner-note">Runs on your phone or tablet. Your film stays on your device unless you choose to share it.<br><strong>Available on Basketball, Volleyball, Football and Lacrosse.</strong></p>
     </section>
     <!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 100 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
@@ -1048,7 +1094,7 @@
                     <div class="spots-bar"><div class="spots-fill" id="spotsFill"></div></div>
                 </div>
                 <ul class="free-perks">
-                    <li><span>✅</span>The full app, not a trial: playbook, live stats, lineups, video</li>
+                    <li><span>✅</span>The full app, not a trial: jersey scanner, playbook, live stats, lineups and video</li>
                     <li><span>💳</span>No credit card. Nothing to cancel.</li>
                     <li><span>♾️</span>Yours to keep after the offer ends</li>
                 </ul>
@@ -1125,27 +1171,33 @@
     <section class="services" id="features">
         <div class="section-header">
             <div class="section-label">Every Notepad</div>
-            <h2>One App for the Whole Sideline</h2>
-            <p>Same four-part flow in every sport: plan it, run it, track it, review it. Works offline, syncs when you're back on.</p>
+            <h2>Plan it. Run it. Track it. Review it.</h2>
+            <p>The same four steps in every sport. Works offline, syncs when you're back on, and shares your roster with another coach in one link.</p>
         </div>
-        <div class="services-grid">
+        <div class="services-grid grid-4">
             <div class="service-card">
                 <div class="service-number">01</div>
                 <div class="service-icon icon-1">📋</div>
-                <h3>Plan &amp; Playbook</h3>
-                <p>Build practice plans, draw up plays, and animate every cut, screen, and route. Your whole playbook in your pocket — no wifi needed on the sideline.</p>
+                <h3>Plan</h3>
+                <p>Build practice plans, draw plays and animate every route. No wifi needed.</p>
             </div>
             <div class="service-card">
                 <div class="service-number">02</div>
                 <div class="service-icon icon-2">📡</div>
-                <h3>Live Game</h3>
-                <p>Score, stats, subs, and a play-by-play log as it happens — plus a team chat and a shared board your bench sees on their own tablet in real time.</p>
+                <h3>Run</h3>
+                <p>Live score, stats and subs as it happens. Your assistant scores from their own phone with a 5-letter game code.</p>
             </div>
             <div class="service-card">
                 <div class="service-number">03</div>
-                <div class="service-icon icon-3">🏆</div>
-                <h3>Season View</h3>
-                <p>Team records, per-player averages, and milestones roll up automatically from every game you track. No spreadsheet, no data entry after the buzzer.</p>
+                <div class="service-icon icon-3">🎥</div>
+                <h3>Track</h3>
+                <p>Scan jerseys, tag clips, and see who did what.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-number">04</div>
+                <div class="service-icon icon-4">🏆</div>
+                <h3>Review</h3>
+                <p>Records, per-player averages and milestones fill in automatically from every game you track.</p>
             </div>
         </div>
     </section>
@@ -1153,28 +1205,29 @@
     <section class="products" id="products">
         <div class="section-header">
             <div class="section-label">Our Products</div>
-            <h2>Built for the Sideline</h2>
-            <p>A coaching toolkit for basketball, volleyball, lacrosse, football, baseball, curling, hockey, cricket, soccer, and rugby teams — playbooks, lineups, live stats, and season milestones, on any device. Pay once. Own it. No subscription quietly draining your budget every month.</p>
+            <h2>Pick your sport. Get the whole toolkit.</h2>
+            <p>Ten sports, one way of coaching. Every Notepad includes playbook, practice plans, live stats, roster and season tracking, on any device. Pay once. Own it. No subscription.<br>📷 <strong>Video scanner included</strong> on Basketball, Volleyball, Football and Lacrosse.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
             <div class="product-card" id="basketball">
                 <div class="mockup mockup-basketball">
-                    <a href="https://basketball-notepad-do-not-erase-1.vercel.app" target="_blank" rel="noopener" aria-label="Try the Basketball Notepad demo" style="display:block;width:100%;height:100%;">
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" aria-label="Try the Basketball Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/basketball-cover.png" alt="Basketball Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Basketball Notepad</h3>
-                    <p>Everything you run on the sideline in one tool: X's and O's playbook, live game stats, lineup rotations, and season milestone tracking.</p>
+                    <p>Scan jerseys, tag players on film, and run your playbook, live stats and lineup rotations from one app.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
                         <span class="feature-tag">Playbook</span>
                         <span class="feature-tag">Live Stats</span>
                         <span class="feature-tag">Lineups</span>
                         <span class="feature-tag">Milestones</span>
                     </div>
-                    <a href="https://basketball-notepad-do-not-erase-1.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Try the Demo</a>
-                    <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Buy Now — CA$49.99</a>
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs">For Clubs — CA$499</a>
                     
                 </div>
@@ -1188,15 +1241,16 @@
                 </div>
                 <div class="product-info">
                     <h3>Volleyball Notepad</h3>
-                    <p>Rotation management, serve receive patterns, lineup builder, and rally scoring with full season analytics.</p>
+                    <p>Scan jerseys on film, then manage rotations and serve receive with live rally scoring and full season analytics.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
                         <span class="feature-tag">Rotations</span>
                         <span class="feature-tag">Lineups</span>
                         <span class="feature-tag">Scoring</span>
                         <span class="feature-tag">Analytics</span>
                     </div>
-                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Try the Demo</a>
-                    <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">Buy Now — CA$49.99</a>
+                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="product-btn btn-volleyball-clubs">For Clubs — CA$499</a>
                     
                 </div>
@@ -1204,21 +1258,22 @@
             <!-- Lacrosse -->
             <div class="product-card" id="lacrosse">
                 <div class="mockup mockup-lacrosse">
-                    <a href="https://lacrosse-notepad.vercel.app" target="_blank" rel="noopener" aria-label="Try the Lacrosse Notepad demo" style="display:block;width:100%;height:100%;">
+                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Lacrosse Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/lacrosse-cover.png" alt="Lacrosse Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Lacrosse Notepad</h3>
-                    <p>Diagram X's and O's, animate player movement and dodges, and track live games and video — all in one sideline-ready notebook.</p>
+                    <p>Scan jerseys, tag players on video, and animate your sets and dodges, all on the sideline.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
                         <span class="feature-tag">Playbook</span>
                         <span class="feature-tag">Animate</span>
                         <span class="feature-tag">Roster</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="https://lacrosse-notepad.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Try the Demo</a>
-                    <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">Buy Now — CA$49.99</a>
+                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="product-btn btn-lacrosse-clubs">For Clubs — CA$499</a>
                     
                 </div>
@@ -1226,14 +1281,15 @@
             <!-- Football -->
             <div class="product-card" id="football">
                 <div class="mockup mockup-football">
-                    <a href="https://football-notepad.vercel.app" target="_blank" rel="noopener" aria-label="Try the Football Notepad demo" style="display:block;width:100%;height:100%;">
+                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Try the Football Notepad demo" style="display:block;width:100%;height:100%;">
                         <img src="images/football-cover.png" alt="Football Notepad — Coach's Toolkit cover screen" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Football Notepad</h3>
-                    <p>Diagram plays, animate every route, run a synced live scoreboard, and keep your roster, schedule, and team chat in one sideline-ready notebook.</p>
+                    <p>Scan numbers on film, animate every route, and run a live scoreboard your whole staff shares.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
                         <span class="feature-tag">Whiteboard</span>
                         <span class="feature-tag">Animate</span>
                         <span class="feature-tag">Playbook</span>
@@ -1242,8 +1298,8 @@
                         <span class="feature-tag">Live Game</span>
                         <span class="feature-tag">Team Chat</span>
                     </div>
-                    <a href="https://football-notepad.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Try the Demo</a>
-                    <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Buy Now — CA$49.99</a>
+                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs">For Clubs — CA$499</a>
                     
                 </div>
@@ -1266,8 +1322,8 @@
                         <span class="feature-tag">Roster</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Try the Demo</a>
-                    <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">Buy Now — CA$49.99</a>
+                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="product-btn btn-baseball-clubs">For Clubs — CA$499</a>
                 </div>
             </div>
@@ -1289,8 +1345,8 @@
                         <span class="feature-tag">Shot %</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Try the Demo</a>
-                    <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">Buy Now — CA$49.99</a>
+                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Try it free, no sign-up</a>
+                    <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">Own it — CA$49.99</a>
                     <a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="product-btn btn-curling-clubs">For Clubs — CA$499</a>
                 </div>
             </div>
@@ -1313,8 +1369,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Team Chat</span>
                     </div>
-                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Try the Demo</a>
-                    <button type="button" class="product-btn btn-hockey-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Try it free, no sign-up</a>
+                    <button type="button" class="product-btn btn-hockey-buy" disabled>Own it — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
             <!-- Cricket -->
@@ -1336,8 +1392,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Team Chat</span>
                     </div>
-                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Try the Demo</a>
-                    <button type="button" class="product-btn btn-cricket-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Try it free, no sign-up</a>
+                    <button type="button" class="product-btn btn-cricket-buy" disabled>Own it — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
             <!-- Soccer -->
@@ -1359,8 +1415,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Team Chat</span>
                     </div>
-                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Try the Demo</a>
-                    <button type="button" class="product-btn btn-soccer-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Try it free, no sign-up</a>
+                    <button type="button" class="product-btn btn-soccer-buy" disabled>Own it — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
             <!-- Rugby -->
@@ -1382,8 +1438,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Team Chat</span>
                     </div>
-                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Try the Demo</a>
-                    <button type="button" class="product-btn btn-rugby-buy" disabled>Buy Now — CA$49.99 · Launching Soon</button>
+                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Try it free, no sign-up</a>
+                    <button type="button" class="product-btn btn-rugby-buy" disabled>Own it — CA$49.99 · Launching Soon</button>
                 </div>
             </div>
         </div>

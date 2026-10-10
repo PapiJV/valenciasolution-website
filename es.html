@@ -239,6 +239,16 @@
         @media (max-width: 900px) {
             .services-grid { grid-template-columns: 1fr; }
         }
+
+        /* Scanner section + 4-step flow (copy refresh) */
+        .services-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .scanner-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 24px; }
+        .scanner-note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+        .scanner-note strong { color: var(--text); }
+        .icon-4 { background: rgba(255, 196, 0, 0.15); color: #ffc400; }
+        .feature-tag.scan-tag { background: rgba(255, 107, 53, 0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+        @media (max-width: 1100px) { .services-grid.grid-4 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 900px) { .services-grid.grid-4 { grid-template-columns: 1fr; } }
         .service-card {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -1018,11 +1028,11 @@
         <div class="hero-content">
             <a class="hero-offer" href="#free">🎁 Por tiempo limitado: obtén un Notepad gratis. Primeros 100 entrenadores →</a><br>
             <div class="hero-badge">Kit del entrenador</div>
-            <h1>Deja de entrenar con <span>notas dispersas.</span></h1>
-            <p>Cada app Notepad reúne tu libro de jugadas, alineaciones, estadísticas en vivo y logros de temporada en una sola app que llevas a cada partido. Paga una vez. Es tuya. Sin una suscripción que se coma tu presupuesto.</p>
+            <h1>Apunta la cámara. <span>Reconoce a cada jugador.</span></h1>
+            <p>Tu Notepad lee los números de camiseta al instante, muestra los nombres en pantalla mientras grabas y abre las estadísticas de cada jugador con un toque. Planes de práctica, estadísticas en vivo y números de temporada en la misma app, hecha para la banca. <strong>Paga una vez. Es tuya. Sin suscripción.</strong></p>
             <div class="hero-buttons">
-                <a href="#products" class="btn btn-primary">Explora los Notepads</a>
-                <a href="#products" class="btn btn-secondary">Ver precios</a>
+                <a href="#free" class="btn btn-primary">Prueba el escáner gratis →</a>
+                <a href="#products" class="btn btn-secondary">Encuentra tu deporte</a>
             </div>
         </div>
         <div class="scroll-indicator">
@@ -1030,6 +1040,42 @@
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
         </div>
+    </section>
+    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse) -->
+    <section class="services scanner" id="scanner">
+        <div class="section-header">
+            <div class="section-label">Escáner de camisetas</div>
+            <h2>Tu cámara ahora es tu asistente</h2>
+            <p>Graba una práctica o un partido y tu Notepad identifica a los jugadores por ti.</p>
+        </div>
+        <div class="scanner-grid">
+            <div class="service-card">
+                <div class="service-icon icon-1">🔢</div>
+                <h3>Escaneo de camisetas</h3>
+                <p>Lee los números de camiseta y los vincula con tu plantel. Toca a un jugador para ver su ficha y sus estadísticas de la temporada.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-2">🏷️</div>
+                <h3>Nombres en vivo</h3>
+                <p>Los nombres siguen a los jugadores en pantalla mientras grabas, así cada clip queda etiquetado al momento.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-3">📋</div>
+                <h3>Plantel desde el video</h3>
+                <p>Solo presiona grabar. Tu Notepad arma el plantel con los números que ve.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-4">🎯</div>
+                <h3>Cámara de seguimiento</h3>
+                <p>La cámara mantiene la acción en cuadro, para que dirijas en lugar de grabar.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-1">🎬</div>
+                <h3>Jugadas destacadas e intercambio de video</h3>
+                <p>Arma jugadas destacadas, crea listas de reproducción e intercambia video con otros equipos.</p>
+            </div>
+        </div>
+        <p class="scanner-note">Funciona en tu teléfono o tableta. Tu video se queda en tu dispositivo, a menos que decidas compartirlo.<br><strong>Disponible en Baloncesto, Voleibol, Fútbol americano y Lacrosse.</strong></p>
     </section>
     <!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 100 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
@@ -1049,7 +1095,7 @@
                     <div class="spots-bar"><div class="spots-fill" id="spotsFill"></div></div>
                 </div>
                 <ul class="free-perks">
-                    <li><span>✅</span>La app completa, no una prueba: libro de jugadas, estadísticas en vivo, alineaciones, video</li>
+                    <li><span>✅</span>La app completa, no una prueba: escáner de camisetas, libro de jugadas, estadísticas en vivo, alineaciones y video</li>
                     <li><span>💳</span>Sin tarjeta de crédito. Nada que cancelar.</li>
                     <li><span>♾️</span>Sigue siendo tuya cuando termine la oferta</li>
                 </ul>
@@ -1126,27 +1172,33 @@
     <section class="services" id="features">
         <div class="section-header">
             <div class="section-label">Cada Notepad</div>
-            <h2>Una sola app para toda la banca</h2>
-            <p>El mismo flujo de cuatro pasos en cada deporte: planifica, ejecuta, registra, revisa. Funciona sin conexión y se sincroniza cuando vuelves a conectarte.</p>
+            <h2>Planifica. Ejecuta. Registra. Revisa.</h2>
+            <p>Los mismos cuatro pasos en cada deporte. Funciona sin conexión, se sincroniza cuando vuelves a conectarte y comparte tu plantel con otro entrenador en un solo enlace.</p>
         </div>
-        <div class="services-grid">
+        <div class="services-grid grid-4">
             <div class="service-card">
                 <div class="service-number">01</div>
                 <div class="service-icon icon-1">📋</div>
-                <h3>Plan y libro de jugadas</h3>
-                <p>Arma planes de práctica, diseña jugadas y anima cada corte, bloqueo y ruta. Todo tu libro de jugadas en el bolsillo — sin necesidad de wifi en la banca.</p>
+                <h3>Planifica</h3>
+                <p>Arma planes de práctica, diseña jugadas y anima cada ruta. Sin necesidad de wifi.</p>
             </div>
             <div class="service-card">
                 <div class="service-number">02</div>
                 <div class="service-icon icon-2">📡</div>
-                <h3>Partido en vivo</h3>
-                <p>Marcador, estadísticas, cambios y un registro jugada por jugada en tiempo real — además de un chat de equipo y una pizarra compartida que tu banca ve en su propia tableta al instante.</p>
+                <h3>Ejecuta</h3>
+                <p>Marcador, estadísticas y cambios en vivo. Tu asistente lleva el marcador desde su propio teléfono con un código de partido de 5 letras.</p>
             </div>
             <div class="service-card">
                 <div class="service-number">03</div>
-                <div class="service-icon icon-3">🏆</div>
-                <h3>Vista de temporada</h3>
-                <p>Récords del equipo, promedios por jugador y logros se acumulan automáticamente de cada partido que registras. Sin hojas de cálculo, sin ingresar datos después del pitazo final.</p>
+                <div class="service-icon icon-3">🎥</div>
+                <h3>Registra</h3>
+                <p>Escanea camisetas, etiqueta clips y ve quién hizo qué.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-number">04</div>
+                <div class="service-icon icon-4">🏆</div>
+                <h3>Revisa</h3>
+                <p>Récords, promedios por jugador y logros se completan solos con cada partido que registras.</p>
             </div>
         </div>
     </section>
@@ -1154,28 +1206,29 @@
     <section class="products" id="products">
         <div class="section-header">
             <div class="section-label">Nuestros productos</div>
-            <h2>Hecho para la banca</h2>
-            <p>Un kit de entrenamiento para equipos de baloncesto, voleibol, lacrosse, fútbol americano, béisbol, curling, hockey, críquet, fútbol y rugby — libros de jugadas, alineaciones, estadísticas en vivo y logros de temporada, en cualquier dispositivo. Paga una vez. Es tuya. Sin una suscripción que drene tu presupuesto cada mes.</p>
+            <h2>Elige tu deporte. Llévate todo el kit.</h2>
+            <p>Diez deportes, una sola forma de entrenar. Cada Notepad incluye libro de jugadas, planes de práctica, estadísticas en vivo, plantel y seguimiento de la temporada, en cualquier dispositivo. Paga una vez. Es tuya. Sin suscripción.<br>📷 <strong>Escáner de video incluido</strong> en Baloncesto, Voleibol, Fútbol americano y Lacrosse.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
             <div class="product-card" id="basketball">
                 <div class="mockup mockup-basketball">
-                    <a href="https://basketball-notepad-do-not-erase-1.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Basketball Notepad" style="display:block;width:100%;height:100%;">
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Basketball Notepad" style="display:block;width:100%;height:100%;">
                         <img src="images/basketball-cover.png" alt="Basketball Notepad — pantalla de portada del Kit del entrenador" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Basketball Notepad</h3>
-                    <p>Todo lo que manejas en la banca en una sola herramienta: libro de jugadas con X y O, estadísticas en vivo, rotaciones de alineación y seguimiento de logros de la temporada.</p>
+                    <p>Escanea camisetas, etiqueta jugadores en video y maneja tu libro de jugadas, estadísticas en vivo y rotaciones desde una sola app.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Escáner de camisetas</span>
                         <span class="feature-tag">Libro de jugadas</span>
                         <span class="feature-tag">Estadísticas en vivo</span>
                         <span class="feature-tag">Alineaciones</span>
                         <span class="feature-tag">Logros</span>
                     </div>
-                    <a href="https://basketball-notepad-do-not-erase-1.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Probar la demo</a>
-                    <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Comprar ahora — CA$49.99</a>
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs">Para clubes — CA$499</a>
                     
                 </div>
@@ -1189,15 +1242,16 @@
                 </div>
                 <div class="product-info">
                     <h3>Volleyball Notepad</h3>
-                    <p>Gestión de rotaciones, esquemas de recepción de saque, creador de alineaciones y marcador por rally con análisis completo de la temporada.</p>
+                    <p>Escanea camisetas en video y luego maneja rotaciones y recepción de saque con marcador por rally en vivo y análisis completo de la temporada.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Escáner de camisetas</span>
                         <span class="feature-tag">Rotaciones</span>
                         <span class="feature-tag">Alineaciones</span>
                         <span class="feature-tag">Marcador</span>
                         <span class="feature-tag">Análisis</span>
                     </div>
-                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Probar la demo</a>
-                    <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">Comprar ahora — CA$49.99</a>
+                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="product-btn btn-volleyball-clubs">Para clubes — CA$499</a>
                     
                 </div>
@@ -1205,21 +1259,22 @@
             <!-- Lacrosse -->
             <div class="product-card" id="lacrosse">
                 <div class="mockup mockup-lacrosse">
-                    <a href="https://lacrosse-notepad.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Lacrosse Notepad" style="display:block;width:100%;height:100%;">
+                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Lacrosse Notepad" style="display:block;width:100%;height:100%;">
                         <img src="images/lacrosse-cover.png" alt="Lacrosse Notepad — pantalla de portada del Kit del entrenador" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Lacrosse Notepad</h3>
-                    <p>Diagrama X y O, anima el movimiento de los jugadores y los dodges, y registra partidos en vivo y video — todo en una libreta lista para la banca.</p>
+                    <p>Escanea camisetas, etiqueta jugadores en video y anima tus sistemas y dodges, directo desde la banca.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Escáner de camisetas</span>
                         <span class="feature-tag">Libro de jugadas</span>
                         <span class="feature-tag">Animación</span>
                         <span class="feature-tag">Plantel</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="https://lacrosse-notepad.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Probar la demo</a>
-                    <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">Comprar ahora — CA$49.99</a>
+                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="product-btn btn-lacrosse-clubs">Para clubes — CA$499</a>
                     
                 </div>
@@ -1227,14 +1282,15 @@
             <!-- Football -->
             <div class="product-card" id="football">
                 <div class="mockup mockup-football">
-                    <a href="https://football-notepad.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Football Notepad" style="display:block;width:100%;height:100%;">
+                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" aria-label="Prueba la demo de Football Notepad" style="display:block;width:100%;height:100%;">
                         <img src="images/football-cover.png" alt="Football Notepad — pantalla de portada del Kit del entrenador" style="width:100%;height:100%;object-fit:cover;display:block;object-position:center top;cursor:pointer;">
                     </a>
                 </div>
                 <div class="product-info">
                     <h3>Football Notepad</h3>
-                    <p>Diagrama jugadas, anima cada ruta, lleva un marcador en vivo sincronizado y mantén tu plantel, calendario y chat de equipo en una libreta lista para la banca.</p>
+                    <p>Escanea números en video, anima cada ruta y lleva un marcador en vivo que comparte todo tu cuerpo técnico.</p>
                     <div class="features">
+                        <span class="feature-tag scan-tag">📷 Escáner de camisetas</span>
                         <span class="feature-tag">Pizarra</span>
                         <span class="feature-tag">Animación</span>
                         <span class="feature-tag">Libro de jugadas</span>
@@ -1243,8 +1299,8 @@
                         <span class="feature-tag">Partido en vivo</span>
                         <span class="feature-tag">Chat de equipo</span>
                     </div>
-                    <a href="https://football-notepad.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Probar la demo</a>
-                    <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Comprar ahora — CA$49.99</a>
+                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs">Para clubes — CA$499</a>
                     
                 </div>
@@ -1267,8 +1323,8 @@
                         <span class="feature-tag">Plantel</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Probar la demo</a>
-                    <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">Comprar ahora — CA$49.99</a>
+                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="product-btn btn-baseball-clubs">Para clubes — CA$499</a>
                 </div>
             </div>
@@ -1290,8 +1346,8 @@
                         <span class="feature-tag">% de tiro</span>
                         <span class="feature-tag">Video</span>
                     </div>
-                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Probar la demo</a>
-                    <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">Comprar ahora — CA$49.99</a>
+                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Pruébalo gratis, sin registro</a>
+                    <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">Tuya por CA$49.99</a>
                     <a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="product-btn btn-curling-clubs">Para clubes — CA$499</a>
                 </div>
             </div>
@@ -1314,8 +1370,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Chat de equipo</span>
                     </div>
-                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Probar la demo</a>
-                    <button type="button" class="product-btn btn-hockey-buy" disabled>Comprar ahora — CA$49.99 · Próximamente</button>
+                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Pruébalo gratis, sin registro</a>
+                    <button type="button" class="product-btn btn-hockey-buy" disabled>Tuya por CA$49.99 · Próximamente</button>
                 </div>
             </div>
             <!-- Cricket -->
@@ -1337,8 +1393,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Chat de equipo</span>
                     </div>
-                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Probar la demo</a>
-                    <button type="button" class="product-btn btn-cricket-buy" disabled>Comprar ahora — CA$49.99 · Próximamente</button>
+                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Pruébalo gratis, sin registro</a>
+                    <button type="button" class="product-btn btn-cricket-buy" disabled>Tuya por CA$49.99 · Próximamente</button>
                 </div>
             </div>
             <!-- Soccer -->
@@ -1360,8 +1416,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Chat de equipo</span>
                     </div>
-                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Probar la demo</a>
-                    <button type="button" class="product-btn btn-soccer-buy" disabled>Comprar ahora — CA$49.99 · Próximamente</button>
+                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Pruébalo gratis, sin registro</a>
+                    <button type="button" class="product-btn btn-soccer-buy" disabled>Tuya por CA$49.99 · Próximamente</button>
                 </div>
             </div>
             <!-- Rugby -->
@@ -1383,8 +1439,8 @@
                         <span class="feature-tag">Video</span>
                         <span class="feature-tag">Chat de equipo</span>
                     </div>
-                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Probar la demo</a>
-                    <button type="button" class="product-btn btn-rugby-buy" disabled>Comprar ahora — CA$49.99 · Próximamente</button>
+                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Pruébalo gratis, sin registro</a>
+                    <button type="button" class="product-btn btn-rugby-buy" disabled>Tuya por CA$49.99 · Próximamente</button>
                 </div>
             </div>
         </div>
