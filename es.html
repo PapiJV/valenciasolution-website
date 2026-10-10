@@ -190,6 +190,9 @@
             border: 1px solid var(--border);
         }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+        .btn-watch { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--text); border: 1px solid transparent; }
+        .btn-watch:hover { color: var(--accent); transform: translateY(-2px); }
+        .btn-watch .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.72rem; padding-left: 2px; }
         .scroll-indicator {
             position: absolute;
             bottom: 30px;
@@ -1125,6 +1128,7 @@
             <div class="hero-buttons">
                 <a href="#free" class="btn btn-primary">Prueba el escáner gratis →</a>
                 <a href="#products" class="btn btn-secondary">Encuentra tu deporte</a>
+                <a href="#demo" class="btn btn-watch"><span class="play-dot">▶</span> Ver la demo</a>
             </div>
         </div>
         <div class="scroll-indicator">
