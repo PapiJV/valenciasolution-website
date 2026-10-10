@@ -251,6 +251,13 @@
         .scanner-note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
         .scanner-note strong { color: var(--text); }
         .icon-4 { background: rgba(255, 196, 0, 0.15); color: #ffc400; }
+        /* Demo video section */
+        .demo { max-width: 1000px; margin: 0 auto; padding: 72px 24px 8px; }
+        .demo .section-header { margin-bottom: 26px; }
+        .demo-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden;
+            border: 1px solid var(--border); background: #000; box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
+        .demo-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
+        .demo-note { margin-top: 12px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
         .whatsnew { max-width: 1200px; margin: 0 auto 10px; padding: 0 24px; }
         .wn-inner { border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,0.02); padding: 20px 22px; }
         .wn-eyebrow { display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color: var(--accent); margin-bottom:14px; }
@@ -1094,6 +1101,7 @@
         <div class="logo"><img src="images/logo.png" alt="Valencia Solution" width="120" height="120"></div>
         <ul class="nav-links">
             <li><a href="#hero">Accueil</a></li>
+            <li><a href="#demo">Démo</a></li>
             <li><a href="#features">Fonctionnalités</a></li>
             <li><a href="#products">Produits</a></li>
             <li><a href="#contact">Contact</a></li>
@@ -1124,6 +1132,21 @@
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
         </div>
+    </section>
+    <!-- Demo video -->
+    <section class="demo" id="demo">
+        <div class="section-header">
+            <div class="section-label">Voyez-le en action</div>
+            <h2>Regardez la démo de 2 minutes</h2>
+            <p>Un tour rapide d’un Notepad au bord du terrain — planifiez, dirigez le match et analysez après.</p>
+        </div>
+        <div class="demo-frame">
+            <video controls preload="metadata" playsinline poster="images/og-scanner-fr.png">
+                <source src="media/valenciasolution-demo.mp4" type="video/mp4">
+                Your browser does not support video playback. <a href="media/valenciasolution-demo.mp4">Download the demo</a>.
+            </video>
+        </div>
+            <p class="demo-note">Narration en anglais</p>
     </section>
     <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse) -->
     <section class="services scanner" id="scanner">
