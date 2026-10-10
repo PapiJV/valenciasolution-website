@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coaching Notepads par ValenciaSolution — Tout votre banc dans une seule app</title>
-    <meta name="description" content="Applications d’entraînement à paiement unique pour le basketball, le volleyball, la crosse, le football, le baseball, le curling, le hockey, le cricket, le soccer et le rugby. Plans de pratique, cahiers de jeux animés, suivi des matchs en direct et statistiques de saison — sur tous vos appareils, sans abonnement.">
+    <meta name="description" content="Votre caméra lit les numéros de chandail et nomme les joueurs à la vidéo. Apps d’entraînement à paiement unique pour 10 sports — plans de pratique, statistiques en direct, totaux de saison. Sans abonnement.">
     <link rel="canonical" href="https://www.valenciasolution.net/fr">
     <link rel="alternate" hreflang="en" href="https://www.valenciasolution.net/">
     <link rel="alternate" hreflang="es" href="https://www.valenciasolution.net/es">
@@ -17,12 +17,12 @@
     <meta property="og:locale" content="fr_CA">
     <meta property="og:site_name" content="ValenciaSolution">
     <meta property="og:title" content="Coaching Notepads par ValenciaSolution">
-    <meta property="og:description" content="Cahier de jeux, alignements, statistiques en direct et jalons de saison dans une seule app que vous apportez à chaque match. Payez une fois. Elle est à vous. Sans abonnement.">
+    <meta property="og:description" content="Pointez la caméra, reconnaissez chaque joueur. Apps d’entraînement à paiement unique pour 10 sports — scanner de chandails, statistiques en direct, totaux de saison. Sans abonnement.">
     <meta property="og:url" content="https://www.valenciasolution.net/fr">
     <meta property="og:image" content="https://www.valenciasolution.net/images/basketball-cover.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Coaching Notepads par ValenciaSolution">
-    <meta name="twitter:description" content="Cahier de jeux, alignements, statistiques en direct et jalons de saison dans une seule app. Payez une fois. Sans abonnement.">
+    <meta name="twitter:description" content="Pointez la caméra, reconnaissez chaque joueur. Apps à paiement unique pour 10 sports — scanner de chandails, stats en direct, totaux de saison. Sans abonnement.">
     <meta name="twitter:image" content="https://www.valenciasolution.net/images/basketball-cover.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -246,6 +246,15 @@
         .scanner-note { max-width: 760px; margin: 28px auto 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
         .scanner-note strong { color: var(--text); }
         .icon-4 { background: rgba(255, 196, 0, 0.15); color: #ffc400; }
+        .whatsnew { max-width: 1200px; margin: 0 auto 10px; padding: 0 24px; }
+        .wn-inner { border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,0.02); padding: 20px 22px; }
+        .wn-eyebrow { display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color: var(--accent); margin-bottom:14px; }
+        .wn-list { list-style:none; display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin:0; padding:0; }
+        .wn-list li { display:flex; gap:10px; align-items:flex-start; font-size:0.9rem; color: var(--text-muted); line-height:1.5; }
+        .wn-list strong { color: var(--text); }
+        .wn-list em { font-style:normal; opacity:0.75; }
+        .wn-ico { font-size:1.15rem; line-height:1.1; }
+        @media (max-width:900px){ .wn-list{ grid-template-columns:1fr; gap:12px; } }
         .feature-tag.scan-tag { background: rgba(255, 107, 53, 0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
         @media (max-width: 1100px) { .services-grid.grid-4 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 900px) { .services-grid.grid-4 { grid-template-columns: 1fr; } }
@@ -1040,6 +1049,40 @@
             .lang-switch a { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; }
         }
     </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.valenciasolution.net/#org",
+      "name": "ValenciaSolution",
+      "url": "https://www.valenciasolution.net/",
+      "logo": "https://www.valenciasolution.net/images/logo.png",
+      "email": "valenciasolution.net@gmail.com",
+      "telephone": "+1-647-794-2878",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "145 Church Street, Unit 5, Office 908",
+        "addressLocality": "Toronto",
+        "addressRegion": "ON",
+        "postalCode": "M5B 1Y4",
+        "addressCountry": "CA"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.valenciasolution.net/fr#website",
+      "url": "https://www.valenciasolution.net/fr",
+      "name": "ValenciaSolution Coaching Notepads",
+      "inLanguage": "fr-CA",
+      "publisher": {
+        "@id": "https://www.valenciasolution.net/#org"
+      }
+    }
+  ]
+}
+    </script>
 </head>
 <body>
     <nav>
@@ -1236,6 +1279,17 @@
                 <h3>Analysez</h3>
                 <p>Les fiches, les moyennes par joueur et les jalons se remplissent automatiquement à partir de chaque match suivi.</p>
             </div>
+        </div>
+    </section>
+    <!-- New this season strip -->
+    <section class="whatsnew" aria-label="Nouveau cette saison">
+        <div class="wn-inner">
+            <span class="wn-eyebrow">Nouveau cette saison</span>
+            <ul class="wn-list">
+                <li><span class="wn-ico">📷</span><span><strong>Scanner de chandails intégré</strong> — lit les numéros, nomme les joueurs à la vidéo <em>(Basketball, Volleyball, Football, Crosse)</em></span></li>
+                <li><span class="wn-ico">📡</span><span><strong>Match en direct à deux téléphones</strong> — pointez ensemble avec un code de 5 lettres</span></li>
+                <li><span class="wn-ico">🔗</span><span><strong>Partagez votre effectif</strong> — envoyez votre équipe à un autre entraîneur en un lien</span></li>
+            </ul>
         </div>
     </section>
     <!-- Section 3: Built for the Sideline -->
