@@ -9,7 +9,7 @@
 //   site:signups         LIST  JSON entries (read via /api/signups?key=...)
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
-const OFFER_ENDS_AT = "2026-11-01T03:59:59Z"; // Oct 31, 2026 11:59:59 pm Toronto (EDT)
+const OFFER_ENDS_AT = "2026-12-01T04:59:59Z"; // Nov 30, 2026 11:59:59 pm Toronto (EST)
 const OFFER_CAP = 100;
 
 const APPS = {
