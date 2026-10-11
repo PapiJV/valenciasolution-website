@@ -1346,73 +1346,12 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 </video>
 </div>
 </section>
-<script src="images/jerseys/data/jersey-data-1.js"></script>
-<script src="images/jerseys/data/jersey-data-2.js"></script>
-<script src="images/jerseys/data/jersey-data-3.js"></script>
-<script src="images/jerseys/data/jersey-data-4.js"></script>
-<script src="images/jerseys/data/jersey-data-5.js"></script>
-<script src="images/jerseys/data/jersey-data-6.js"></script>
-<script src="images/jerseys/data/jersey-data-7.js"></script>
 <section class="scanner-demo" id="scanner" style="padding:60px 20px;text-align:center;background:#0a0a0f;">
-<div style="max-width:600px;margin:0 auto;">
+<div style="max-width:860px;margin:0 auto;">
 <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-0.02em;">Watch it <span style="background:linear-gradient(135deg,#ff6b35,#00d4aa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">scan.</span></h2>
-<p style="color:#8a8a9a;font-size:15px;margin-bottom:32px;">Point your camera at any jersey — men's or women's, all 10 sports. The Notepad reads the number instantly.</p>
-<div id="scanner-frame" style="position:relative;width:300px;height:360px;margin:0 auto;background:#12121a;border:2px solid #2a2a3a;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);">
-<div style="position:absolute;top:12px;left:12px;right:12px;bottom:12px;border:2px dashed #3a3a4a;border-radius:12px;pointer-events:none;z-index:3;"></div>
-<div id="scan-line" style="position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#00d4aa,transparent);box-shadow:0 0 16px #00d4aa;top:0;z-index:2;"></div>
-<img id="scan-jersey" src="images/jerseys/basketball-men.jpg?v=2?v=2" alt="Scanned jersey" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:85%;max-height:75%;border-radius:8px;z-index:1;transition:opacity 0.3s;">
-<div id="scan-label" style="position:absolute;bottom:16px;left:0;right:0;z-index:3;font-size:14px;font-weight:700;color:#fff;letter-spacing:0.5px;">Basketball</div>
-<div id="scan-num" style="position:absolute;top:18px;right:18px;z-index:3;font-size:12px;font-weight:700;color:#00d4aa;background:rgba(0,0,0,0.6);padding:4px 10px;border-radius:20px;">No. 23</div>
-<div id="scan-gender" style="position:absolute;top:18px;left:18px;z-index:3;font-size:12px;font-weight:700;color:#ff6b35;background:rgba(0,0,0,0.6);padding:4px 10px;border-radius:20px;">Men's</div>
+<p style="color:#8a8a9a;font-size:15px;margin:0 auto 28px;max-width:560px;">Point the camera at a jersey — the number is read and matched to your roster, on the device. On Basketball, Volleyball, Football &amp; Lacrosse.</p>
+<img src="media/scanner-demo.gif" width="900" height="506" loading="lazy" alt="The jersey scanner reads a player's number and matches it to your roster across basketball, volleyball, football and lacrosse." style="width:100%;max-width:860px;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 18px 50px rgba(0,0,0,0.45);">
 </div>
-<p style="color:#5a5a6a;font-size:12px;margin-top:20px;">Live demo — cycling all 10 sports, men's & women's</p>
-</div>
-<script>
-(function(){
-var items = [
-{sport:"basketball",men:"images/jerseys/basketball-men.jpg?v=2?v=2",women:"images/jerseys/basketball-women.jpg?v=2",name:"Basketball",num:"23"},
-{sport:"football",men:"images/jerseys/football-men.jpg?v=2",women:"images/jerseys/football-women.jpg?v=2",name:"Football",num:"12"},
-{sport:"soccer",men:"images/jerseys/soccer-men.jpg?v=2",women:"images/jerseys/soccer-women.jpg?v=2",name:"Soccer",num:"9"},
-{sport:"baseball",men:"images/jerseys/baseball-men.jpg?v=2",women:"images/jerseys/baseball-women.jpg?v=2",name:"Baseball",num:"27"},
-{sport:"hockey",men:"images/jerseys/hockey-men.jpg?v=2",women:"images/jerseys/hockey-women.jpg?v=2",name:"Hockey",num:"99"},
-{sport:"volleyball",men:"images/jerseys/volleyball-men.jpg?v=2",women:"images/jerseys/volleyball-women.jpg?v=2",name:"Volleyball",num:"7",womenOnly:true},
-{sport:"lacrosse",men:"images/jerseys/lacrosse-men.jpg?v=2",women:"images/jerseys/lacrosse-women.jpg?v=2",name:"Lacrosse",num:"10",womenOnly:true},
-{sport:"cricket",men:"images/jerseys/cricket-men.jpg?v=2",women:"images/jerseys/cricket-women.jpg?v=2",name:"Cricket",num:"18"},
-{sport:"curling",men:"images/jerseys/curling-men.jpg?v=2",women:"images/jerseys/curling-women.jpg?v=2",name:"Curling",num:"",womenOnly:true},
-{sport:"rugby",men:"images/jerseys/rugby-men.jpg?v=2",women:"images/jerseys/rugby-women.jpg?v=2",name:"Rugby",num:"15"}
-];
-var idx = 0, isMen = true;
-var img = document.getElementById('scan-jersey'), label = document.getElementById('scan-label'),
-    numEl = document.getElementById('scan-num'), genderEl = document.getElementById('scan-gender'),
-    line = document.getElementById('scan-line');
-function show(){
-    var s = items[idx];
-    var key = s.sport + '-' + (isMen ? 'men' : 'women');
-    var src = (window.JERSEY_DATA && window.JERSEY_DATA[key]) ? window.JERSEY_DATA[key] : (isMen ? s.men : s.women);
-    img.style.opacity = '0';
-    line.style.transition = 'none'; line.style.top = '100%';
-    setTimeout(function(){
-        img.src = src;
-        label.textContent = s.name;
-        numEl.textContent = s.num ? 'No. ' + s.num : 'Name + Country';
-        genderEl.textContent = isMen ? "Men's" : "Women's";
-        genderEl.style.color = isMen ? '#ff6b35' : '#00d4aa';
-        line.style.transition = 'top 0.9s ease-in-out'; line.style.top = '0%';
-        setTimeout(function(){ img.style.opacity = '1'; }, 800);
-    }, 350);
-    setTimeout(function(){
-        line.style.transition = 'top 0.9s ease-in-out'; line.style.top = '100%';
-        setTimeout(function(){ img.style.opacity = '0'; }, 600);
-    }, 2800);
-}
-show();
-setInterval(function(){
-    idx = (idx + 1) % items.length;
-    if (items[idx].womenOnly) { isMen = false; } else { isMen = !isMen; }
-    show();
-}, 3800);
-})();
-</script>
 </section>
 <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse) -->
 
