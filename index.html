@@ -1067,7 +1067,12 @@ transition: color 0.2s, background 0.2s;
 .nav-links.open ~ .lang-switch { display: flex; }
 .lang-switch a { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; }
 }
-</style>
+.logo-coin{position:relative;width:120px;height:120px;transform-style:preserve-3d;animation:coinflip 4s linear infinite;}
+.logo-coin-sm{width:64px;height:64px;display:inline-block;vertical-align:middle;}
+.coin-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+.coin-face img{width:100%;height:100%;border-radius:50%;display:block;}
+.coin-back{transform:rotateY(180deg);}
+@keyframes coinflip{from{transform:perspective(600px) rotateY(0deg);}to{transform:perspective(600px) rotateY(360deg);}}</style>
 <script type="application/ld+json">
 {
 "@context": "https://schema.org",
@@ -1291,7 +1296,7 @@ transition: color 0.2s, background 0.2s;
 </head>
 <body>
 <nav>
-<div class="logo"><img src="images/logo.png" alt="Valencia Solution" width="120" height="120"></div>
+<div class="logo logo-coin"><div class="coin-face coin-front"><img src="images/logo.png" alt="Valencia Solution" width="120" height="120"></div><div class="coin-face coin-back"><img src="images/logo.png" alt="" width="120" height="120" aria-hidden="true"></div></div>
 <ul class="nav-links">
 <li><a href="#hero">Home</a></li>
 <li><a href="#demo">Demo</a></li>
@@ -1920,7 +1925,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <div class="ft-inner">
 <div class="ft-grid">
 <div class="ft-brand">
-<img src="images/logo.png" alt="ValenciaSolution" width="64" height="64" loading="lazy">
+<span class="logo-coin logo-coin-sm"><span class="coin-face coin-front"><img src="images/logo.png" alt="ValenciaSolution" width="64" height="64" loading="lazy"></span><span class="coin-face coin-back"><img src="images/logo.png" alt="" width="64" height="64" loading="lazy" aria-hidden="true"></span></span>
 <p>Pay-once coaching apps for the sideline. Playbooks, live stats, lineups and film — built for coaches who care about the game.</p>
 <p class="ft-made">🇨🇦 Made in Toronto, Ontario</p>
 </div>
