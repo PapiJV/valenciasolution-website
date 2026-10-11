@@ -1368,10 +1368,10 @@ var items = [
 {sport:"soccer",men:"images/jerseys/soccer-men.jpg?v=2",women:"images/jerseys/soccer-women.jpg?v=2",name:"Soccer",num:"9"},
 {sport:"baseball",men:"images/jerseys/baseball-men.jpg?v=2",women:"images/jerseys/baseball-women.jpg?v=2",name:"Baseball",num:"27"},
 {sport:"hockey",men:"images/jerseys/hockey-men.jpg?v=2",women:"images/jerseys/hockey-women.jpg?v=2",name:"Hockey",num:"99"},
-{sport:"volleyball",men:"images/jerseys/volleyball-men.jpg?v=2",women:"images/jerseys/volleyball-women.jpg?v=2",name:"Volleyball",num:"7"},
-{sport:"lacrosse",men:"images/jerseys/lacrosse-men.jpg?v=2",women:"images/jerseys/lacrosse-women.jpg?v=2",name:"Lacrosse",num:"10"},
+{sport:"volleyball",men:"images/jerseys/volleyball-men.jpg?v=2",women:"images/jerseys/volleyball-women.jpg?v=2",name:"Volleyball",num:"7",womenOnly:true},
+{sport:"lacrosse",men:"images/jerseys/lacrosse-men.jpg?v=2",women:"images/jerseys/lacrosse-women.jpg?v=2",name:"Lacrosse",num:"10",womenOnly:true},
 {sport:"cricket",men:"images/jerseys/cricket-men.jpg?v=2",women:"images/jerseys/cricket-women.jpg?v=2",name:"Cricket",num:"18"},
-{sport:"curling",men:"images/jerseys/curling-men.jpg?v=2",women:"images/jerseys/curling-women.jpg?v=2",name:"Curling",num:""},
+{sport:"curling",men:"images/jerseys/curling-men.jpg?v=2",women:"images/jerseys/curling-women.jpg?v=2",name:"Curling",num:"",womenOnly:true},
 {sport:"rugby",men:"images/jerseys/rugby-men.jpg?v=2",women:"images/jerseys/rugby-women.jpg?v=2",name:"Rugby",num:"15"}
 ];
 var idx = 0, isMen = true;
@@ -1400,7 +1400,7 @@ function show(){
 show();
 setInterval(function(){
     idx = (idx + 1) % items.length;
-    isMen = !isMen;
+    if (items[idx].womenOnly) { isMen = false; } else { isMen = !isMen; }
     show();
 }, 3800);
 })();
