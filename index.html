@@ -1294,6 +1294,27 @@ transition: color 0.2s, background 0.2s;
 ]
 }
 </script>
+
+<style>
+.charts { max-width: 1200px; margin: 0 auto; padding: 70px 24px 40px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+.charts .ch-eyebrow { display:inline-block; font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color: var(--accent); margin-bottom:12px; }
+.charts h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.1; margin: 0 0 14px; }
+.charts .ch-lead { color: var(--text-muted); line-height: 1.65; margin: 0 0 20px; }
+.charts .ch-list { list-style: none; padding: 0; margin: 0 0 26px; display: grid; gap: 12px; }
+.charts .ch-list li { display: flex; gap: 10px; color: var(--text-muted); line-height: 1.5; font-size: 0.95rem; }
+.charts .ch-list strong { color: var(--text); }
+.charts .ch-cta { display: inline-block; padding: 12px 22px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; text-decoration: none; }
+.charts .ch-cta:hover { filter: brightness(1.08); }
+.ch-courts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ch-court { margin: 0; }
+.ch-court svg { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,0.45); }
+.ch-court figcaption { margin-top: 8px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+.ch-miss { filter: grayscale(1) brightness(0.22); }
+.ch-faded { opacity: 0.45; }
+.ch-dot { display:inline-block; filter: grayscale(1) brightness(0.22); background:#E9CFA3; border-radius:50%; padding:0 2px; }
+@media (max-width: 860px) { .charts { grid-template-columns: 1fr; gap: 28px; padding-top: 50px; } }
+.wn-list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+</style>
 </head>
 <body>
 <nav>
@@ -1483,10 +1504,65 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <div class="wn-inner">
 <span class="wn-eyebrow">New this season</span>
 <ul class="wn-list">
+<li><span class="wn-ico">🎯</span><span><strong>Shot &amp; attack charts</strong> — tap the court, see every player's spots <em>(Basketball, Volleyball)</em></span></li>
 <li><span class="wn-ico">📷</span><span><strong>On-device jersey scanner</strong> — reads numbers, names players on film <em>(Basketball, Volleyball, Football, Lacrosse)</em></span></li>
 <li><span class="wn-ico">📡</span><span><strong>Two-phone Live Game</strong> — score together with a 5-letter code</span></li>
 <li><span class="wn-ico">🔗</span><span><strong>Share your roster</strong> — send your team to another coach in one link</span></li>
 </ul>
+</div>
+</section>
+
+<!-- Shot & attack charts (Basketball Shot Chart, Volleyball Attack & Serve Chart) -->
+<section class="charts" id="charts">
+<div>
+<span class="ch-eyebrow">New: shot &amp; attack charts</span>
+<h2>See where every shot comes from.</h2>
+<p class="ch-lead">Tap the court where the shot was taken, then tap Made or Missed. Points and FG% update on their own, your assistant sees it on their phone, and the chart shows up on the player's card when you scan their jersey.</p>
+<ul class="ch-list">
+<li><span>🏀</span><span><strong>Basketball Shot Chart</strong> — an NBA half court. 2s and 3s are counted from where you tap.</span></li>
+<li><span>🏐</span><span><strong>Volleyball Attack &amp; Serve Chart</strong> — kills, aces, errors and balls in play, in or out.</span></li>
+<li><span>📷</span><span><strong>On the scanner card</strong> — this game or the whole season, one tap away.</span></li>
+</ul>
+<a class="ch-cta" href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener">Try it in the demo →</a>
+</div>
+
+<div class="ch-courts" aria-hidden="true">
+<figure class="ch-court">
+<svg viewBox="0 0 500 470" role="img">
+<rect width="500" height="470" fill="#E9CFA3"/>
+<g fill="none" stroke="#3B2A17" stroke-width="3">
+<rect x="170" y="0" width="160" height="190" fill="#D9B47E"/>
+<path d="M190 190 A60 60 0 0 0 310 190"/>
+<path d="M30 0 V142 A237.5 237.5 0 0 0 470 142 V0"/>
+<path d="M210 52.5 A40 40 0 0 0 290 52.5"/>
+<line x1="220" y1="40" x2="280" y2="40" stroke-width="4"/>
+<circle cx="250" cy="52.5" r="7.5" stroke="#C4453A"/>
+<path d="M190 470 A60 60 0 0 1 310 470"/>
+</g>
+<g font-size="34" text-anchor="middle" dominant-baseline="central">
+<text x="250" y="95">🏀</text><text x="205" y="150">🏀</text><text x="60" y="70">🏀</text>
+<text x="400" y="330">🏀</text><text x="250" y="380">🏀</text><text x="300" y="120">🏀</text>
+<text x="120" y="300" class="ch-miss">🏀</text><text x="455" y="60" class="ch-miss">🏀</text>
+<text x="330" y="240" class="ch-miss">🏀</text><text x="160" y="210" class="ch-miss">🏀</text>
+</g>
+</svg>
+<figcaption>🏀 made · <span class="ch-dot">🏀</span> missed</figcaption>
+</figure>
+<figure class="ch-court">
+<svg viewBox="0 0 600 540" role="img">
+<rect width="600" height="540" fill="#3E6B5A"/>
+<rect x="75" y="15" width="450" height="450" fill="#E7C9A0" stroke="#fff" stroke-width="5"/>
+<line x1="75" y1="165" x2="525" y2="165" stroke="#fff" stroke-width="4"/>
+<line x1="55" y1="15" x2="545" y2="15" stroke="#1B1B1B" stroke-width="8"/>
+<g font-size="40" text-anchor="middle" dominant-baseline="central">
+<text x="140" y="390">🏐</text><text x="470" y="420">🏐</text><text x="300" y="260">🏐</text>
+<text x="180" y="120">🏐</text><text x="560" y="300" class="ch-miss">🏐</text>
+<text x="300" y="505" class="ch-miss">🏐</text><text x="420" y="200" class="ch-faded">🏐</text>
+<text x="240" y="420" class="ch-faded">🏐</text>
+</g>
+</svg>
+<figcaption>🏐 kill/ace · <span class="ch-dot">🏐</span> error · faded = in play</figcaption>
+</figure>
 </div>
 </section>
 <!-- Section 3: Built for the Sideline -->
@@ -1509,6 +1585,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <p>Scan jerseys, tag players on film, and run your playbook, live stats and lineup rotations from one app.</p>
 <div class="features">
 <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
+<span class="feature-tag scan-tag">🏀 Shot Chart</span>
 <span class="feature-tag">Playbook</span>
 <span class="feature-tag">Live Stats</span>
 <span class="feature-tag">Lineups</span>
@@ -1531,6 +1608,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <p>Scan jerseys on film, then manage rotations and serve receive with live rally scoring and full season analytics.</p>
 <div class="features">
 <span class="feature-tag scan-tag">📷 Jersey Scanner</span>
+<span class="feature-tag scan-tag">🏐 Attack &amp; Serve Chart</span>
 <span class="feature-tag">Rotations</span>
 <span class="feature-tag">Lineups</span>
 <span class="feature-tag">Scoring</span>
