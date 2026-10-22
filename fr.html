@@ -967,7 +967,7 @@
         @media (max-width: 600px) { .free-card { padding: 22px 18px; } }
         .free-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; }
         .free-card .sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 22px; }
-        .sport-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .sport-pick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         @media (max-width: 480px) { .sport-pick { grid-template-columns: repeat(2, 1fr); } }
         .sport-opt { position: relative; }
         .sport-opt input { position: absolute; opacity: 0; pointer-events: none; }
@@ -1122,6 +1122,10 @@
 @media (max-width: 860px) { .charts { grid-template-columns: 1fr; gap: 28px; padding-top: 50px; } }
 .wn-list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 </style>
+<style>
+.product-demo-link { display: block; text-align: center; margin: 8px 0 4px; font-size: 0.85rem; color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
+.product-demo-link:hover { color: var(--text); }
+</style>
 </head>
 <body>
     <nav>
@@ -1145,7 +1149,7 @@
     <!-- Section 1: Hero -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <a class="hero-offer" href="#free">🎁 Offre limitée : obtenez un Notepad gratuit. Les 100 premiers entraîneurs →</a><br>
+            <a class="hero-offer" href="#free">🎁 Offre limitée : obtenez un Notepad gratuit. Les 1000 premiers entraîneurs →</a><br>
             <div class="hero-badge">Trousse de l’entraîneur</div>
             <h1>Pointez la caméra. <span>Reconnaissez chaque joueur.</span></h1>
             <p>Votre Notepad lit les numéros de chandail en direct, affiche les noms à l’écran pendant que vous filmez et ouvre les statistiques de chaque joueur d’un simple toucher. Plans de pratique, statistiques en direct et bilan de saison dans la même app, conçue pour le bord du terrain. <strong>Payez une fois. Elle est à vous. Aucun abonnement.</strong></p>
@@ -1217,13 +1221,13 @@
         </div>
         <p class="scanner-note">Fonctionne sur votre téléphone ou votre tablette. Vos vidéos restent sur votre appareil, sauf si vous choisissez de les partager.<br><strong>Offert sur les Notepads Basketball, Volleyball, Football et Crosse.</strong></p>
     </section>
-    <!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 100 sign-ups (enforced by /api/register) -->
+    <!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 1000 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
         <div class="free-inner">
             <div>
                 <div class="free-tag">Offre de lancement à durée limitée</div>
                 <h2>Obtenez un Notepad <s>49,99 $ CA</s> <em>gratuit.</em><br>Gardez-le pour toujours.</h2>
-                <p class="free-lead">Nous offrons les Notepads aux 100 premiers entraîneurs. Inscrivez-vous, choisissez votre sport et commencez à utiliser l’app complète dès aujourd’hui. Sans carte, sans période d’essai, sans piège.</p>
+                <p class="free-lead">Nous offrons les Notepads aux 1000 premiers entraîneurs. Inscrivez-vous, choisissez votre sport et commencez à utiliser l’app complète dès aujourd’hui. Sans carte, sans période d’essai, sans piège.</p>
                 <div class="countdown" id="countdown" aria-label="Temps restant à l’offre">
                     <div class="cd-box"><span class="cd-num" id="cdD">--</span><span class="cd-lbl">Jours</span></div>
                     <div class="cd-box"><span class="cd-num" id="cdH">--</span><span class="cd-lbl">H</span></div>
@@ -1231,7 +1235,7 @@
                     <div class="cd-box"><span class="cd-num" id="cdS">--</span><span class="cd-lbl">Sec</span></div>
                 </div>
                 <div class="spots" id="spots" hidden>
-                    <div class="spots-row"><span><strong id="spotsLeft">–</strong> places gratuites restantes sur 100</span><span id="spotsClaimed"></span></div>
+                    <div class="spots-row"><span><strong id="spotsLeft">–</strong> places gratuites restantes sur 1000</span><span id="spotsClaimed"></span></div>
                     <div class="spots-bar"><div class="spots-fill" id="spotsFill"></div></div>
                 </div>
                 <ul class="free-perks">
@@ -1252,6 +1256,12 @@
                             <label class="sport-opt"><input type="radio" name="sport" value="volleyball"><span><b>🏐</b>Volleyball</span></label>
                             <label class="sport-opt"><input type="radio" name="sport" value="football"><span><b>🏈</b>Football</span></label>
                             <label class="sport-opt"><input type="radio" name="sport" value="lacrosse"><span><b>🥍</b>Crosse</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="baseball"><span><b>⚾</b>Baseball</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="curling"><span><b>🥌</b>Curling</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="hockey"><span><b>🏒</b>Hockey</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="cricket"><span><b>🏏</b>Cricket</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="soccer"><span><b>⚽</b>Soccer</span></label>
+                            <label class="sport-opt"><input type="radio" name="sport" value="rugby"><span><b>🏉</b>Rugby</span></label>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1285,7 +1295,7 @@
                     </label>
                     <p class="form-msg" id="freeErr" role="alert"></p>
                     <button type="submit" class="btn btn-primary" id="freeBtn">Obtenir mon Notepad gratuit 🎁</button>
-                    <p class="free-fine">Un Notepad gratuit (licence individuelle) par entraîneur. L’offre prend fin le 30 novembre 2026 à 23 h 59 (HE) ou lorsque 100 entraîneurs se seront inscrits, selon la première éventualité. Consultez les <a href="/terms#free-offer">conditions de l’offre</a> et notre <a href="/privacy">Politique de confidentialité</a>.</p>
+                    <p class="free-fine">Un Notepad gratuit (licence individuelle) par entraîneur. L’offre prend fin le 30 novembre 2026 à 23 h 59 (HE) ou lorsque 1000 entraîneurs se seront inscrits, selon la première éventualité. Consultez les <a href="/terms#free-offer">conditions de l’offre</a> et notre <a href="/privacy">Politique de confidentialité</a>.</p>
                 </form>
 
                 <div class="free-done" id="freeDone" hidden>
@@ -1434,7 +1444,8 @@
                         <span class="feature-tag">Alignements</span>
                         <span class="feature-tag">Jalons</span>
                     </div>
-                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Essai gratuit, sans inscription</a>
+                    <a href="?sport=basketball&amp;src=card-basketball#freeCard" class="product-btn btn-basketball" data-claim="basketball">Obtenez-le gratuitement →</a>
+                    <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs">Pour les clubs — 499 $ CA</a>
                     
@@ -1458,7 +1469,8 @@
                         <span class="feature-tag">Pointage</span>
                         <span class="feature-tag">Analyses</span>
                     </div>
-                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Essai gratuit, sans inscription</a>
+                    <a href="?sport=volleyball&amp;src=card-volleyball#freeCard" class="product-btn btn-volleyball" data-claim="volleyball">Obtenez-le gratuitement →</a>
+                    <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="product-btn btn-volleyball-clubs">Pour les clubs — 499 $ CA</a>
                     
@@ -1481,7 +1493,8 @@
                         <span class="feature-tag">Effectif</span>
                         <span class="feature-tag">Vidéo</span>
                     </div>
-                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Essai gratuit, sans inscription</a>
+                    <a href="?sport=lacrosse&amp;src=card-lacrosse#freeCard" class="product-btn btn-lacrosse" data-claim="lacrosse">Obtenez-le gratuitement →</a>
+                    <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="product-btn btn-lacrosse-clubs">Pour les clubs — 499 $ CA</a>
                     
@@ -1507,7 +1520,8 @@
                         <span class="feature-tag">Match en direct</span>
                         <span class="feature-tag">Clavardage d’équipe</span>
                     </div>
-                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Essai gratuit, sans inscription</a>
+                    <a href="?sport=football&amp;src=card-football#freeCard" class="product-btn btn-football" data-claim="football">Obtenez-le gratuitement →</a>
+                    <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs">Pour les clubs — 499 $ CA</a>
                     
@@ -1531,7 +1545,8 @@
                         <span class="feature-tag">Effectif</span>
                         <span class="feature-tag">Vidéo</span>
                     </div>
-                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Essai gratuit, sans inscription</a>
+                    <a href="?sport=baseball&amp;src=card-baseball#freeCard" class="product-btn btn-baseball" data-claim="baseball">Obtenez-le gratuitement →</a>
+                    <a href="/baseball-demo" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="product-btn btn-baseball-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -1554,7 +1569,8 @@
                         <span class="feature-tag">% de lancers</span>
                         <span class="feature-tag">Vidéo</span>
                     </div>
-                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Essai gratuit, sans inscription</a>
+                    <a href="?sport=curling&amp;src=card-curling#freeCard" class="product-btn btn-curling" data-claim="curling">Obtenez-le gratuitement →</a>
+                    <a href="/curling-demo" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="product-btn btn-curling-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -1578,7 +1594,8 @@
                         <span class="feature-tag">Vidéo</span>
                         <span class="feature-tag">Clavardage d’équipe</span>
                     </div>
-                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Essai gratuit, sans inscription</a>
+                    <a href="?sport=hockey&amp;src=card-hockey#freeCard" class="product-btn btn-hockey" data-claim="hockey">Obtenez-le gratuitement →</a>
+                    <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/eVq00c3fM5Fw626dbL1RC0e" target="_blank" rel="noopener" class="product-btn btn-hockey-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/aFa00c5nUec276ab3D1RC0f" target="_blank" rel="noopener" class="product-btn btn-hockey-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -1602,7 +1619,8 @@
                         <span class="feature-tag">Vidéo</span>
                         <span class="feature-tag">Clavardage d’équipe</span>
                     </div>
-                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Essai gratuit, sans inscription</a>
+                    <a href="?sport=cricket&amp;src=card-cricket#freeCard" class="product-btn btn-cricket" data-claim="cricket">Obtenez-le gratuitement →</a>
+                    <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/14A00ceYu4Bsduy8Vv1RC0g" target="_blank" rel="noopener" class="product-btn btn-cricket-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/5kQaEQ6rYaZQgGK5Jj1RC0h" target="_blank" rel="noopener" class="product-btn btn-cricket-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -1626,7 +1644,8 @@
                         <span class="feature-tag">Vidéo</span>
                         <span class="feature-tag">Clavardage d’équipe</span>
                     </div>
-                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Essai gratuit, sans inscription</a>
+                    <a href="?sport=soccer&amp;src=card-soccer#freeCard" class="product-btn btn-soccer" data-claim="soccer">Obtenez-le gratuitement →</a>
+                    <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/5kQ00c03Ac3U0HMdbL1RC0i" target="_blank" rel="noopener" class="product-btn btn-soccer-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/7sY6oA8A60lc1LQ0oZ1RC0j" target="_blank" rel="noopener" class="product-btn btn-soccer-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -1650,7 +1669,8 @@
                         <span class="feature-tag">Vidéo</span>
                         <span class="feature-tag">Clavardage d’équipe</span>
                     </div>
-                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Essai gratuit, sans inscription</a>
+                    <a href="?sport=rugby&amp;src=card-rugby#freeCard" class="product-btn btn-rugby" data-claim="rugby">Obtenez-le gratuitement →</a>
+                    <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">ou explorez la démo d'abord</a>
                     <a href="https://buy.stripe.com/3cIbIUcQm5Fw6262x71RC0k" target="_blank" rel="noopener" class="product-btn btn-rugby-buy">À vous pour 49,99 $ CA</a>
                     <a href="https://buy.stripe.com/aFadR2aIe0lc76a7Rr1RC0l" target="_blank" rel="noopener" class="product-btn btn-rugby-clubs">Pour les clubs — 499 $ CA</a>
                 </div>
@@ -2255,13 +2275,19 @@
         /* Free launch offer: countdown, live spots, registration (/api/register). */
         (function () {
             var ENDS_AT = Date.parse('2026-12-01T04:59:59Z'); // Nov 30, 2026 11:59:59 pm ET
-            var CAP = 100;
+            var CAP = 1000;
             var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
             var APPS = {
                 basketball: { icon: '🏀', name: 'Basketball Notepad', url: 'https://basketball-notepad-do-not-erase-1.vercel.app/' },
                 volleyball: { icon: '🏐', name: 'Volleyball Notepad', url: 'https://volleyball-notepad-exclusive1sole.vercel.app/' },
                 football:   { icon: '🏈', name: 'Football Notepad',   url: 'https://football-notepad.vercel.app/' },
-                lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' }
+                lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' },
+                baseball: { icon: '⚾', name: 'Baseball Notepad', url: 'https://baseball-notepad.vercel.app/' },
+                curling: { icon: '🥌', name: 'Curling Notepad', url: 'https://curling-notepad.vercel.app/' },
+                hockey: { icon: '🏒', name: 'Hockey Notepad', url: 'https://hockey-notepad.vercel.app/' },
+                cricket: { icon: '🏏', name: 'Cricket Notepad', url: 'https://cricket-notepad.vercel.app/' },
+                soccer: { icon: '⚽', name: 'Soccer Notepad', url: 'https://soccer-notepad.vercel.app/' },
+                rugby: { icon: '🏉', name: 'Rugby Notepad', url: 'https://rugby-notepad.vercel.app/' }
             };
             var $ = function (id) { return document.getElementById(id); };
             /* Sign-up source: ?src=club-oakville (or utm_source), else the referring site. */
@@ -2282,6 +2308,28 @@
             })();
             var form = $('freeForm');
             if (!form) return;
+            // QR deep link: ?sport=basketball preselects the sport and jumps straight to the form.
+            var wanted = (new URLSearchParams(location.search).get('sport') || '').toLowerCase();
+            var preset = APPS[wanted] && form.querySelector('input[name="sport"][value="' + wanted + '"]');
+            if (preset) {
+            preset.checked = true;
+            window.addEventListener('load', function () { $('freeCard').scrollIntoView({ behavior: 'instant', block: 'start' }); });
+            }
+
+            /* Product cards: "Claim it free" picks that sport in the form and jumps to it. */
+            document.querySelectorAll('[data-claim]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+            var s = a.getAttribute('data-claim');
+            var r = document.querySelector('#freeForm input[name="sport"][value="' + s + '"]');
+            var card = document.getElementById('freeCard');
+            if (!r || !card) return; // no form here: follow the link
+            e.preventDefault();
+            r.checked = true;
+            if (typeof signupSource !== 'undefined' && !signupSource.source) signupSource.source = 'card-' + s;
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+            });
+
             var pad = function (n) { return (n < 10 ? '0' : '') + n; };
 
             function closeOffer(title, msg) {
@@ -2322,7 +2370,7 @@
                 $('spotsClaimed').textContent = st.claimed + ' réclamées';
                 $('spotsFill').style.width = Math.min(100, (st.claimed / (st.cap || CAP)) * 100) + '%';
                 if (!st.open && $('freeDone').hidden) {
-                    closeOffer(st.spotsLeft <= 0 ? 'Les 100 places gratuites ont été réclamées' : 'Cette offre est terminée', null);
+                    closeOffer(st.spotsLeft <= 0 ? 'Les 1000 places gratuites ont été réclamées' : 'Cette offre est terminée', null);
                 }
             }
             fetch('/api/register', { cache: 'no-store' })
@@ -2393,7 +2441,7 @@
                         showDone(sp, APPS[sp].url, !!res.body.already);
                         if (typeof res.body.spotsLeft === 'number') showSpots(res.body);
                     } else if (res.status === 410) {
-                        closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'Les 100 places gratuites ont été réclamées' : 'Cette offre est terminée', null);
+                        closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'Les 1000 places gratuites ont été réclamées' : 'Cette offre est terminée', null);
                     } else if (res.status === 400) {
                         err(res.body.error || 'Veuillez vérifier vos renseignements.');
                     } else if (res.status === 501) {

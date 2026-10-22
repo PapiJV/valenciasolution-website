@@ -10,13 +10,19 @@
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
 const OFFER_ENDS_AT = "2026-12-01T04:59:59Z"; // Nov 30, 2026 11:59:59 pm Toronto (EST)
-const OFFER_CAP = 100;
+const OFFER_CAP = 1000;
 
 const APPS = {
   basketball: { name: "Basketball Notepad", url: "https://basketball-notepad-do-not-erase-1.vercel.app/" },
   volleyball: { name: "Volleyball Notepad", url: "https://volleyball-notepad-exclusive1sole.vercel.app/" },
   football: { name: "Football Notepad", url: "https://football-notepad.vercel.app/" },
   lacrosse: { name: "Lacrosse Notepad", url: "https://lacrosse-notepad.vercel.app/" },
+  baseball: { name: "Baseball Notepad", url: "https://baseball-notepad.vercel.app/" },
+  curling: { name: "Curling Notepad", url: "https://curling-notepad.vercel.app/" },
+  hockey: { name: "Hockey Notepad", url: "https://hockey-notepad.vercel.app/" },
+  cricket: { name: "Cricket Notepad", url: "https://cricket-notepad.vercel.app/" },
+  soccer: { name: "Soccer Notepad", url: "https://soccer-notepad.vercel.app/" },
+  rugby: { name: "Rugby Notepad", url: "https://rugby-notepad.vercel.app/" },
 };
 
 const EMAILS_KEY = "site:signups:emails";

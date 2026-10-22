@@ -969,7 +969,7 @@ radial-gradient(80% 120% at 100% 100%, rgba(255,107,53,0.12) 0%, rgba(255,107,53
 @media (max-width: 600px) { .free-card { padding: 22px 18px; } }
 .free-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; }
 .free-card .sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 22px; }
-.sport-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sport-pick { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
 @media (max-width: 480px) { .sport-pick { grid-template-columns: repeat(2, 1fr); } }
 .sport-opt { position: relative; }
 .sport-opt input { position: absolute; opacity: 0; pointer-events: none; }
@@ -1315,6 +1315,10 @@ transition: color 0.2s, background 0.2s;
 @media (max-width: 860px) { .charts { grid-template-columns: 1fr; gap: 28px; padding-top: 50px; } }
 .wn-list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 </style>
+<style>
+.product-demo-link { display: block; text-align: center; margin: 8px 0 4px; font-size: 0.85rem; color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
+.product-demo-link:hover { color: var(--text); }
+</style>
 </head>
 <body>
 <nav>
@@ -1338,10 +1342,10 @@ transition: color 0.2s, background 0.2s;
 <!-- Section 1: Hero -->
 <section class="hero" id="hero">
 <div class="hero-content">
-<a class="hero-offer" href="#free">🎁 Limited time: get a Notepad free. First 100 coaches →</a><br>
+<a class="hero-offer" href="#free">🎁 Limited time: get a Notepad free. First 1,000 coaches →</a><br>
 <div class="hero-badge">Coach's Toolkit</div>
 <h1>Point your camera. <span>Know every player.</span></h1>
-<p>Your Notepad reads jersey numbers on the fly, puts names on screen while you record, and pulls up each player's stats with a tap. Practice plans, live stats and season numbers in the same app, built for the sideline. <strong>Free for the first 100 coaches — yours to keep, forever.</strong></p>
+<p>Your Notepad reads jersey numbers on the fly, puts names on screen while you record, and pulls up each player's stats with a tap. Practice plans, live stats and season numbers in the same app, built for the sideline. <strong>Free for the first 1,000 coaches — yours to keep, forever.</strong></p>
 <div class="hero-buttons">
 <a href="#free" class="btn btn-primary">Claim your free Notepad →</a>
 <a href="#products" class="btn btn-secondary">Find your sport</a>
@@ -1377,13 +1381,13 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 </section>
 <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse) -->
 
-<!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 100 sign-ups (enforced by /api/register) -->
+<!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 1,000 sign-ups (enforced by /api/register) -->
 <section class="free" id="free">
 <div class="free-inner">
 <div>
 <div class="free-tag">Limited-time launch offer</div>
 <h2>Get a Notepad <s>CA$49.99</s> <em>free.</em><br>Keep it forever.</h2>
-<p class="free-lead">We're putting Notepads in the hands of the first 100 coaches. Register, pick your sport, and start using the full app today. No card, no trial clock, no catch.</p>
+<p class="free-lead">We're putting Notepads in the hands of the first 1,000 coaches. Register, pick your sport, and start using the full app today. No card, no trial clock, no catch.</p>
 <div class="countdown" id="countdown" aria-label="Time left in offer">
 <div class="cd-box"><span class="cd-num" id="cdD">--</span><span class="cd-lbl">Days</span></div>
 <div class="cd-box"><span class="cd-num" id="cdH">--</span><span class="cd-lbl">Hrs</span></div>
@@ -1391,7 +1395,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <div class="cd-box"><span class="cd-num" id="cdS">--</span><span class="cd-lbl">Sec</span></div>
 </div>
 <div class="spots" id="spots" hidden>
-<div class="spots-row"><span><strong id="spotsLeft">–</strong> of 100 free spots left</span><span id="spotsClaimed"></span></div>
+<div class="spots-row"><span><strong id="spotsLeft">–</strong> of 1,000 free spots left</span><span id="spotsClaimed"></span></div>
 <div class="spots-bar"><div class="spots-fill" id="spotsFill"></div></div>
 </div>
 <ul class="free-perks">
@@ -1411,6 +1415,12 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <label class="sport-opt"><input type="radio" name="sport" value="volleyball"><span><b>🏐</b>Volleyball</span></label>
 <label class="sport-opt"><input type="radio" name="sport" value="football"><span><b>🏈</b>Football</span></label>
 <label class="sport-opt"><input type="radio" name="sport" value="lacrosse"><span><b>🥍</b>Lacrosse</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="baseball"><span><b>⚾</b>Baseball</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="curling"><span><b>🥌</b>Curling</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="hockey"><span><b>🏒</b>Hockey</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="cricket"><span><b>🏏</b>Cricket</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="soccer"><span><b>⚽</b>Soccer</span></label>
+<label class="sport-opt"><input type="radio" name="sport" value="rugby"><span><b>🏉</b>Rugby</span></label>
 </div>
 </div>
 <div class="form-row">
@@ -1444,7 +1454,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 </label>
 <p class="form-msg" id="freeErr" role="alert"></p>
 <button type="submit" class="btn btn-primary" id="freeBtn">Claim my free Notepad 🎁</button>
-<p class="free-fine">One free Notepad (individual licence) per coach. Offer ends Nov 30, 2026 at 11:59 pm ET or when 100 coaches have registered, whichever comes first. See the <a href="/terms#free-offer">offer terms</a> and our <a href="/privacy">Privacy Policy</a>.</p>
+<p class="free-fine">One free Notepad (individual licence) per coach. Offer ends Nov 30, 2026 at 11:59 pm ET or when 1,000 coaches have registered, whichever comes first. See the <a href="/terms#free-offer">offer terms</a> and our <a href="/privacy">Privacy Policy</a>.</p>
 </form>
 <div class="free-done" id="freeDone" hidden>
 <div class="big" id="freeDoneIcon">🏀</div>
@@ -1591,7 +1601,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Lineups</span>
 <span class="feature-tag">Milestones</span>
 </div>
-<a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-btn btn-basketball">Try it free, no sign-up</a>
+<a href="?sport=basketball&amp;src=card-basketball#freeCard" class="product-btn btn-basketball" data-claim="basketball">Claim it free →</a>
+<a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs">For Clubs — CA$499</a>
 </div>
@@ -1614,7 +1625,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Scoring</span>
 <span class="feature-tag">Analytics</span>
 </div>
-<a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-volleyball">Try it free, no sign-up</a>
+<a href="?sport=volleyball&amp;src=card-volleyball#freeCard" class="product-btn btn-volleyball" data-claim="volleyball">Claim it free →</a>
+<a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="product-btn btn-volleyball-clubs">For Clubs — CA$499</a>
 </div>
@@ -1636,7 +1648,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Roster</span>
 <span class="feature-tag">Video</span>
 </div>
-<a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-lacrosse">Try it free, no sign-up</a>
+<a href="?sport=lacrosse&amp;src=card-lacrosse#freeCard" class="product-btn btn-lacrosse" data-claim="lacrosse">Claim it free →</a>
+<a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="product-btn btn-lacrosse-clubs">For Clubs — CA$499</a>
 </div>
@@ -1661,7 +1674,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Live Game</span>
 <span class="feature-tag">Team Chat</span>
 </div>
-<a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-football">Try it free, no sign-up</a>
+<a href="?sport=football&amp;src=card-football#freeCard" class="product-btn btn-football" data-claim="football">Claim it free →</a>
+<a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs">For Clubs — CA$499</a>
 </div>
@@ -1684,7 +1698,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Roster</span>
 <span class="feature-tag">Video</span>
 </div>
-<a href="/baseball-demo" target="_blank" rel="noopener" class="product-btn btn-baseball">Try it free, no sign-up</a>
+<a href="?sport=baseball&amp;src=card-baseball#freeCard" class="product-btn btn-baseball" data-claim="baseball">Claim it free →</a>
+<a href="/baseball-demo" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="product-btn btn-baseball-clubs">For Clubs — CA$499</a>
 </div>
@@ -1707,7 +1722,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Shot %</span>
 <span class="feature-tag">Video</span>
 </div>
-<a href="/curling-demo" target="_blank" rel="noopener" class="product-btn btn-curling">Try it free, no sign-up</a>
+<a href="?sport=curling&amp;src=card-curling#freeCard" class="product-btn btn-curling" data-claim="curling">Claim it free →</a>
+<a href="/curling-demo" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="product-btn btn-curling-clubs">For Clubs — CA$499</a>
 </div>
@@ -1731,7 +1747,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Video</span>
 <span class="feature-tag">Team Chat</span>
 </div>
-<a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-hockey">Try it free, no sign-up</a>
+<a href="?sport=hockey&amp;src=card-hockey#freeCard" class="product-btn btn-hockey" data-claim="hockey">Claim it free →</a>
+<a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/eVq00c3fM5Fw626dbL1RC0e" target="_blank" rel="noopener" class="product-btn btn-hockey-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/aFa00c5nUec276ab3D1RC0f" target="_blank" rel="noopener" class="product-btn btn-hockey-clubs">For Clubs — CA$499</a>
 </div>
@@ -1755,7 +1772,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Video</span>
 <span class="feature-tag">Team Chat</span>
 </div>
-<a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-cricket">Try it free, no sign-up</a>
+<a href="?sport=cricket&amp;src=card-cricket#freeCard" class="product-btn btn-cricket" data-claim="cricket">Claim it free →</a>
+<a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/14A00ceYu4Bsduy8Vv1RC0g" target="_blank" rel="noopener" class="product-btn btn-cricket-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/5kQaEQ6rYaZQgGK5Jj1RC0h" target="_blank" rel="noopener" class="product-btn btn-cricket-clubs">For Clubs — CA$499</a>
 </div>
@@ -1779,7 +1797,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Video</span>
 <span class="feature-tag">Team Chat</span>
 </div>
-<a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-soccer">Try it free, no sign-up</a>
+<a href="?sport=soccer&amp;src=card-soccer#freeCard" class="product-btn btn-soccer" data-claim="soccer">Claim it free →</a>
+<a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/5kQ00c03Ac3U0HMdbL1RC0i" target="_blank" rel="noopener" class="product-btn btn-soccer-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/7sY6oA8A60lc1LQ0oZ1RC0j" target="_blank" rel="noopener" class="product-btn btn-soccer-clubs">For Clubs — CA$499</a>
 </div>
@@ -1803,7 +1822,8 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <span class="feature-tag">Video</span>
 <span class="feature-tag">Team Chat</span>
 </div>
-<a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-btn btn-rugby">Try it free, no sign-up</a>
+<a href="?sport=rugby&amp;src=card-rugby#freeCard" class="product-btn btn-rugby" data-claim="rugby">Claim it free →</a>
+<a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link">or look around the demo first</a>
 <a href="https://buy.stripe.com/3cIbIUcQm5Fw6262x71RC0k" target="_blank" rel="noopener" class="product-btn btn-rugby-buy">Own it — CA$49.99</a>
 <a href="https://buy.stripe.com/aFadR2aIe0lc76a7Rr1RC0l" target="_blank" rel="noopener" class="product-btn btn-rugby-clubs">For Clubs — CA$499</a>
 </div>
@@ -2394,13 +2414,19 @@ body: JSON.stringify(data)
 /* Free launch offer: countdown, live spots, registration (/api/register). */
 (function () {
 var ENDS_AT = Date.parse('2026-12-01T04:59:59Z'); // Nov 30, 2026 11:59:59 pm ET
-var CAP = 100;
+var CAP = 1000;
 var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
 var APPS = {
 basketball: { icon: '🏀', name: 'Basketball Notepad', url: 'https://basketball-notepad-do-not-erase-1.vercel.app/' },
 volleyball: { icon: '🏐', name: 'Volleyball Notepad', url: 'https://volleyball-notepad-exclusive1sole.vercel.app/' },
 football:   { icon: '🏈', name: 'Football Notepad',   url: 'https://football-notepad.vercel.app/' },
-lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' }
+lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' },
+baseball: { icon: '⚾', name: 'Baseball Notepad', url: 'https://baseball-notepad.vercel.app/' },
+curling: { icon: '🥌', name: 'Curling Notepad', url: 'https://curling-notepad.vercel.app/' },
+hockey: { icon: '🏒', name: 'Hockey Notepad', url: 'https://hockey-notepad.vercel.app/' },
+cricket: { icon: '🏏', name: 'Cricket Notepad', url: 'https://cricket-notepad.vercel.app/' },
+soccer: { icon: '⚽', name: 'Soccer Notepad', url: 'https://soccer-notepad.vercel.app/' },
+rugby: { icon: '🏉', name: 'Rugby Notepad', url: 'https://rugby-notepad.vercel.app/' }
 };
 var $ = function (id) { return document.getElementById(id); };
 /* Sign-up source: ?src=club-oakville (or utm_source), else the referring site. */
@@ -2421,6 +2447,20 @@ return { source: src, referrer: ref };
 })();
 var form = $('freeForm');
 if (!form) return;
+/* Product cards: "Claim it free" picks that sport in the form and jumps to it. */
+document.querySelectorAll('[data-claim]').forEach(function (a) {
+a.addEventListener('click', function (e) {
+var s = a.getAttribute('data-claim');
+var r = document.querySelector('#freeForm input[name="sport"][value="' + s + '"]');
+var card = document.getElementById('freeCard');
+if (!r || !card) return; // no form here: follow the link
+e.preventDefault();
+r.checked = true;
+if (typeof signupSource !== 'undefined' && !signupSource.source) signupSource.source = 'card-' + s;
+card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+});
+
 var pad = function (n) { return (n < 10 ? '0' : '') + n; };
 // QR deep link: ?sport=basketball preselects the sport and jumps straight to the form.
 var wanted = (new URLSearchParams(location.search).get('sport') || '').toLowerCase();
@@ -2465,7 +2505,7 @@ $('spotsLeft').textContent = st.spotsLeft;
 $('spotsClaimed').textContent = st.claimed + ' claimed';
 $('spotsFill').style.width = Math.min(100, (st.claimed / (st.cap || CAP)) * 100) + '%';
 if (!st.open && $('freeDone').hidden) {
-closeOffer(st.spotsLeft <= 0 ? 'All 100 free spots are claimed' : 'This offer has ended', null);
+closeOffer(st.spotsLeft <= 0 ? 'All 1,000 free spots are claimed' : 'This offer has ended', null);
 }
 }
 fetch('/api/register', { cache: 'no-store' })
@@ -2533,7 +2573,7 @@ var sp = APPS[res.body.sport] ? res.body.sport : data.sport;
 showDone(sp, APPS[sp].url, !!res.body.already);
 if (typeof res.body.spotsLeft === 'number') showSpots(res.body);
 } else if (res.status === 410) {
-closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'All 100 free spots are claimed' : 'This offer has ended', null);
+closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'All 1,000 free spots are claimed' : 'This offer has ended', null);
 } else if (res.status === 400) {
 err(res.body.error || 'Please check your details.');
 } else if (res.status === 501) {
