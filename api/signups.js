@@ -73,7 +73,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const cols = ["at", "spotNumber", "sport", "name", "email", "role", "club", "city", "marketingOptIn"];
+  const cols = ["at", "spotNumber", "sport", "name", "email", "role", "club", "city", "marketingOptIn", "source", "referrer"];
   if (format === "csv") {
     const csv = [cols.join(",")]
       .concat(list.map((r) => cols.map((c) => csvCell(r[c])).join(",")))
@@ -86,6 +86,8 @@ export default async function handler(req, res) {
 
   const bySport = list.reduce((m, r) => ((m[r.sport] = (m[r.sport] || 0) + 1), m), {});
   const optIns = list.filter((r) => r.marketingOptIn).length;
+  const sourceOf = (r) => r.source || (r.referrer ? `via ${r.referrer}` : "direct / unknown");
+  const bySource = list.reduce((m, r) => ((m[sourceOf(r)] = (m[sourceOf(r)] || 0) + 1), m), {});
   const trs = list.map((r) => `<tr>
     <td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td>
     <td>#${esc(r.spotNumber)}</td>
@@ -94,6 +96,7 @@ export default async function handler(req, res) {
     <td>${esc(r.club)}${r.city ? `<br><span class="muted">${esc(r.city)}</span>` : ""}</td>
     <td><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
     <td>${r.marketingOptIn ? "✅ Yes" : "No"}</td>
+    <td>${esc(sourceOf(r))}</td>
   </tr>`).join("\n");
   const keyQ = encodeURIComponent(String(req.query.key));
 
@@ -117,9 +120,13 @@ export default async function handler(req, res) {
   ${["basketball", "volleyball", "football", "lacrosse"].map((s) => `<div class="stat"><b>${bySport[s] || 0}</b>${s}</div>`).join("")}
   <div class="stat"><b>${optIns}</b>email opt-ins</div>
 </div>
+<div class="muted">Where they came from</div>
+<div class="stats">
+  ${Object.entries(bySource).sort((a, b) => b[1] - a[1]).map(([s, n]) => `<div class="stat"><b>${n}</b>${esc(s)}</div>`).join("")}
+</div>
 <p><a class="btn" href="/api/signups?key=${keyQ}&format=csv">Download CSV</a></p>
 ${list.length ? `<table>
-  <tr><th>When</th><th>Spot</th><th>Sport</th><th>Coach</th><th>Club</th><th>Email</th><th>Email opt-in</th></tr>
+  <tr><th>When</th><th>Spot</th><th>Sport</th><th>Coach</th><th>Club</th><th>Email</th><th>Email opt-in</th><th>Source</th></tr>
   ${trs}
 </table>` : "<p>No sign-ups yet.</p>"}`);
 }

@@ -103,6 +103,9 @@ export default async function handler(req, res) {
   const club = clean(body.club, 100);
   const city = clean(body.city, 80);
   const marketingOptIn = body.marketingOptIn === true;
+  // Where they came from: ?src= on the link, else the referring site.
+  const source = clean(body.source, 40).toLowerCase().replace(/[^a-z0-9._-]/g, "");
+  const referrer = clean(body.referrer, 100).toLowerCase();
 
   if (!APPS[sport] || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     res.status(400).json({ error: "Please pick a sport and enter your name and a valid email." });
@@ -145,6 +148,8 @@ export default async function handler(req, res) {
       at: new Date().toISOString(),
       sport, name, email, role, club, city,
       marketingOptIn,
+      source,
+      referrer,
       consentText: marketingOptIn
         ? "Yes, email me Notepad updates, tips and offers from ValenciaSolution. I can unsubscribe any time."
         : "",

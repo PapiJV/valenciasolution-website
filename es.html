@@ -2264,6 +2264,22 @@
                 lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' }
             };
             var $ = function (id) { return document.getElementById(id); };
+            /* Sign-up source: ?src=club-oakville (or utm_source), else the referring site. */
+            var signupSource = (function () {
+            var KEY = 'vs-signup-src';
+            var clean = function (v) { return String(v || '').toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 40); };
+            var q = new URLSearchParams(location.search);
+            var src = clean(q.get('src') || q.get('utm_source'));
+            var camp = clean(q.get('utm_campaign'));
+            if (camp && src) src = (src + '.' + camp).slice(0, 40);
+            try {
+            if (src) sessionStorage.setItem(KEY, src);
+            else src = sessionStorage.getItem(KEY) || '';
+            } catch (e) { /* storage blocked: keep this page's value */ }
+            var ref = '';
+            try { if (document.referrer) { var h = new URL(document.referrer).hostname.replace(/^www\./, ''); if (h !== location.hostname.replace(/^www\./, '')) ref = h; } } catch (e) {}
+            return { source: src, referrer: ref };
+            })();
             var form = $('freeForm');
             if (!form) return;
             var pad = function (n) { return (n < 10 ? '0' : '') + n; };
@@ -2351,7 +2367,9 @@
                     club: form.elements.club.value.trim(),
                     city: form.elements.city.value.trim(),
                     website: form.elements.website.value,
-                    marketingOptIn: $('frOptIn').checked
+                    marketingOptIn: $('frOptIn').checked,
+                    source: signupSource.source,
+                    referrer: signupSource.referrer
                 };
                 if (!data.sport) return err('Primero elige tu deporte.', form.querySelector('input[name="sport"]'));
                 if (!data.name) return err('Por favor ingresa tu nombre.', $('frName'));
