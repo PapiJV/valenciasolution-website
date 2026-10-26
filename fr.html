@@ -1115,6 +1115,8 @@
 .ch-courts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .ch-court { margin: 0; }
 .ch-rink { grid-column: 1 / -1; }
+.ch-puck { display:inline-block; width:14px; height:9px; border-radius:50%; background:#111; box-shadow:0 0 0 3px #EEF6FB; vertical-align:middle; margin:0 6px 0 4px; }
+.ch-puck-miss { background:#C8102E; }
 .ch-court svg { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,0.45); }
 .ch-court figcaption { margin-top: 8px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
 .ch-miss { filter: grayscale(1) brightness(0.22); }
@@ -1435,9 +1437,9 @@
 </g>
 <g fill="#C8102E"><circle cx="160" cy="145" r="6"/><circle cx="440" cy="145" r="6"/><circle cx="205" cy="270" r="6"/><circle cx="395" cy="270" r="6"/></g>
 <g fill="#111"><ellipse cx="300" cy="110" rx="12" ry="8"/><ellipse cx="260" cy="150" rx="12" ry="8"/><ellipse cx="350" cy="175" rx="12" ry="8"/><ellipse cx="420" cy="95" rx="12" ry="8"/></g>
-<g fill="none" stroke="#111" stroke-width="3"><ellipse cx="130" cy="210" rx="11" ry="7"/><ellipse cx="300" cy="250" rx="11" ry="7"/><ellipse cx="480" cy="230" rx="11" ry="7"/><ellipse cx="200" cy="95" rx="11" ry="7"/><ellipse cx="395" cy="140" rx="11" ry="7"/><ellipse cx="90" cy="290" rx="11" ry="7"/></g>
+<g fill="#C8102E" stroke="#7A0A1C" stroke-width="1.5"><ellipse cx="130" cy="210" rx="12" ry="8"/><ellipse cx="300" cy="250" rx="12" ry="8"/><ellipse cx="480" cy="230" rx="12" ry="8"/><ellipse cx="200" cy="95" rx="12" ry="8"/><ellipse cx="395" cy="140" rx="12" ry="8"/><ellipse cx="90" cy="290" rx="12" ry="8"/></g>
 </svg>
-<figcaption>● but · ○ raté</figcaption>
+<figcaption><span class="ch-puck"></span> but · <span class="ch-puck ch-puck-miss"></span> raté</figcaption>
 </figure>
 </div>
 </section>
