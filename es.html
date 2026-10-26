@@ -1114,6 +1114,7 @@
 .charts .ch-cta:hover { filter: brightness(1.08); }
 .ch-courts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .ch-court { margin: 0; }
+.ch-rink { grid-column: 1 / -1; }
 .ch-court svg { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,0.45); }
 .ch-court figcaption { margin-top: 8px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
 .ch-miss { filter: grayscale(1) brightness(0.22); }
@@ -1368,7 +1369,7 @@
         </div>
     </section>
 
-<!-- Shot & attack charts (Basketball Shot Chart, Volleyball Attack & Serve Chart) -->
+<!-- Shot & attack charts (Basketball Shot Chart, Volleyball Attack & Serve Chart, Hockey Shot Chart) -->
 <section class="charts" id="charts">
 <div>
 <span class="ch-eyebrow">Nuevo: mapas de tiro y de ataque</span>
@@ -1377,6 +1378,7 @@
 <ul class="ch-list">
 <li><span>🏀</span><span><strong>Mapa de tiros de básquetbol</strong> — media cancha NBA. Dobles y triples se cuentan según dónde toques.</span></li>
 <li><span>🏐</span><span><strong>Mapa de ataques y saques de vóleibol</strong> — kills, aces, errores y balones en juego, dentro o fuera.</span></li>
+<li><span>🏒</span><span><strong>Mapa de tiros de hockey</strong> — la zona de ataque. Toca dónde fue el tiro y luego Gol o Fallado.</span></li>
 <li><span>📷</span><span><strong>En la ficha del escáner</strong> — este partido o toda la temporada, con un toque.</span></li>
 </ul>
 <a class="ch-cta" href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener">Pruébalo en la demo →</a>
@@ -1418,6 +1420,24 @@
 </g>
 </svg>
 <figcaption>🏐 kill/ace · <span class="ch-dot">🏐</span> error · tenue = en juego</figcaption>
+</figure>
+<figure class="ch-court ch-rink">
+<svg viewBox="0 0 600 340" role="img">
+<rect width="600" height="340" fill="#1C2A36"/>
+<path d="M20 340 V95 A85 85 0 0 1 105 10 H495 A85 85 0 0 1 580 95 V340 Z" fill="#EEF6FB" stroke="#9FB3C2" stroke-width="5"/>
+<g fill="none">
+<line x1="24" y1="55" x2="576" y2="55" stroke="#C8102E" stroke-width="3"/>
+<path d="M270 55 A30 30 0 0 0 330 55 Z" fill="#9CCFEF" stroke="#C8102E" stroke-width="2"/>
+<rect x="282" y="40" width="36" height="15" fill="#fff" stroke="#C8102E" stroke-width="3"/>
+<circle cx="160" cy="145" r="55" stroke="#C8102E" stroke-width="3"/>
+<circle cx="440" cy="145" r="55" stroke="#C8102E" stroke-width="3"/>
+<line x1="22" y1="318" x2="578" y2="318" stroke="#0033A0" stroke-width="12"/>
+</g>
+<g fill="#C8102E"><circle cx="160" cy="145" r="6"/><circle cx="440" cy="145" r="6"/><circle cx="205" cy="270" r="6"/><circle cx="395" cy="270" r="6"/></g>
+<g fill="#111"><ellipse cx="300" cy="110" rx="12" ry="8"/><ellipse cx="260" cy="150" rx="12" ry="8"/><ellipse cx="350" cy="175" rx="12" ry="8"/><ellipse cx="420" cy="95" rx="12" ry="8"/></g>
+<g fill="none" stroke="#111" stroke-width="3"><ellipse cx="130" cy="210" rx="11" ry="7"/><ellipse cx="300" cy="250" rx="11" ry="7"/><ellipse cx="480" cy="230" rx="11" ry="7"/><ellipse cx="200" cy="95" rx="11" ry="7"/><ellipse cx="395" cy="140" rx="11" ry="7"/><ellipse cx="90" cy="290" rx="11" ry="7"/></g>
+</svg>
+<figcaption>● gol · ○ fallado</figcaption>
 </figure>
 </div>
 </section>
