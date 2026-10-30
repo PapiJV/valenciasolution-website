@@ -1,8 +1,11 @@
 // Private admin view of free-offer sign-ups (from /api/register).
-//   GET /api/signups?key=KEY               -> HTML table
-//   GET /api/signups?key=KEY&format=csv    -> CSV download
-//   GET /api/signups?key=KEY&format=json   -> JSON
+//   GET /api/signups               -> HTML table
+//   GET /api/signups?format=csv    -> CSV download
+//   GET /api/signups?format=json   -> JSON
 // Gated by REVIEWS_ADMIN_KEY (same key as /api/reviews). Fails closed.
+// Sign in at /api/admin, or send "Authorization: Bearer <key>" from scripts.
+
+import { isAdmin } from "./_lib/security.js";
 
 function creds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -45,8 +48,10 @@ export default async function handler(req, res) {
     res.status(501).json({ error: "REVIEWS_ADMIN_KEY is not set." });
     return;
   }
-  if (String(req.query.key || "") !== adminKey) {
-    res.status(401).json({ error: "Unauthorized." });
+  if (!isAdmin(req, adminKey)) {
+    const f = String(req.query.format || "");
+    if (f === "json" || f === "csv") res.status(401).json({ error: "Unauthorized." });
+    else res.redirect(303, "/api/admin?next=/api/signups");
     return;
   }
 
@@ -98,7 +103,6 @@ export default async function handler(req, res) {
     <td>${r.marketingOptIn ? "✅ Yes" : "No"}</td>
     <td>${esc(sourceOf(r))}</td>
   </tr>`).join("\n");
-  const keyQ = encodeURIComponent(String(req.query.key));
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
@@ -124,7 +128,8 @@ export default async function handler(req, res) {
 <div class="stats">
   ${Object.entries(bySource).sort((a, b) => b[1] - a[1]).map(([s, n]) => `<div class="stat"><b>${n}</b>${esc(s)}</div>`).join("")}
 </div>
-<p><a class="btn" href="/api/signups?key=${keyQ}&format=csv">Download CSV</a></p>
+<p><a class="btn" href="/api/signups?format=csv">Download CSV</a></p>
+<form method="post" action="/api/admin"><input type="hidden" name="logout" value="1"><input type="hidden" name="next" value="/api/signups"><button>Sign out</button></form>
 ${list.length ? `<table>
   <tr><th>When</th><th>Spot</th><th>Sport</th><th>Coach</th><th>Club</th><th>Email</th><th>Email opt-in</th><th>Source</th></tr>
   ${trs}

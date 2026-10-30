@@ -7,6 +7,8 @@
 // Upstash integration) or UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN.
 // If neither is set the route answers 501 and the form falls back to email.
 
+import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
+
 const MAX_REVIEWS = 500;
 
 function creds() {
@@ -31,6 +33,17 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+
+  if (!sameOrigin(req)) {
+    res.status(403).json({ error: "Forbidden." });
+    return;
+  }
+  // 5 per hour per visitor: plenty for a coach, stops bots flooding the list.
+  const rl = await rateLimit(req, { bucket: "review", limit: 5, windowSec: 3600, failOpen: true });
+  if (!rl.ok) {
+    tooMany(res, rl);
     return;
   }
 

@@ -1863,12 +1863,12 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <!-- Section 5: Testimonials + Testimonial composer (last section before footer) -->
 <!-- ============================================================= -->
 <!--  The wall fills itself: approve testimonials at               -->
-<!--  /api/reviews?key=... and they load from /api/testimonials.   -->
+<!--  /api/reviews and they load from /api/testimonials.   -->
 <!--  To pin one by hand instead:                                   -->
 <!--  Copy the <div class="review-card"> template below into        -->
 <!--  #reviewsGrid and delete #reviewsEmpty.                         -->
 <!--  Trophies: filled = 🏆   empty = <span class="t-empty">🏆</span>  -->
-<!--  Submissions land in /api/reviews?key=... (private list). Only  -->
+<!--  Submissions land in /api/reviews (private list). Only  -->
 <!--  publish entries where "OK to publish" = yes.                   -->
 <!--                                                                 -->
 <!--  <div class="review-card">                                      -->
@@ -2088,7 +2088,7 @@ if (window.innerWidth > 900) setOpen(false);
 })();
 </script>
 <script>
-/* Testimonial wall: approved testimonials from /api/testimonials (approve them at /api/reviews?key=...). */
+/* Testimonial wall: approved testimonials from /api/testimonials (approve them at /api/reviews). */
 (function () {
 var grid = document.getElementById('reviewsGrid');
 if (!grid || !window.fetch) return;

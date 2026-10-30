@@ -9,6 +9,8 @@
 //   site:signups         LIST  JSON entries (read via /api/signups?key=...)
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
+import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
+
 const OFFER_ENDS_AT = "2026-12-01T04:59:59Z"; // Nov 30, 2026 11:59:59 pm Toronto (EST)
 const OFFER_CAP = 1000;
 
@@ -87,6 +89,17 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");
     res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+
+  if (!sameOrigin(req)) {
+    res.status(403).json({ error: "Forbidden." });
+    return;
+  }
+  // 5 per hour per visitor: plenty for a coach, stops bots flooding the list.
+  const rl = await rateLimit(req, { bucket: "register", limit: 5, windowSec: 3600, failOpen: true });
+  if (!rl.ok) {
+    tooMany(res, rl);
     return;
   }
 

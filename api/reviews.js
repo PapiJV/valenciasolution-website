@@ -1,9 +1,12 @@
 // Private admin view of collected reviews (from /api/review -> Upstash list
 // site:reviews). Entries contain reviewer emails, so this is gated by a key.
 //
-//   GET  /api/reviews?key=YOUR_KEY             -> HTML table with Approve / Hide
-//   GET  /api/reviews?key=YOUR_KEY&format=json -> { count, reviews }
-//   POST /api/reviews  { key, id, action: "approve" | "hide" | "pending" }
+//   GET  /api/reviews              -> HTML table with Approve / Hide
+//   GET  /api/reviews?format=json  -> { count, reviews }
+//   POST /api/reviews  { id, action: "approve" | "hide" | "pending" }
+//
+// Sign in at /api/admin (sets an HttpOnly cookie). Scripts can instead send
+// "Authorization: Bearer <REVIEWS_ADMIN_KEY>". The key never goes in the URL.
 //
 // Approved entries (with "OK to publish" ticked) appear on the public wall via
 // /api/testimonials. Status lives in the hash site:reviews:status, keyed by
@@ -12,6 +15,8 @@
 // Env: REVIEWS_ADMIN_KEY  (set any random string in the Vercel project).
 //      KV_REST_API_URL / KV_REST_API_TOKEN  (or UPSTASH_REDIS_REST_*).
 // Fails closed: if REVIEWS_ADMIN_KEY is unset the route is unavailable.
+
+import { isAdmin, sameOrigin } from "./_lib/security.js";
 
 const STATUS_KEY = "site:reviews:status";
 
@@ -66,8 +71,12 @@ async function setStatus(req, res, adminKey) {
     }
   }
   res.setHeader("Cache-Control", "no-store");
-  if (!body || String(body.key || "") !== adminKey) {
+  if (!isAdmin(req, adminKey) || !sameOrigin(req)) {
     res.status(401).json({ error: "Unauthorized." });
+    return;
+  }
+  if (!body) {
+    res.status(400).json({ error: "Invalid request." });
     return;
   }
   const id = String(body.id || "").slice(0, 80);
@@ -112,9 +121,10 @@ export default async function handler(req, res) {
     await setStatus(req, res, adminKey);
     return;
   }
-  if (String(req.query.key || "") !== adminKey) {
-    res.setHeader("Cache-Control", "no-store");
-    res.status(401).json({ error: "Unauthorized." });
+  res.setHeader("Cache-Control", "no-store");
+  if (!isAdmin(req, adminKey)) {
+    if (String(req.query.format || "") === "json") res.status(401).json({ error: "Unauthorized." });
+    else res.redirect(303, "/api/admin?next=/api/reviews");
     return;
   }
 
@@ -203,6 +213,7 @@ export default async function handler(req, res) {
   .acts button[data-action=approve]:not([disabled]){background:#0a8;border-color:#0a8;color:#fff}
   .acts button[disabled]{opacity:.4;cursor:default}
 </style>
+<form method="post" action="/api/admin" style="float:right"><input type="hidden" name="logout" value="1"><input type="hidden" name="next" value="/api/reviews"><button>Sign out</button></form>
 <h1>Collected reviews — ${reviews.length}</h1>
 <div class="muted">Newest first. <b>${waiting}</b> waiting for review. Approve puts a testimonial on the public wall (EN/FR/ES) within about a minute; Hide takes it off. Emails are never shown publicly.</div>
 ${reviews.length ? `<table>
@@ -210,7 +221,6 @@ ${reviews.length ? `<table>
   ${trs}
 </table>` : "<p>No reviews collected yet.</p>"}
 <script>
-  var KEY = new URLSearchParams(location.search).get('key') || '';
   document.addEventListener('click', function (e) {
     var b = e.target.closest('.acts button');
     if (!b || b.disabled) return;
@@ -219,7 +229,8 @@ ${reviews.length ? `<table>
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: KEY, id: b.dataset.id, action: b.dataset.action })
+      credentials: 'same-origin',
+      body: JSON.stringify({ id: b.dataset.id, action: b.dataset.action })
     }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (x) {
         if (!x.ok) throw new Error(x.j.error || 'Failed');
