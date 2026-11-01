@@ -15,8 +15,8 @@ const OFFER_ENDS_AT = "2026-12-01T04:59:59Z"; // Nov 30, 2026 11:59:59 pm Toront
 const OFFER_CAP = 1000;
 
 const APPS = {
-  basketball: { name: "Basketball Notepad", url: "https://basketball-notepad-do-not-erase-1.vercel.app/" },
-  volleyball: { name: "Volleyball Notepad", url: "https://volleyball-notepad-exclusive1sole.vercel.app/" },
+  basketball: { name: "Basketball Notepad", url: "https://basketball-notepad.vercel.app/" },
+  volleyball: { name: "Volleyball Notepad", url: "https://volleyball-notepad.vercel.app/" },
   football: { name: "Football Notepad", url: "https://football-notepad.vercel.app/" },
   lacrosse: { name: "Lacrosse Notepad", url: "https://lacrosse-notepad.vercel.app/" },
   baseball: { name: "Baseball Notepad", url: "https://baseball-notepad.vercel.app/" },
