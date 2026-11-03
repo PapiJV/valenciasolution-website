@@ -11,7 +11,7 @@
 
 import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
 
-const OFFER_ENDS_AT = "2026-12-01T04:59:59Z"; // Nov 30, 2026 11:59:59 pm Toronto (EST)
+const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
 const OFFER_CAP = 1000;
 
 const APPS = {

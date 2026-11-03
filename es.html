@@ -1176,12 +1176,12 @@
         <div class="section-header">
             <div class="section-label">Míralo en acción</div>
             <h2>Mira la demo de 90 segundos</h2>
-            <p>Un recorrido rápido de un Notepad en la banca — planifica, dirige el partido y revisa después.</p>
+            <p>Un recorrido rápido de los 10 Notepads en la banca — planifica, dirige el partido y revisa después.</p>
         </div>
         <div class="demo-frame">
             <video controls preload="metadata" playsinline poster="images/og-scanner-es.png">
-                <source src="media/valenciasolution-demo.mp4" type="video/mp4">
-                Your browser does not support video playback. <a href="media/valenciasolution-demo.mp4">Download the demo</a>.
+                <source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
+                Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
             </video>
         </div>
             <p class="demo-note">Narración en inglés</p>
@@ -1227,7 +1227,7 @@
         </div>
         <p class="scanner-note">Funciona en tu teléfono o tableta. Tu video se queda en tu dispositivo, a menos que decidas compartirlo.<br><strong>Disponible en Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</strong></p>
     </section>
-    <!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 1000 sign-ups (enforced by /api/register) -->
+    <!-- Free launch offer: ends Dec 31, 2026 11:59 pm ET or at 1000 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
         <div class="free-inner">
             <div>
@@ -1301,7 +1301,7 @@
                     </label>
                     <p class="form-msg" id="freeErr" role="alert"></p>
                     <button type="submit" class="btn btn-primary" id="freeBtn">Obtener mi Notepad gratis 🎁</button>
-                    <p class="free-fine">Un Notepad gratis (licencia individual) por entrenador. La oferta termina el 30 de noviembre de 2026 a las 11:59 p. m. (hora del Este) o cuando se hayan registrado 1000 entrenadores, lo que ocurra primero. Consulta los <a href="/terms#free-offer">términos de la oferta</a> y nuestra <a href="/privacy">Política de privacidad</a>.</p>
+                    <p class="free-fine">Un Notepad gratis (licencia individual) por entrenador. La oferta termina el 31 de diciembre de 2026 a las 11:59 p. m. (hora del Este) o cuando se hayan registrado 1000 entrenadores, lo que ocurra primero. Consulta los <a href="/terms#free-offer">términos de la oferta</a> y nuestra <a href="/privacy">Política de privacidad</a>.</p>
                 </form>
 
                 <div class="free-done" id="freeDone" hidden>
@@ -2301,7 +2301,7 @@
     <script>
         /* Free launch offer: countdown, live spots, registration (/api/register). */
         (function () {
-            var ENDS_AT = Date.parse('2026-12-01T04:59:59Z'); // Nov 30, 2026 11:59:59 pm ET
+            var ENDS_AT = Date.parse('2027-01-01T04:59:59Z'); // Dec 31, 2026 11:59:59 pm ET
             var CAP = 1000;
             var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
             var APPS = {
@@ -2378,7 +2378,7 @@
                     ['cdD', 'cdH', 'cdM', 'cdS'].forEach(function (id) { $(id).textContent = '00'; });
                     clearInterval(timer);
                     if (!$('freeDone').hidden) return;
-                    closeOffer('Esta oferta ha terminado', 'La oferta gratuita de lanzamiento cerró el 30 de noviembre de 2026. Aún puedes probar cualquier Notepad en la demo gratuita, o comprar la app completa abajo.');
+                    closeOffer('Esta oferta ha terminado', 'La oferta gratuita de lanzamiento cerró el 31 de diciembre de 2026. Aún puedes probar cualquier Notepad en la demo gratuita, o comprar la app completa abajo.');
                     return;
                 }
                 var s = Math.floor(ms / 1000);

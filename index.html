@@ -1369,12 +1369,12 @@ transition: color 0.2s, background 0.2s;
 <div class="section-header">
 <div class="section-label">See it in action</div>
 <h2>Watch the 90-second demo</h2>
-<p>A quick tour of a Notepad on the sideline — plan, run the game, and review after.</p>
+<p>A quick tour of all 10 Notepads on the sideline — plan, run the game, and review after.</p>
 </div>
 <div class="demo-frame">
 <video controls preload="metadata" playsinline poster="images/og-scanner.png">
-<source src="media/valenciasolution-demo.mp4" type="video/mp4">
-Your browser does not support video playback. <a href="media/valenciasolution-demo.mp4">Download the demo</a>.
+<source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
+Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
 </video>
 </div>
 </section>
@@ -1387,7 +1387,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 </section>
 <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
 
-<!-- Free launch offer: ends Nov 30, 2026 11:59 pm ET or at 1,000 sign-ups (enforced by /api/register) -->
+<!-- Free launch offer: ends Dec 31, 2026 11:59 pm ET or at 1,000 sign-ups (enforced by /api/register) -->
 <section class="free" id="free">
 <div class="free-inner">
 <div>
@@ -1460,7 +1460,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 </label>
 <p class="form-msg" id="freeErr" role="alert"></p>
 <button type="submit" class="btn btn-primary" id="freeBtn">Claim my free Notepad 🎁</button>
-<p class="free-fine">One free Notepad (individual licence) per coach. Offer ends Nov 30, 2026 at 11:59 pm ET or when 1,000 coaches have registered, whichever comes first. See the <a href="/terms#free-offer">offer terms</a> and our <a href="/privacy">Privacy Policy</a>.</p>
+<p class="free-fine">One free Notepad (individual licence) per coach. Offer ends Dec 31, 2026 at 11:59 pm ET or when 1,000 coaches have registered, whichever comes first. See the <a href="/terms#free-offer">offer terms</a> and our <a href="/privacy">Privacy Policy</a>.</p>
 </form>
 <div class="free-done" id="freeDone" hidden>
 <div class="big" id="freeDoneIcon">🏀</div>
@@ -2440,7 +2440,7 @@ body: JSON.stringify(data)
 <script>
 /* Free launch offer: countdown, live spots, registration (/api/register). */
 (function () {
-var ENDS_AT = Date.parse('2026-12-01T04:59:59Z'); // Nov 30, 2026 11:59:59 pm ET
+var ENDS_AT = Date.parse('2027-01-01T04:59:59Z'); // Dec 31, 2026 11:59:59 pm ET
 var CAP = 1000;
 var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
 var APPS = {
@@ -2514,7 +2514,7 @@ if (ms <= 0) {
 ['cdD', 'cdH', 'cdM', 'cdS'].forEach(function (id) { $(id).textContent = '00'; });
 clearInterval(timer);
 if (!$('freeDone').hidden) return;
-closeOffer('This offer has ended', 'The free launch offer closed on Nov 30, 2026. You can still try any Notepad in the free demo, or get the full app below.');
+closeOffer('This offer has ended', 'The free launch offer closed on Dec 31, 2026. You can still try any Notepad in the free demo, or get the full app below.');
 return;
 }
 var s = Math.floor(ms / 1000);
