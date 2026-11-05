@@ -12,18 +12,28 @@ function redisCreds() {
   return { url, token };
 }
 
-async function redisPipeline(commands) {
+// POST a batch to Upstash. "/multi-exec" runs it as one atomic transaction,
+// "/pipeline" does not. A per-command { error } throws, so callers never
+// treat a failed command as a result.
+async function redisBatch(path, commands) {
   const { url, token } = redisCreds();
-  const res = await fetch(`${url}/pipeline`, {
+  const res = await fetch(`${url}${path}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify(commands),
   });
   if (!res.ok) throw new Error(`REDIS_${res.status}`);
-  return (await res.json()).map((r) => r.result);
+  const out = await res.json();
+  // A discarded transaction answers a single { error } instead of an array.
+  if (!Array.isArray(out)) throw new Error(`REDIS_CMD: ${(out && out.error) || "bad response"}`);
+  return out.map((r) => {
+    if (!r || r.error) throw new Error(`REDIS_CMD: ${(r && r.error) || "empty"}`);
+    return r.result;
+  });
 }
 
 const sha256 = (s) => crypto.createHash("sha256").update(String(s)).digest();
+const tag = (s) => sha256(s).toString("hex").slice(0, 24);
 
 // Constant-time string compare (hashing first makes lengths equal).
 export function safeEqual(a, b) {
@@ -38,24 +48,30 @@ export function clientIp(req) {
 }
 
 // Hashed so raw IPs are never stored.
-const ipTag = (req) => sha256(`ip:${clientIp(req)}`).toString("hex").slice(0, 24);
+const ipTag = (req) => tag(`ip:${clientIp(req)}`);
 
 /**
  * Fixed-window counter. Returns { ok, retryAfter }.
  * scope "ip" counts per visitor, "global" counts across everyone.
+ * identity: count per this value instead (e.g. an email). It is hashed
+ * into the key, so the raw value is never stored.
  * failOpen: when Redis is missing or down, let the request through
  * (the route's own storage call then reports the error).
  */
-export async function rateLimit(req, { bucket, limit, windowSec, scope = "ip", failOpen = false }) {
-  const who = scope === "global" ? "all" : ipTag(req);
+export async function rateLimit(req, { bucket, limit, windowSec, scope = "ip", identity, failOpen = false }) {
+  const who = identity != null ? tag(`id:${identity}`) : scope === "global" ? "all" : ipTag(req);
   const key = `site:rl:${bucket}:${who}`;
   try {
-    const [, count, ttl] = await redisPipeline([
+    // One transaction, so the key can't expire between SET and INCR and be
+    // recreated by INCR without an expiry.
+    const [, count, ttl] = await redisBatch("/multi-exec", [
       ["SET", key, "0", "EX", String(windowSec), "NX"],
       ["INCR", key],
       ["TTL", key],
     ]);
-    if (Number(count) > limit) return { ok: false, retryAfter: Math.max(1, Number(ttl) || windowSec) };
+    // Belt and braces: a key with no expiry would block this bucket forever.
+    if (Number(ttl) < 0) await redisBatch("/pipeline", [["EXPIRE", key, String(windowSec)]]);
+    if (Number(count) > limit) return { ok: false, retryAfter: Math.max(1, Number(ttl) > 0 ? Number(ttl) : windowSec) };
     return { ok: true, retryAfter: 0 };
   } catch {
     return failOpen ? { ok: true, retryAfter: 0 } : { ok: false, retryAfter: 60, error: true };
@@ -65,6 +81,35 @@ export async function rateLimit(req, { bucket, limit, windowSec, scope = "ip", f
 export function tooMany(res, rl, message = "Too many requests. Please wait a bit and try again.") {
   res.setHeader("Retry-After", String(rl.retryAfter || 60));
   res.status(rl.error ? 503 : 429).json({ error: rl.error ? "Service temporarily unavailable." : message });
+}
+
+// ---- Media links: only files in our own Vercel Blob store ----
+
+// Public hostname of the store behind BLOB_READ_WRITE_TOKEN, derived the
+// same way @vercel/blob does: the token is "vercel_blob_rw_<storeId>_<secret>"
+// and public URLs are https://<storeId>.public.blob.vercel-storage.com/...
+// Empty when the token is missing or malformed (callers then allow no media).
+export function blobStoreHost() {
+  const token = String(process.env.BLOB_READ_WRITE_TOKEN || "");
+  if (!token.startsWith("vercel_blob_rw_")) return "";
+  const [, , , storeId = ""] = token.split("_");
+  if (!/^[a-z0-9-]+$/i.test(storeId)) return "";
+  return `${storeId}.public.blob.vercel-storage.com`.toLowerCase();
+}
+
+// Returns the URL if it is an https file under /testimonials/ in our own
+// Blob store, otherwise "". Fails closed.
+export function ownBlobUrl(u) {
+  const host = blobStoreHost();
+  if (!host) return "";
+  try {
+    const url = new URL(String(u || ""));
+    if (url.protocol !== "https:" || url.username || url.password || url.port) return "";
+    if (url.hostname !== host || !url.pathname.startsWith("/testimonials/")) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
 }
 
 // Browsers always send Origin on POST. Reject cross-site posts and scripts

@@ -7,7 +7,14 @@
 // Approval state lives in the hash site:reviews:status (id -> "approved" |
 // "hidden"); entries saved before ids existed use their `at` timestamp.
 //
-// Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
+// Approved entries are read from both site:reviews and the
+// site:reviews:approved hash (which survives the list being trimmed).
+//
+// Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*),
+//      BLOB_READ_WRITE_TOKEN (media links must point at this Blob store).
+
+import { ownBlobUrl } from "./_lib/security.js";
+import { APPROVED_KEY, LIST_KEY, STATUS_KEY, mergeReviews } from "./_lib/reviews.js";
 
 const MAX_ON_WALL = 60;
 
@@ -29,16 +36,6 @@ async function redisPipeline(commands) {
   return res.json();
 }
 
-// Only media we host ourselves (Vercel Blob) is passed through to the wall.
-function safeMedia(u) {
-  try {
-    const url = new URL(String(u || ""));
-    return url.protocol === "https:" && url.hostname.endsWith(".public.blob.vercel-storage.com") ? url.href : "";
-  } catch {
-    return "";
-  }
-}
-
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
@@ -48,11 +45,13 @@ export default async function handler(req, res) {
 
   let rows, status;
   try {
-    const [list, hash] = await redisPipeline([
-      ["LRANGE", "site:reviews", "0", "-1"],
-      ["HGETALL", "site:reviews:status"],
+    const [list, hash, approved] = await redisPipeline([
+      ["LRANGE", LIST_KEY, "0", "-1"],
+      ["HGETALL", STATUS_KEY],
+      ["HVALS", APPROVED_KEY],
     ]);
-    rows = list.result || [];
+    for (const r of [list, hash, approved]) if (!r || r.error) throw new Error("REDIS_CMD");
+    rows = mergeReviews(list.result, approved.result);
     status = {};
     const flat = hash.result || [];
     for (let i = 0; i + 1 < flat.length; i += 2) status[flat[i]] = flat[i + 1];
@@ -63,14 +62,7 @@ export default async function handler(req, res) {
   }
 
   const testimonials = rows
-    .map((s) => {
-      try {
-        return JSON.parse(s);
-      } catch {
-        return null;
-      }
-    })
-    .filter((r) => r && r.consent === true && status[r.id || r.at] === "approved")
+    .filter((r) => r.consent === true && status[r.id || r.at] === "approved")
     .reverse()
     .slice(0, MAX_ON_WALL)
     .map((r) => ({
@@ -82,7 +74,7 @@ export default async function handler(req, res) {
       club: r.club || "",
       headline: r.headline || "",
       message: r.message || "",
-      media: safeMedia(r.media),
+      media: ownBlobUrl(r.media),
       at: r.at || "",
     }));
 
