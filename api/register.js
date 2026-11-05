@@ -3,6 +3,8 @@
 //
 //   GET  /api/register  -> { open, cap, claimed, spotsLeft, endsAt }
 //   POST /api/register  -> { ok, sport, appUrl, already? }
+//                          409 { error, already: true } when the email already
+//                          claimed a different sport (the sport isn't named)
 //
 // Storage: Upstash Redis (same store as /api/review).
 //   site:signups:emails  SET   lower-cased emails (dedupe + cap count)
@@ -10,22 +12,7 @@
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
 import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
-
-const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
-const OFFER_CAP = 1000;
-
-const APPS = {
-  basketball: { name: "Basketball Notepad", url: "https://basketball-notepad.vercel.app/" },
-  volleyball: { name: "Volleyball Notepad", url: "https://volleyball-notepad.vercel.app/" },
-  football: { name: "Football Notepad", url: "https://football-notepad.vercel.app/" },
-  lacrosse: { name: "Lacrosse Notepad", url: "https://lacrosse-notepad.vercel.app/" },
-  baseball: { name: "Baseball Notepad", url: "https://baseball-notepad.vercel.app/" },
-  curling: { name: "Curling Notepad", url: "https://curling-notepad.vercel.app/" },
-  hockey: { name: "Hockey Notepad", url: "https://hockey-notepad.vercel.app/" },
-  cricket: { name: "Cricket Notepad", url: "https://cricket-notepad.vercel.app/" },
-  soccer: { name: "Soccer Notepad", url: "https://soccer-notepad.vercel.app/" },
-  rugby: { name: "Rugby Notepad", url: "https://rugby-notepad.vercel.app/" },
-};
+import { APPS, OFFER_CAP, OFFER_ENDS_AT } from "./_lib/offer.js";
 
 const EMAILS_KEY = "site:signups:emails";
 const LIST_KEY = "site:signups";
@@ -152,8 +139,17 @@ export default async function handler(req, res) {
           if (r.email === email) { prior = r; break; }
         } catch { /* skip */ }
       }
+      // Only resend the link for the sport they asked for. Never name the
+      // prior sport here: anyone can type someone else's email.
       const priorSport = prior && APPS[prior.sport] ? prior.sport : sport;
-      res.status(200).json({ ok: true, already: true, sport: priorSport, appName: APPS[priorSport].name, appUrl: APPS[priorSport].url });
+      if (priorSport !== sport) {
+        res.status(409).json({
+          error: "This email already claimed its free Notepad. Use the link we gave you, or contact us.",
+          already: true,
+        });
+        return;
+      }
+      res.status(200).json({ ok: true, already: true, sport, appName: APPS[sport].name, appUrl: APPS[sport].url });
       return;
     }
 

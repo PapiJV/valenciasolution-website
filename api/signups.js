@@ -6,6 +6,7 @@
 // Sign in at /api/admin, or send "Authorization: Bearer <key>" from scripts.
 
 import { isAdmin } from "./_lib/security.js";
+import { OFFER_CAP, SPORTS } from "./_lib/offer.js";
 
 function creds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -118,10 +119,10 @@ export default async function handler(req, res) {
   th{background:#f0f0f6;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
   a.btn{display:inline-block;background:#ff6b35;color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:600}
 </style>
-<h1>Free Notepad sign-ups — ${list.length} / 100</h1>
+<h1>Free Notepad sign-ups — ${list.length} / ${OFFER_CAP}</h1>
 <div class="muted">Newest first. Only email people marked "Yes" with marketing (CASL).</div>
 <div class="stats">
-  ${["basketball", "volleyball", "football", "lacrosse"].map((s) => `<div class="stat"><b>${bySport[s] || 0}</b>${s}</div>`).join("")}
+  ${SPORTS.map((s) => `<div class="stat"><b>${bySport[s] || 0}</b>${s}</div>`).join("")}
   <div class="stat"><b>${optIns}</b>email opt-ins</div>
 </div>
 <div class="muted">Where they came from</div>

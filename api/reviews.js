@@ -11,14 +11,17 @@
 // Approved entries (with "OK to publish" ticked) appear on the public wall via
 // /api/testimonials. Status lives in the hash site:reviews:status, keyed by
 // the entry id (or its `at` timestamp for entries saved before ids existed).
+// Approving also copies the entry into the hash site:reviews:approved, so it
+// stays on the wall after site:reviews is trimmed; Hide/pending remove it.
+// This page lists the union of both.
 //
 // Env: REVIEWS_ADMIN_KEY  (set any random string in the Vercel project).
+//      BLOB_READ_WRITE_TOKEN  (media previews only for our own Blob store).
 //      KV_REST_API_URL / KV_REST_API_TOKEN  (or UPSTASH_REDIS_REST_*).
 // Fails closed: if REVIEWS_ADMIN_KEY is unset the route is unavailable.
 
-import { isAdmin, sameOrigin } from "./_lib/security.js";
-
-const STATUS_KEY = "site:reviews:status";
+import { isAdmin, ownBlobUrl, sameOrigin } from "./_lib/security.js";
+import { APPROVED_KEY, LIST_KEY, STATUS_KEY, mergeReviews } from "./_lib/reviews.js";
 
 function redisCreds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -42,16 +45,12 @@ const esc = (s) =>
   String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-const parseRows = (rows) =>
-  rows
-    .map((s) => {
-      try {
-        return JSON.parse(s);
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
+// Every review: the list plus approved entries kept after trimming.
+async function allReviews() {
+  const rows = (await redis(["LRANGE", LIST_KEY, "0", "-1"])) || [];
+  const approved = (await redis(["HVALS", APPROVED_KEY])) || [];
+  return mergeReviews(rows, approved);
+}
 
 const storageError = (res, e) => {
   if (e.message === "NOT_CONFIGURED") {
@@ -86,9 +85,7 @@ async function setStatus(req, res, adminKey) {
     return;
   }
   try {
-    const entry = parseRows((await redis(["LRANGE", "site:reviews", "0", "-1"])) || []).find(
-      (r) => (r.id || r.at) === id,
-    );
+    const entry = (await allReviews()).find((r) => (r.id || r.at) === id);
     if (!entry) {
       res.status(404).json({ error: "Review not found." });
       return;
@@ -97,8 +94,15 @@ async function setStatus(req, res, adminKey) {
       res.status(409).json({ error: "This coach didn't give permission to publish." });
       return;
     }
-    if (action === "pending") await redis(["HDEL", STATUS_KEY, id]);
-    else await redis(["HSET", STATUS_KEY, id, action === "approve" ? "approved" : "hidden"]);
+    if (action === "approve") {
+      // Copy first, so an entry marked approved is always in the hash.
+      await redis(["HSET", APPROVED_KEY, id, JSON.stringify(entry)]);
+      await redis(["HSET", STATUS_KEY, id, "approved"]);
+    } else {
+      if (action === "pending") await redis(["HDEL", STATUS_KEY, id]);
+      else await redis(["HSET", STATUS_KEY, id, "hidden"]);
+      await redis(["HDEL", APPROVED_KEY, id]);
+    }
     res.status(200).json({ ok: true, id, status: action === "pending" ? "" : action === "approve" ? "approved" : "hidden" });
   } catch (e) {
     storageError(res, e);
@@ -128,9 +132,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  let rows, statusFlat;
+  let all, statusFlat;
   try {
-    rows = (await redis(["LRANGE", "site:reviews", "0", "-1"])) || [];
+    all = await allReviews();
     statusFlat = (await redis(["HGETALL", STATUS_KEY])) || [];
   } catch (e) {
     storageError(res, e);
@@ -139,7 +143,7 @@ export default async function handler(req, res) {
   const status = {};
   for (let i = 0; i + 1 < statusFlat.length; i += 2) status[statusFlat[i]] = statusFlat[i + 1];
 
-  const reviews = parseRows(rows)
+  const reviews = all
     .map((r) => ({ ...r, wall: status[r.id || r.at] || "" }))
     .reverse(); // newest first
 
@@ -150,11 +154,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Only render https links (Vercel Blob URLs); anything else is shown as text.
+  // Only preview files in our own Blob store; anything else is shown as
+  // plain text so the browser never fetches it.
   const mediaCell = (u) => {
-    const url = String(u || "");
-    if (!url) return "—";
-    if (!/^https:\/\//i.test(url)) return esc(url);
+    const raw = String(u || "");
+    if (!raw) return "—";
+    const url = ownBlobUrl(raw);
+    if (!url) return esc(raw);
     const isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp|avi|mkv)(\?|$)/i.test(url);
     const thumb = isVideo
       ? `<video src="${esc(url)}" preload="metadata" muted playsinline controls></video>`

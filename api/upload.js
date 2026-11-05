@@ -22,6 +22,13 @@ const PER_VISITOR_PER_HOUR = 3;
 const SITE_WIDE_PER_DAY = 25;
 const TOKEN_TTL_MS = 30 * 60 * 1000;
 
+// Explicit list, no wildcards: "image/*" would let in SVG, which can run
+// script. Keep in sync with MEDIA_TYPES / accept= in index/fr/es.html.
+const ALLOWED_TYPES = [
+  "image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif",
+  "video/mp4", "video/quicktime", "video/webm",
+];
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -66,7 +73,7 @@ export default async function handler(req, res) {
       onBeforeGenerateToken: async (pathname) => {
         if (!/^testimonials\//.test(pathname)) throw new Error("BAD_PATH");
         return {
-          allowedContentTypes: ["image/*", "video/*"],
+          allowedContentTypes: ALLOWED_TYPES,
           maximumSizeInBytes: MAX_BYTES,
           addRandomSuffix: true,
           validUntil: Date.now() + TOKEN_TTL_MS,
