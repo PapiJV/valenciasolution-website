@@ -75,14 +75,15 @@ export default async function handler(req, res) {
       return;
     }
 
-    const app = PAYMENT_LINKS[s.payment_link] || (s.metadata && s.metadata.app);
+    const app = PAYMENT_LINKS[s.payment_link];
     if (!APPS[app]) {
       page(res, 409, "Almost there", "Your payment went through, but we couldn't match it to a Notepad automatically.");
       return;
     }
     const item = s.line_items && s.line_items.data && s.line_items.data[0];
     const unit = (item && item.price && item.price.unit_amount) || 0;
-    const tier = unit >= CLUB_MIN_CENTS ? "club" : "individual";
+    // A 100%-off code (club giveaways) still unlocks the app, but is logged as comp.
+    const tier = !s.amount_total ? "comp" : unit >= CLUB_MIN_CENTS ? "club" : "individual";
 
     const { token, payload } = signLicense({ app, tier, ref: id });
     // NX: if two tabs race, the first licence wins and both get the same one.
