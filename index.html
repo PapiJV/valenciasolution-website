@@ -2444,16 +2444,16 @@ var ENDS_AT = Date.parse('2027-01-01T04:59:59Z'); // Dec 31, 2026 11:59:59 pm ET
 var CAP = 1000;
 var SHOW_COUNT_AT = 10; // keep the live count hidden until this many coaches have claimed a spot
 var APPS = {
-basketball: { icon: '🏀', name: 'Basketball Notepad', url: 'https://basketball-notepad.vercel.app/' },
-volleyball: { icon: '🏐', name: 'Volleyball Notepad', url: 'https://volleyball-notepad.vercel.app/' },
-football:   { icon: '🏈', name: 'Football Notepad',   url: 'https://football-notepad.vercel.app/' },
-lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad',   url: 'https://lacrosse-notepad.vercel.app/' },
-baseball: { icon: '⚾', name: 'Baseball Notepad', url: 'https://baseball-notepad.vercel.app/' },
-curling: { icon: '🥌', name: 'Curling Notepad', url: 'https://curling-notepad.vercel.app/' },
-hockey: { icon: '🏒', name: 'Hockey Notepad', url: 'https://hockey-notepad.vercel.app/' },
-cricket: { icon: '🏏', name: 'Cricket Notepad', url: 'https://cricket-notepad.vercel.app/' },
-soccer: { icon: '⚽', name: 'Soccer Notepad', url: 'https://soccer-notepad.vercel.app/' },
-rugby: { icon: '🏉', name: 'Rugby Notepad', url: 'https://rugby-notepad.vercel.app/' }
+basketball: { icon: '🏀', name: 'Basketball Notepad' },
+volleyball: { icon: '🏐', name: 'Volleyball Notepad' },
+football:   { icon: '🏈', name: 'Football Notepad' },
+lacrosse:   { icon: '🥍', name: 'Lacrosse Notepad' },
+baseball: { icon: '⚾', name: 'Baseball Notepad' },
+curling: { icon: '🥌', name: 'Curling Notepad' },
+hockey: { icon: '🏒', name: 'Hockey Notepad' },
+cricket: { icon: '🏏', name: 'Cricket Notepad' },
+soccer: { icon: '⚽', name: 'Soccer Notepad' },
+rugby: { icon: '🏉', name: 'Rugby Notepad' }
 };
 var $ = function (id) { return document.getElementById(id); };
 /* Sign-up source: ?src=club-oakville (or utm_source), else the referring site. */
@@ -2597,16 +2597,15 @@ btn.disabled = false;
 btn.textContent = 'Claim my free Notepad 🎁';
 if (res.status === 200 && res.body.ok) {
 var sp = APPS[res.body.sport] ? res.body.sport : data.sport;
-showDone(sp, APPS[sp].url, !!res.body.already);
+showDone(sp, res.body.appUrl, !!res.body.already);
 if (typeof res.body.spotsLeft === 'number') showSpots(res.body);
 } else if (res.status === 410) {
 closeOffer(res.body.spotsLeft === 0 && Date.now() <= ENDS_AT ? 'All 1,000 free spots are claimed' : 'This offer has ended', null);
 } else if (res.status === 400) {
 err(res.body.error || 'Please check your details.');
 } else if (res.status === 501) {
-/* Storage not connected yet: never block the coach. Deliver the
-app and hand the team a record by email instead. */
-showDone(data.sport, APPS[data.sport].url, false);
+/* Sign-up backend unavailable: email the team; we send the licensed link by hand. */
+err('We emailed your details to our team. We will send your Notepad link shortly.');
 var body = ['Free Notepad sign-up', 'Sport: ' + data.sport, 'Name: ' + data.name, 'Email: ' + data.email,
 'Role: ' + (data.role || '-'), 'Club: ' + (data.club || '-'), 'City: ' + (data.city || '-'),
 'Email updates opt-in: ' + (data.marketingOptIn ? 'Yes' : 'No')].join('\n');

@@ -3,32 +3,41 @@
 //
 //   GET  /api/register  -> { open, cap, claimed, spotsLeft, endsAt }
 //   POST /api/register  -> { ok, sport, appUrl, already? }
+//                          appUrl carries a signed licence (#license=...).
 //
 // Storage: Upstash Redis (same store as /api/review).
 //   site:signups:emails  SET   lower-cased emails (dedupe + cap count)
 //   site:signups         LIST  JSON entries (read via /api/signups?key=...)
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
+import { APPS, appLink } from "./_lib/apps.js";
+import { signLicense } from "./_lib/license.js";
 import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
 
 const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
 const OFFER_CAP = 1000;
 
-const APPS = {
-  basketball: { name: "Basketball Notepad", url: "https://basketball-notepad.vercel.app/" },
-  volleyball: { name: "Volleyball Notepad", url: "https://volleyball-notepad.vercel.app/" },
-  football: { name: "Football Notepad", url: "https://football-notepad.vercel.app/" },
-  lacrosse: { name: "Lacrosse Notepad", url: "https://lacrosse-notepad.vercel.app/" },
-  baseball: { name: "Baseball Notepad", url: "https://baseball-notepad.vercel.app/" },
-  curling: { name: "Curling Notepad", url: "https://curling-notepad.vercel.app/" },
-  hockey: { name: "Hockey Notepad", url: "https://hockey-notepad.vercel.app/" },
-  cricket: { name: "Cricket Notepad", url: "https://cricket-notepad.vercel.app/" },
-  soccer: { name: "Soccer Notepad", url: "https://soccer-notepad.vercel.app/" },
-  rugby: { name: "Rugby Notepad", url: "https://rugby-notepad.vercel.app/" },
-};
 
 const EMAILS_KEY = "site:signups:emails";
 const LIST_KEY = "site:signups";
+const LIC_KEY = "site:signups:lic"; // HASH email -> {app, token}
+
+// One licence per coach: reuse it on repeat sign-ins so the log stays clean.
+async function licenceFor(email, sport) {
+  const [prior] = await pipeline([["HGET", LIC_KEY, email]]);
+  if (prior) {
+    try {
+      const p = JSON.parse(prior);
+      if (p.app === sport && p.token) return p.token;
+    } catch { /* reissue */ }
+  }
+  const { token, payload } = signLicense({ app: sport, tier: "free", ref: "free-launch-2026" });
+  await pipeline([
+    ["HSET", LIC_KEY, email, JSON.stringify({ app: sport, token })],
+    ["RPUSH", "site:licenses", JSON.stringify({ at: new Date().toISOString(), source: "free-offer", app: sport, tier: "free", lid: payload.lid, email })],
+  ]);
+  return token;
+}
 
 function creds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -153,7 +162,8 @@ export default async function handler(req, res) {
         } catch { /* skip */ }
       }
       const priorSport = prior && APPS[prior.sport] ? prior.sport : sport;
-      res.status(200).json({ ok: true, already: true, sport: priorSport, appName: APPS[priorSport].name, appUrl: APPS[priorSport].url });
+      const token = await licenceFor(email, priorSport);
+      res.status(200).json({ ok: true, already: true, sport: priorSport, appName: APPS[priorSport].name, appUrl: appLink(priorSport, token) });
       return;
     }
 
@@ -176,14 +186,15 @@ export default async function handler(req, res) {
       spotNumber: Number(claimed),
     };
     await pipeline([["RPUSH", LIST_KEY, JSON.stringify(entry)]]);
+    const token = await licenceFor(email, sport);
 
     res.status(200).json({
-      ok: true, sport, appName: APPS[sport].name, appUrl: APPS[sport].url,
+      ok: true, sport, appName: APPS[sport].name, appUrl: appLink(sport, token),
       ...status(Number(claimed)),
     });
   } catch (e) {
-    if (e.message === "NOT_CONFIGURED") {
-      res.status(501).json({ error: "Sign-up storage isn't configured." });
+    if (e.message === "NOT_CONFIGURED" || e.message === "LICENSE_NOT_CONFIGURED") {
+      res.status(501).json({ error: "Sign-up isn't configured." });
       return;
     }
     res.status(502).json({ error: "Storage request failed." });

@@ -1,4 +1,4 @@
-// Admin sign-in for /api/reviews and /api/signups.
+// Admin sign-in for /api/reviews, /api/signups and /api/license.
 //
 //   GET  /api/admin?next=/api/reviews   -> sign-in form
 //   POST /api/admin  key=...&next=...    -> sets a 12-hour HttpOnly cookie, redirects
@@ -10,7 +10,7 @@
 
 import { adminCookie, clearAdminCookie, rateLimit, safeEqual, sameOrigin, tooMany } from "./_lib/security.js";
 
-const NEXT_OK = new Set(["/api/reviews", "/api/signups"]);
+const NEXT_OK = new Set(["/api/reviews", "/api/signups", "/api/license"]);
 const nextOf = (v) => (NEXT_OK.has(String(v || "")) ? String(v) : "/api/reviews");
 
 function parseBody(req) {

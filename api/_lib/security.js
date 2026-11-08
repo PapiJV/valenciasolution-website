@@ -12,7 +12,7 @@ function redisCreds() {
   return { url, token };
 }
 
-async function redisPipeline(commands) {
+export async function redisPipeline(commands) {
   const { url, token } = redisCreds();
   const res = await fetch(`${url}/pipeline`, {
     method: "POST",
@@ -20,7 +20,10 @@ async function redisPipeline(commands) {
     body: JSON.stringify(commands),
   });
   if (!res.ok) throw new Error(`REDIS_${res.status}`);
-  return (await res.json()).map((r) => r.result);
+  return (await res.json()).map((r) => {
+    if (r && r.error) throw new Error(`REDIS_CMD: ${r.error}`);
+    return r ? r.result : null;
+  });
 }
 
 const sha256 = (s) => crypto.createHash("sha256").update(String(s)).digest();
