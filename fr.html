@@ -1077,7 +1077,7 @@
       "name": "ValenciaSolution",
       "url": "https://www.valenciasolution.net/",
       "logo": "https://www.valenciasolution.net/images/logo.png",
-      "email": "valenciasolution.net@gmail.com",
+      "email": "j@valenciasolution.net",
       "telephone": "+1-647-794-2878",
       "address": {
         "@type": "PostalAddress",
@@ -1716,7 +1716,7 @@
             <div class="contact-methods">
                 <div class="contact-card">
                     <div class="label">Courriel</div>
-                    <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net@gmail.com</a>
+                    <a href="mailto:j@valenciasolution.net">j@valenciasolution.net</a>
                 </div>
                 <div class="contact-card">
                     <div class="label">Téléphone</div>
@@ -1907,7 +1907,7 @@
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                     <address class="ft-contact">
-                        <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net@gmail.com</a><br>
+                        <a href="mailto:j@valenciasolution.net">j@valenciasolution.net</a><br>
                         <a href="tel:+16477942878">+1 (647) 794-2878</a>
                     </address>
                 </div>
@@ -1917,7 +1917,7 @@
                         <li><a href="/terms">Conditions de vente</a></li>
                         <li><a href="/privacy">Politique de confidentialité</a></li>
                         <li><a href="/privacy#emails">Préférences de courriel</a></li>
-                        <li><a href="mailto:valenciasolution.net@gmail.com?subject=Unsubscribe">Se désabonner</a></li>
+                        <li><a href="mailto:j@valenciasolution.net?subject=Unsubscribe">Se désabonner</a></li>
                     </ul>
                 </div>
             </div>
@@ -2032,7 +2032,7 @@
         /* Testimonial composer: 5-trophy rating, live preview, POST /api/review.
            Falls back to a mailto: draft only if the endpoint is unavailable. */
         (function () {
-            var TEAM_EMAIL = 'valenciasolution.net@gmail.com';
+            var TEAM_EMAIL = 'j@valenciasolution.net';
             var MAX = 600;
             var RANKS = ['', 'Réchauffe-banc', 'Joueur de soutien', 'Partant', 'Étoile', 'MVP'];
             var $ = function (id) { return document.getElementById(id); };
@@ -2483,10 +2483,10 @@ err('We emailed your details to our team. We will send your Notepad link shortly
                         var body = ['Free Notepad sign-up', 'Sport: ' + data.sport, 'Name: ' + data.name, 'Email: ' + data.email,
                             'Role: ' + (data.role || '-'), 'Club: ' + (data.club || '-'), 'City: ' + (data.city || '-'),
                             'Email updates opt-in: ' + (data.marketingOptIn ? 'Yes' : 'No')].join('\n');
-                        window.location.href = 'mailto:valenciasolution.net@gmail.com?subject=' +
+                        window.location.href = 'mailto:j@valenciasolution.net?subject=' +
                             encodeURIComponent('Free Notepad sign-up: ' + data.name) + '&body=' + encodeURIComponent(body);
                     } else {
-                        err('Un problème est survenu de notre côté. Veuillez réessayer, ou écrivez à valenciasolution.net@gmail.com et nous vous inscrirons.');
+                        err('Un problème est survenu de notre côté. Veuillez réessayer, ou écrivez à j@valenciasolution.net et nous vous inscrirons.');
                     }
                 }).catch(function () {
                     btn.disabled = false;
