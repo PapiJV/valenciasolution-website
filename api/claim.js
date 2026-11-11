@@ -23,7 +23,7 @@ function page(res, status, title, msg) {
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>${title}</title>
 <style>body{font:16px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f7fb;color:#1a1a2e}
 main{background:#fff;border:1px solid #e2e2ec;border-radius:14px;padding:28px;max-width:440px;margin:16px}h1{font-size:20px;margin:0 0 10px}a{color:#ff6b35}</style>
-<main><h1>${title}</h1><p>${msg}</p><p>Need help? Email <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net@gmail.com</a> with your receipt and we'll sort it out.</p></main>`);
+<main><h1>${title}</h1><p>${msg}</p><p>Need help? Email <a href="mailto:j@valenciasolution.net">j@valenciasolution.net</a> with your receipt and we'll sort it out.</p></main>`);
 }
 
 async function stripeSession(id) {
