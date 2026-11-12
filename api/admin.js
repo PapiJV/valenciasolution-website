@@ -84,7 +84,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (!safeEqual(String(body.key || ""), adminKey)) {
+  if (!safeEqual(String(body.key || "").trim(), adminKey.trim())) {
     form(res, next, 401, "Wrong key.");
     return;
   }
