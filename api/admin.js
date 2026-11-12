@@ -10,7 +10,7 @@
 
 import { adminCookie, clearAdminCookie, rateLimit, safeEqual, sameOrigin, tooMany } from "./_lib/security.js";
 
-const NEXT_OK = new Set(["/api/reviews", "/api/signups", "/api/license"]);
+const NEXT_OK = new Set(["/api/reviews", "/api/signups", "/api/license", "/api/qr"]);
 const nextOf = (v) => (NEXT_OK.has(String(v || "")) ? String(v) : "/api/reviews");
 
 function parseBody(req) {
