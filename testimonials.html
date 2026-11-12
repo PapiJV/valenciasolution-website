@@ -703,7 +703,7 @@
         .t-empty { filter: grayscale(1); opacity: 0.3; }
         .review-product { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; margin-bottom: 12px; }
         .review-headline { color: var(--text); font-size: 1.08rem; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
-        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; }
+        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; white-space: pre-line; }
         .review-author { color: var(--text); font-size: 0.9rem; font-weight: 700; }
         .review-role { color: var(--text-muted); font-size: 0.82rem; font-weight: 400; }
         .reviews-more { text-align: center; margin-top: 28px; }
@@ -1208,6 +1208,17 @@
                 if (text) e.textContent = text;
                 return e;
             }
+            function richText(cls, m) {
+                /* **bold** -> <strong>, built with DOM nodes (no innerHTML). Line breaks kept via CSS. */
+                var box = el('div', cls), s = quote(m), re = /\*\*([^*\n]+)\*\*/g, last = 0, x;
+                while ((x = re.exec(s))) {
+                    if (x.index > last) box.appendChild(document.createTextNode(s.slice(last, x.index)));
+                    box.appendChild(el('strong', '', x[1]));
+                    last = re.lastIndex;
+                }
+                if (last < s.length) box.appendChild(document.createTextNode(s.slice(last)));
+                return box;
+            }
             function card(t) {
                 var c = el('div', 'review-card');
                 var n = Math.max(1, Math.min(5, t.rating | 0));
@@ -1224,7 +1235,7 @@
                     m.appendChild(v);
                     c.appendChild(m);
                 }
-                c.appendChild(el('div', 'review-text', quote(t.message)));
+                c.appendChild(richText('review-text', t.message));
                 var a = el('div', 'review-author', t.name);
                 var role = [t.role, t.club].filter(Boolean).join(' · ');
                 if (role) { a.appendChild(document.createTextNode(' ')); a.appendChild(el('span', 'review-role', '· ' + role)); }
