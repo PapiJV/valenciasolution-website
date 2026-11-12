@@ -105,7 +105,7 @@ ${codes.map((c) => `<tr><td>${esc(c.club)}</td><td>${esc(c.sport ? (APPS[c.sport
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Referrer-Policy", "same-origin"); // no-referrer would send Origin: null on form posts and fail sameOrigin()
   if (!isAdmin(req, process.env.REVIEWS_ADMIN_KEY)) {
     res.redirect(303, "/api/admin?next=/api/qr");
     return;

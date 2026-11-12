@@ -61,7 +61,7 @@ async function render(res, issued, notice) {
   const { list, enforce } = await deviceTable();
   const opts = Object.entries(APPS).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Referrer-Policy", "same-origin"); // no-referrer would send Origin: null on form posts and fail sameOrigin()
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Issue licence</title>
 <style>body{font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f7f7fb;color:#1a1a2e;padding:16px}
