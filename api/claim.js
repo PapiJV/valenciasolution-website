@@ -12,7 +12,7 @@
 //      LICENSE_PRIVATE_KEY, KV_REST_API_URL / KV_REST_API_TOKEN.
 
 import { APPS, CLUB_MIN_CENTS, PAYMENT_LINKS, appLink } from "./_lib/apps.js";
-import { signLicense } from "./_lib/license.js";
+import { metaCommand, signLicense } from "./_lib/license.js";
 import { rateLimit, redisPipeline, tooMany } from "./_lib/security.js";
 
 const SESSION_RE = /^cs_(live|test)_[A-Za-z0-9]{10,200}$/;
@@ -94,7 +94,8 @@ export default async function handler(req, res) {
       res.redirect(303, appLink(prior.app, prior.token));
       return;
     }
-    await redisPipeline([[
+    const buyer = (s.customer_details && s.customer_details.email) || id;
+    await redisPipeline([metaCommand(payload, buyer), [
       "RPUSH", "site:licenses",
       JSON.stringify({
         at: new Date().toISOString(), source: "stripe", app, tier, lid: payload.lid, ref: id,

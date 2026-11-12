@@ -3,11 +3,12 @@
 //
 //   GET  /api/license          -> form + recent licences
 //   POST /api/license  app, tier, note   -> shows the ready-to-send app link
+//   POST /api/license  action=revoke|restore lid   /  action=enforce lid=on|off
 //
 // Env: REVIEWS_ADMIN_KEY, LICENSE_PRIVATE_KEY, KV_REST_API_URL / KV_REST_API_TOKEN.
 
 import { APPS, appLink } from "./_lib/apps.js";
-import { signLicense } from "./_lib/license.js";
+import { DEVICE_LIMITS, metaCommand, signLicense } from "./_lib/license.js";
 import { isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
 
 const esc = (s) =>
@@ -30,8 +31,34 @@ async function recent() {
   }
 }
 
-async function render(res, issued) {
+// Every tracked licence with its device count, most devices first.
+async function deviceTable() {
+  try {
+    const [metaFlat, revokedList, enforce] = await redisPipeline([
+      ["HGETALL", "site:lic:meta"], ["SMEMBERS", "site:lic:revoked"], ["GET", "site:lic:enforce"],
+    ]);
+    const meta = [];
+    for (let i = 0; i < (metaFlat || []).length; i += 2) {
+      try { meta.push({ lid: metaFlat[i], ...JSON.parse(metaFlat[i + 1]) }); } catch { /* skip */ }
+    }
+    const counts = meta.length ? await redisPipeline(meta.map((m) => ["HLEN", `site:lic:dev:${m.lid}`])) : [];
+    const revoked = new Set(revokedList || []);
+    const list = meta
+      .map((m, i) => ({ ...m, devices: counts[i] || 0, limit: DEVICE_LIMITS[m.tier] || DEVICE_LIMITS.individual, revoked: revoked.has(m.lid) }))
+      .sort((a, b) => b.devices - a.devices || String(b.at).localeCompare(String(a.at)));
+    return { list, enforce: enforce === "on" };
+  } catch {
+    return { list: [], enforce: false };
+  }
+}
+
+const act = (action, lid, label, color) =>
+  `<form method="post" action="/api/license" style="margin:0"><input type="hidden" name="action" value="${action}">` +
+  `<input type="hidden" name="lid" value="${esc(lid)}"><button type="submit" style="margin:0;padding:4px 8px;width:auto;background:${color}">${label}</button></form>`;
+
+async function render(res, issued, notice) {
   const rows = await recent();
+  const { list, enforce } = await deviceTable();
   const opts = Object.entries(APPS).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Referrer-Policy", "no-referrer");
@@ -42,6 +69,7 @@ async function render(res, issued) {
 label{display:block;font-weight:600;margin:10px 0 4px}select,input,textarea,button{font:inherit;width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #c9c9d6}
 button{background:#ff6b35;color:#fff;border:0;font-weight:600;margin-top:14px;cursor:pointer}textarea{height:96px;font-family:ui-monospace,monospace;font-size:12px}
 table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;border-bottom:1px solid #eee;text-align:left}</style>
+${notice ? `<div class="card"><strong>${esc(notice)}</strong></div>` : ""}
 ${issued ? `<div class="card"><h2>Licence ready: ${esc(APPS[issued.app].name)} (${esc(issued.tier)})</h2>
 <p>Send this link. Opening it once unlocks the app on that device, offline after that.</p>
 <textarea readonly onclick="this.select()">${esc(issued.link)}</textarea></div>` : ""}
@@ -50,6 +78,14 @@ ${issued ? `<div class="card"><h2>Licence ready: ${esc(APPS[issued.app].name)} (
 <label>Tier</label><select name="tier"><option value="comp">Comp (club giveaway)</option><option value="individual">Individual (paid)</option><option value="club">Club (paid)</option></select>
 <label>Note (who it's for)</label><input name="note" maxlength="80" placeholder="e.g. Riverside Hawks U14 / jane@club.ca">
 <button type="submit">Create link</button></form>
+<div class="card"><h2>Devices per licence</h2>
+<p>Device limits are <strong>${enforce ? "ON" : "OFF (counting only)"}</strong>. Limits when on: individual ${DEVICE_LIMITS.individual}, club ${DEVICE_LIMITS.club}, free ${DEVICE_LIMITS.free}, comp ${DEVICE_LIMITS.comp}. A device counts once it opens the app online.</p>
+${act("enforce", enforce ? "off" : "on", enforce ? "Turn limits OFF" : "Turn limits ON", enforce ? "#6b6b80" : "#c0392b")}
+<table style="margin-top:12px"><tr><th>App</th><th>Tier</th><th>Who</th><th>Devices</th><th></th></tr>
+${list.map((m) => `<tr style="${m.revoked ? "opacity:.5" : m.devices > m.limit ? "background:#fff1ec" : ""}"><td>${esc(m.app)}</td><td>${esc(m.tier)}</td><td>${esc(m.who)}</td>` +
+  `<td><strong>${m.devices}</strong> / ${m.limit}${m.revoked ? " (revoked)" : ""}</td>` +
+  `<td>${m.revoked ? act("restore", m.lid, "Restore", "#2e7d32") : act("revoke", m.lid, "Revoke", "#c0392b")}</td></tr>`).join("") || '<tr><td colspan="5">No devices yet.</td></tr>'}
+</table></div>
 <div class="card"><h2>Recent licences</h2><table><tr><th>When</th><th>App</th><th>Tier</th><th>Source</th><th>Ref / email</th></tr>
 ${rows.map((r) => `<tr><td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td><td>${esc(r.app)}</td><td>${esc(r.tier)}</td><td>${esc(r.source)}</td><td>${esc(r.email || r.note || r.ref)}</td></tr>`).join("")}
 </table></div>`);
@@ -75,6 +111,23 @@ export default async function handler(req, res) {
     return;
   }
   const b = parseBody(req);
+  const LID_RE = /^[A-Za-z0-9_-]{6,40}$/;
+  if (b.action === "revoke" || b.action === "restore") {
+    const lid = String(b.lid || "");
+    if (!LID_RE.test(lid)) {
+      res.status(400).json({ error: "Bad licence id." });
+      return;
+    }
+    await redisPipeline([[b.action === "revoke" ? "SADD" : "SREM", "site:lic:revoked", lid]]);
+    await render(res, null, b.action === "revoke" ? "Licence revoked: it stops working the next time a device opens the app online." : "Licence restored.");
+    return;
+  }
+  if (b.action === "enforce") {
+    const on = b.lid === "on";
+    await redisPipeline([on ? ["SET", "site:lic:enforce", "on"] : ["DEL", "site:lic:enforce"]]);
+    await render(res, null, on ? "Device limits are ON. New devices beyond a licence's limit are refused." : "Device limits are OFF. Devices are counted only.");
+    return;
+  }
   const app = String(b.app || "");
   const tier = ["comp", "individual", "club"].includes(b.tier) ? b.tier : "comp";
   const note = String(b.note || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 80);
@@ -84,7 +137,7 @@ export default async function handler(req, res) {
   }
   try {
     const { token, payload } = signLicense({ app, tier, ref: note || "admin" });
-    await redisPipeline([[
+    await redisPipeline([metaCommand(payload, note || "admin"), [
       "RPUSH", "site:licenses",
       JSON.stringify({ at: new Date().toISOString(), source: "admin", app, tier, lid: payload.lid, note }),
     ]]);

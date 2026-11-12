@@ -33,3 +33,36 @@ export function signLicense({ app, tier, ref }) {
   const sig = crypto.sign("sha256", Buffer.from(body), { key: privateKey(), dsaEncoding: "ieee-p1363" });
   return { token: `${body}.${b64u(sig)}`, payload };
 }
+
+// Server-side check of a token this site issued (same key pair as signing).
+export function verifyLicenseToken(token) {
+  try {
+    const parts = String(token || "").trim().split(".");
+    if (parts.length !== 3 || parts[0] !== PREFIX) return null;
+    const ok = crypto.verify(
+      "sha256",
+      Buffer.from(`${parts[0]}.${parts[1]}`),
+      { key: crypto.createPublicKey(privateKey()), dsaEncoding: "ieee-p1363" },
+      Buffer.from(parts[2], "base64url")
+    );
+    if (!ok) return null;
+    const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    return payload && payload.v === 1 && payload.lid ? payload : null;
+  } catch {
+    return null;
+  }
+}
+
+// Device tracking (Upstash):
+//   site:lic:meta            HASH lid -> {app, tier, who, at}
+//   site:lic:dev:<lid>       HASH deviceId -> ISO last seen
+//   site:lic:revoked         SET  lid
+//   site:lic:enforce         STRING "on" when device limits are enforced
+export const DEVICE_LIMITS = { individual: 4, club: 30, free: 2, comp: 30 };
+
+export function metaCommand(payload, who) {
+  return [
+    "HSET", "site:lic:meta", payload.lid,
+    JSON.stringify({ app: payload.app, tier: payload.tier, who: String(who || payload.ref || "").slice(0, 80), at: new Date().toISOString() }),
+  ];
+}

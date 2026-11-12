@@ -11,7 +11,7 @@
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
 import { APPS, appLink } from "./_lib/apps.js";
-import { signLicense } from "./_lib/license.js";
+import { metaCommand, signLicense } from "./_lib/license.js";
 import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
 
 const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
@@ -35,6 +35,7 @@ async function licenceFor(email, sport) {
   await pipeline([
     ["HSET", LIC_KEY, email, JSON.stringify({ app: sport, token })],
     ["RPUSH", "site:licenses", JSON.stringify({ at: new Date().toISOString(), source: "free-offer", app: sport, tier: "free", lid: payload.lid, email })],
+    metaCommand(payload, email),
   ]);
   return token;
 }
