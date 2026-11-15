@@ -16,9 +16,20 @@
 //      KV_REST_API_URL / KV_REST_API_TOKEN  (or UPSTASH_REDIS_REST_*).
 // Fails closed: if REVIEWS_ADMIN_KEY is unset the route is unavailable.
 
-import { isAdmin, sameOrigin } from "./_lib/security.js";
+import { BLOB_HOST_RE, ReviewStatusSchema, parse } from "./_lib/schemas.js";
+import { adminHtml, esc, isAdmin, sameOrigin } from "./_lib/security.js";
 
 const STATUS_KEY = "site:reviews:status";
+
+// Only our own Blob uploads are rendered as media; anything else is plain text.
+const isBlobUrl = (u) => {
+  try {
+    const x = new URL(u);
+    return x.protocol === "https:" && BLOB_HOST_RE.test(x.hostname);
+  } catch {
+    return false;
+  }
+};
 
 function redisCreds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -37,10 +48,6 @@ async function redis(command) {
   if (!res.ok) throw new Error(`REDIS_${res.status}`);
   return (await res.json()).result;
 }
-
-const esc = (s) =>
-  String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const parseRows = (rows) =>
   rows
@@ -62,29 +69,21 @@ const storageError = (res, e) => {
 };
 
 async function setStatus(req, res, adminKey) {
-  let body = req.body;
-  if (typeof body === "string") {
-    try {
-      body = JSON.parse(body);
-    } catch {
-      body = null;
-    }
-  }
   res.setHeader("Cache-Control", "no-store");
-  if (!isAdmin(req, adminKey) || !sameOrigin(req)) {
+  if (!sameOrigin(req)) {
+    res.status(403).json({ error: "Forbidden." });
+    return;
+  }
+  if (!(await isAdmin(req, adminKey))) {
     res.status(401).json({ error: "Unauthorized." });
     return;
   }
-  if (!body) {
-    res.status(400).json({ error: "Invalid request." });
-    return;
-  }
-  const id = String(body.id || "").slice(0, 80);
-  const action = String(body.action || "");
-  if (!id || !["approve", "hide", "pending"].includes(action)) {
+  const p = parse(ReviewStatusSchema, req);
+  if (!p.ok) {
     res.status(400).json({ error: "Missing id or unknown action." });
     return;
   }
+  const { id, action } = p.data;
   try {
     const entry = parseRows((await redis(["LRANGE", "site:reviews", "0", "-1"])) || []).find(
       (r) => (r.id || r.at) === id,
@@ -114,7 +113,7 @@ export default async function handler(req, res) {
 
   const adminKey = process.env.REVIEWS_ADMIN_KEY;
   if (!adminKey) {
-    res.status(501).json({ error: "REVIEWS_ADMIN_KEY is not set." });
+    res.status(503).json({ error: "Admin is unavailable." });
     return;
   }
   if (req.method === "POST") {
@@ -122,7 +121,7 @@ export default async function handler(req, res) {
     return;
   }
   res.setHeader("Cache-Control", "no-store");
-  if (!isAdmin(req, adminKey)) {
+  if (!(await isAdmin(req, adminKey))) {
     if (String(req.query.format || "") === "json") res.status(401).json({ error: "Unauthorized." });
     else res.redirect(303, "/api/admin?next=/api/reviews");
     return;
@@ -154,12 +153,12 @@ export default async function handler(req, res) {
   const mediaCell = (u) => {
     const url = String(u || "");
     if (!url) return "—";
-    if (!/^https:\/\//i.test(url)) return esc(url);
+    if (!isBlobUrl(url)) return esc(url);
     const isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp|avi|mkv)(\?|$)/i.test(url);
     const thumb = isVideo
       ? `<video src="${esc(url)}" preload="metadata" muted playsinline controls></video>`
       : `<img src="${esc(url)}" alt="" loading="lazy">`;
-    return `<a href="${esc(url)}" target="_blank" rel="noopener">${thumb}</a><input class="url" value="${esc(url)}" readonly onclick="this.select()">`;
+    return `<a href="${esc(url)}" target="_blank" rel="noopener">${thumb}</a><input class="url" value="${esc(url)}" readonly>`;
   };
   const wallCell = (r) => {
     const id = esc(r.id || r.at);
@@ -188,7 +187,8 @@ export default async function handler(req, res) {
     )
     .join("\n");
 
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  const nonce = adminHtml(res);
+  res.setHeader("Referrer-Policy", "same-origin");
   res.status(200).send(`<!doctype html><meta charset="utf-8">
 <meta name="robots" content="noindex">
 <title>Reviews (${reviews.length})</title>
@@ -220,8 +220,9 @@ ${reviews.length ? `<table>
   <tr><th>Wall</th><th>When</th><th>Rating</th><th>Product</th><th>Coach</th><th>Testimonial</th><th>Media</th><th>Email</th></tr>
   ${trs}
 </table>` : "<p>No reviews collected yet.</p>"}
-<script>
+<script nonce="${nonce}">
   document.addEventListener('click', function (e) {
+    if (e.target.matches('input.url')) { e.target.select(); return; }
     var b = e.target.closest('.acts button');
     if (!b || b.disabled) return;
     var cell = b.closest('td');

@@ -1973,7 +1973,7 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <input type="text" id="revHeadline" name="headline" placeholder="Finally ditched the clipboard" maxlength="90"></div>
 <div class="form-field">
 <div class="lbl">Photo/video <span class="hint">(optional, up to 100MB)</span></div>
-<input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/*,video/*">
+<input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,video/mp4,video/quicktime,video/webm">
 <label for="revMedia" class="tm-file-pick" id="revMediaPick">📷 Add a photo or video</label>
 <div class="tm-file" id="revMediaChosen" hidden>
 <div class="tm-file-thumb" id="revMediaThumb"></div>
@@ -2292,6 +2292,7 @@ renderPreview();
 form.addEventListener('change', renderPreview);
 renderPreview();
 /* Photo/video: thumbnail + Remove in the form, full media in the preview card. */
+var UPLOAD_EXT = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/heic':'heic','image/heif':'heif','video/mp4':'mp4','video/quicktime':'mov','video/webm':'webm'}; // keep in sync with UPLOAD_TYPES in api/upload.js
 var MEDIA_MAX_MB = 100; // keep in sync with MAX_BYTES in api/upload.js
 var mediaInput = $('revMedia'), mediaFile = null, mediaUrl = '';
 function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
@@ -2329,6 +2330,7 @@ clearError();
 mediaInput.closest('.form-field').classList.remove('has-error');
 if (!f) return; // picker cancelled - keep whatever was chosen before
 if (!/^(image|video)\//.test(f.type)) { clearMedia(); return fail('That file isn’t a photo or video.', 'revMedia'); }
+if (!UPLOAD_EXT[f.type]) { clearMedia(); return fail('Use a JPG, PNG, WebP, GIF, HEIC photo or an MP4, MOV, WebM video.', 'revMedia'); }
 if (f.size > MEDIA_MAX_MB * 1048576) { clearMedia(); return fail('Photo/video must be under ' + MEDIA_MAX_MB + 'MB - try a shorter clip.', 'revMedia'); }
 if (mediaUrl) URL.revokeObjectURL(mediaUrl);
 mediaFile = f;
@@ -2397,7 +2399,7 @@ $('revMediaRemove').disabled = true;
 submitBtn.textContent = 'Uploading… 0%';
 try {
 var blobClient = await import('/js/blob-upload.js');
-var safeName = mediaFile.name.replace(/[^\w.\-]+/g, '_').slice(-80) || 'upload';
+var safeName = crypto.randomUUID() + '.' + UPLOAD_EXT[mediaFile.type]; // random name: nothing user-chosen is stored
 var blob = await blobClient.upload('testimonials/' + safeName, mediaFile, {
 access: 'public',
 handleUploadUrl: '/api/upload',
@@ -2568,9 +2570,13 @@ $('freeDone').hidden = false;
 $('freeDoneIcon').textContent = app.icon;
 $('freeDoneTitle').textContent = already ? 'Welcome back, Coach.' : 'You’re in, Coach.';
 $('freeDoneMsg').textContent = (already ? 'You already claimed ' : 'Your free ') + app.name + (already ? '. Here’s your link again. ' : ' is ready. ') + 'Save this link: it’s your app.';
-$('freeOpen').href = url;
+var hasUrl = !!url;
+$('freeOpen').style.display = hasUrl ? '' : 'none';
+$('freeUrl').parentNode.style.display = hasUrl ? '' : 'none';
+if (!hasUrl) $('freeDoneMsg').textContent = 'You already claimed {app}. For your security we only show the link again on the device you signed up with. Email j@valenciasolution.net and we’ll resend it.'.replace('{app}', app.name);
+$('freeOpen').href = url || '#';
 $('freeOpen').textContent = 'Open ' + app.name + ' →';
-$('freeUrl').value = url;
+$('freeUrl').value = url || '';
 $('freeCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 $('freeCopy').addEventListener('click', function () {

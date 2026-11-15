@@ -22,6 +22,22 @@ const PER_VISITOR_PER_HOUR = 3;
 const SITE_WIDE_PER_DAY = 25;
 const TOKEN_TTL_MS = 30 * 60 * 1000;
 
+// Explicit allowlist (no SVG: it can carry script). Extension must match type.
+export const UPLOAD_TYPES = {
+  "image/jpeg": ["jpg", "jpeg"],
+  "image/png": ["png"],
+  "image/webp": ["webp"],
+  "image/gif": ["gif"],
+  "image/heic": ["heic"],
+  "image/heif": ["heif"],
+  "video/mp4": ["mp4", "m4v"],
+  "video/quicktime": ["mov"],
+  "video/webm": ["webm"],
+};
+const EXTS = [...new Set(Object.values(UPLOAD_TYPES).flat())];
+// Client names files "testimonials/<random uuid>.<ext>"; nothing user-chosen survives.
+export const UPLOAD_PATH_RE = new RegExp(`^testimonials/[0-9a-f-]{36}\\.(${EXTS.join("|")})$`);
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -64,9 +80,11 @@ export default async function handler(req, res) {
       body,
       request: req,
       onBeforeGenerateToken: async (pathname) => {
-        if (!/^testimonials\//.test(pathname)) throw new Error("BAD_PATH");
+        const m = UPLOAD_PATH_RE.exec(String(pathname));
+        if (!m) throw new Error("BAD_PATH");
+        const ext = m[1];
         return {
-          allowedContentTypes: ["image/*", "video/*"],
+          allowedContentTypes: Object.keys(UPLOAD_TYPES).filter((t) => UPLOAD_TYPES[t].includes(ext)),
           maximumSizeInBytes: MAX_BYTES,
           addRandomSuffix: true,
           validUntil: Date.now() + TOKEN_TTL_MS,

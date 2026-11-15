@@ -9,18 +9,8 @@
 
 import { APPS, appLink } from "./_lib/apps.js";
 import { DEVICE_LIMITS, metaCommand, signLicense } from "./_lib/license.js";
-import { isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
-
-const esc = (s) =>
-  String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-function parseBody(req) {
-  let b = req.body;
-  if (typeof b === "string") {
-    try { b = JSON.parse(b); } catch { b = Object.fromEntries(new URLSearchParams(b)); }
-  }
-  return b && typeof b === "object" ? b : {};
-}
+import { LicenseActionSchema, parse } from "./_lib/schemas.js";
+import { adminHtml, esc, isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
 
 async function recent() {
   try {
@@ -60,7 +50,7 @@ async function render(res, issued, notice) {
   const rows = await recent();
   const { list, enforce } = await deviceTable();
   const opts = Object.entries(APPS).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  const nonce = adminHtml(res);
   res.setHeader("Referrer-Policy", "same-origin"); // no-referrer would send Origin: null on form posts and fail sameOrigin()
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Issue licence</title>
@@ -72,7 +62,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;borde
 ${notice ? `<div class="card"><strong>${esc(notice)}</strong></div>` : ""}
 ${issued ? `<div class="card"><h2>Licence ready: ${esc(APPS[issued.app].name)} (${esc(issued.tier)})</h2>
 <p>Send this link. Opening it once unlocks the app on that device, offline after that.</p>
-<textarea readonly onclick="this.select()">${esc(issued.link)}</textarea></div>` : ""}
+<textarea readonly id="issuedLink">${esc(issued.link)}</textarea></div>
+<script nonce="${nonce}">document.getElementById('issuedLink').addEventListener('click', function () { this.select(); });</script>` : ""}
 <form class="card" method="post" action="/api/license"><h2>Issue a licence</h2>
 <label>Notepad</label><select name="app" required>${opts}</select>
 <label>Tier</label><select name="tier"><option value="comp">Comp (club giveaway)</option><option value="individual">Individual (paid)</option><option value="club">Club (paid)</option></select>
@@ -93,7 +84,7 @@ ${rows.map((r) => `<tr><td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  if (!isAdmin(req, process.env.REVIEWS_ADMIN_KEY)) {
+  if (!(await isAdmin(req, process.env.REVIEWS_ADMIN_KEY))) {
     res.redirect(303, "/api/admin?next=/api/license");
     return;
   }
@@ -110,31 +101,29 @@ export default async function handler(req, res) {
     res.status(403).json({ error: "Forbidden." });
     return;
   }
-  const b = parseBody(req);
-  const LID_RE = /^[A-Za-z0-9_-]{6,40}$/;
-  if (b.action === "revoke" || b.action === "restore") {
-    const lid = String(b.lid || "");
-    if (!LID_RE.test(lid)) {
-      res.status(400).json({ error: "Bad licence id." });
+  const p = parse(LicenseActionSchema, req, { action: "issue" });
+  if (!p.ok) {
+    res.status(400).json({ error: "Invalid request." });
+    return;
+  }
+  const b = p.data;
+  try {
+    if (b.action === "revoke" || b.action === "restore") {
+      await redisPipeline([[b.action === "revoke" ? "SADD" : "SREM", "site:lic:revoked", b.lid]]);
+      await render(res, null, b.action === "revoke" ? "Licence revoked: it stops working the next time a device opens the app online." : "Licence restored.");
       return;
     }
-    await redisPipeline([[b.action === "revoke" ? "SADD" : "SREM", "site:lic:revoked", lid]]);
-    await render(res, null, b.action === "revoke" ? "Licence revoked: it stops working the next time a device opens the app online." : "Licence restored.");
+    if (b.action === "enforce") {
+      const on = b.lid === "on";
+      await redisPipeline([on ? ["SET", "site:lic:enforce", "on"] : ["DEL", "site:lic:enforce"]]);
+      await render(res, null, on ? "Device limits are ON. New devices beyond a licence's limit are refused." : "Device limits are OFF. Devices are counted only.");
+      return;
+    }
+  } catch {
+    res.status(502).json({ error: "Storage request failed." });
     return;
   }
-  if (b.action === "enforce") {
-    const on = b.lid === "on";
-    await redisPipeline([on ? ["SET", "site:lic:enforce", "on"] : ["DEL", "site:lic:enforce"]]);
-    await render(res, null, on ? "Device limits are ON. New devices beyond a licence's limit are refused." : "Device limits are OFF. Devices are counted only.");
-    return;
-  }
-  const app = String(b.app || "");
-  const tier = ["comp", "individual", "club"].includes(b.tier) ? b.tier : "comp";
-  const note = String(b.note || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 80);
-  if (!APPS[app]) {
-    res.status(400).json({ error: "Unknown app." });
-    return;
-  }
+  const { app, tier, note } = b;
   try {
     const { token, payload } = signLicense({ app, tier, ref: note || "admin" });
     await redisPipeline([metaCommand(payload, note || "admin"), [
@@ -143,6 +132,7 @@ export default async function handler(req, res) {
     ]]);
     await render(res, { app, tier, link: appLink(app, token) });
   } catch (e) {
-    res.status(501).json({ error: e.message === "LICENSE_NOT_CONFIGURED" ? "LICENSE_PRIVATE_KEY is not set." : "Could not issue licence." });
+    console.error("license issue failed", e && e.message);
+    res.status(503).json({ error: "Could not issue licence." });
   }
 }

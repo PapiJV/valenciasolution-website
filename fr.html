@@ -1826,7 +1826,7 @@
                         </div>
                         <div class="form-field">
                             <div class="lbl">Photo/vidéo <span class="hint">(facultatif, jusqu’à 100 Mo)</span></div>
-                            <input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/*,video/*">
+                            <input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,video/mp4,video/quicktime,video/webm">
                             <label for="revMedia" class="tm-file-pick" id="revMediaPick">📷 Ajouter une photo ou une vidéo</label>
                             <div class="tm-file" id="revMediaChosen" hidden>
                                 <div class="tm-file-thumb" id="revMediaThumb"></div>
@@ -2149,6 +2149,7 @@
             renderPreview();
 
             /* Photo/video: thumbnail + Remove in the form, full media in the preview card. */
+            var UPLOAD_EXT = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/heic':'heic','image/heif':'heif','video/mp4':'mp4','video/quicktime':'mov','video/webm':'webm'}; // keep in sync with UPLOAD_TYPES in api/upload.js
             var MEDIA_MAX_MB = 100; // keep in sync with MAX_BYTES in api/upload.js
             var mediaInput = $('revMedia'), mediaFile = null, mediaUrl = '';
             function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' Mo' : Math.max(1, Math.round(b / 1024)) + ' Ko'; }
@@ -2186,6 +2187,7 @@
                 mediaInput.closest('.form-field').classList.remove('has-error');
                 if (!f) return; // picker cancelled - keep whatever was chosen before
                 if (!/^(image|video)\//.test(f.type)) { clearMedia(); return fail('Ce fichier n’est ni une photo ni une vidéo.', 'revMedia'); }
+                if (!UPLOAD_EXT[f.type]) { clearMedia(); return fail('Utilisez une photo JPG, PNG, WebP, GIF, HEIC ou une vidéo MP4, MOV, WebM.', 'revMedia'); }
                 if (f.size > MEDIA_MAX_MB * 1048576) { clearMedia(); return fail('La photo/vidéo doit faire moins de ' + MEDIA_MAX_MB + ' Mo - essayez un extrait plus court.', 'revMedia'); }
                 if (mediaUrl) URL.revokeObjectURL(mediaUrl);
                 mediaFile = f;
@@ -2257,7 +2259,7 @@
                     submitBtn.textContent = 'Téléversement… 0%';
                     try {
                         var blobClient = await import('/js/blob-upload.js');
-                        var safeName = mediaFile.name.replace(/[^\w.\-]+/g, '_').slice(-80) || 'upload';
+                        var safeName = crypto.randomUUID() + '.' + UPLOAD_EXT[mediaFile.type]; // random name: nothing user-chosen is stored
                         var blob = await blobClient.upload('testimonials/' + safeName, mediaFile, {
                             access: 'public',
                             handleUploadUrl: '/api/upload',
@@ -2434,9 +2436,13 @@
                 $('freeDoneIcon').textContent = app.icon;
                 $('freeDoneTitle').textContent = already ? 'Bon retour, Coach.' : 'C’est fait, Coach.';
                 $('freeDoneMsg').textContent = (already ? 'Vous avez déjà réclamé ' : 'Votre ') + app.name + (already ? '. Voici de nouveau votre lien. ' : ' gratuit est prêt. ') + 'Conservez ce lien : c’est votre app.';
-                $('freeOpen').href = url;
+                var hasUrl = !!url;
+                $('freeOpen').style.display = hasUrl ? '' : 'none';
+                $('freeUrl').parentNode.style.display = hasUrl ? '' : 'none';
+                if (!hasUrl) $('freeDoneMsg').textContent = 'Vous avez déjà réclamé {app}. Par sécurité, le lien ne s’affiche de nouveau que sur l’appareil utilisé à l’inscription. Écrivez à j@valenciasolution.net et nous vous le renverrons.'.replace('{app}', app.name);
+                $('freeOpen').href = url || '#';
                 $('freeOpen').textContent = 'Ouvrir ' + app.name + ' →';
-                $('freeUrl').value = url;
+                $('freeUrl').value = url || '';
                 $('freeCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             $('freeCopy').addEventListener('click', function () {

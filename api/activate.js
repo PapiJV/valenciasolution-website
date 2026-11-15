@@ -10,10 +10,10 @@
 // are always refused.
 
 import { DEVICE_LIMITS, metaCommand, verifyLicenseToken } from "./_lib/license.js";
+import { ActivateSchema, parse } from "./_lib/schemas.js";
 import { rateLimit, redisPipeline, tooMany } from "./_lib/security.js";
 
 const ORIGIN_OK = /^https:\/\/[a-z0-9-]+\.vercel\.app$/;
-const DEVICE_RE = /^[A-Za-z0-9_-]{16,64}$/;
 
 function cors(req, res) {
   const o = String(req.headers.origin || "");
@@ -24,14 +24,6 @@ function cors(req, res) {
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.setHeader("Access-Control-Max-Age", "86400");
   }
-}
-
-function body(req) {
-  let b = req.body;
-  if (typeof b === "string") {
-    try { b = JSON.parse(b); } catch { b = {}; }
-  }
-  return b && typeof b === "object" ? b : {};
 }
 
 export default async function handler(req, res) {
@@ -47,9 +39,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { token, device } = body(req);
-  const payload = verifyLicenseToken(token);
-  if (!payload || !DEVICE_RE.test(String(device || ""))) {
+  const p = parse(ActivateSchema, req);
+  const payload = p.ok ? verifyLicenseToken(p.data.token) : null;
+  const device = p.ok ? p.data.device : "";
+  if (!payload) {
     res.status(400).json({ ok: false, reason: "invalid" });
     return;
   }
