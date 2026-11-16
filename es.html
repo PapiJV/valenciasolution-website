@@ -1003,6 +1003,7 @@ vertical-align: middle;
         .free-link { display: flex; gap: 8px; margin-bottom: 14px; }
         .free-link input { flex: 1; min-width: 0; background: var(--bg-light); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 0.85rem; }
         .free-link button { background: var(--bg-light); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0 14px; font-weight: 600; cursor: pointer; }
+        .free-share { display: block; width: 100%; margin: 0 0 14px; cursor: pointer; font: inherit; font-weight: 600; }
         .free-closed { text-align: center; padding: 20px 0; }
         .free-closed h3 { margin-bottom: 8px; }
         .free-closed p { color: var(--text-muted); margin-bottom: 18px; }
@@ -1326,6 +1327,7 @@ vertical-align: middle;
                         <input type="text" id="freeUrl" readonly aria-label="El enlace de tu app">
                         <button type="button" id="freeCopy">Copiar</button>
                     </div>
+                    <button type="button" class="btn btn-secondary free-share" id="freeShare">👥 Compartir con tu entrenador asistente</button>
                     <p class="free-fine">Consejo: en tu teléfono, abre la app y elige "Agregar a la pantalla de inicio" para tenerla siempre a un toque durante el partido.</p>
                 </div>
 
@@ -1839,7 +1841,7 @@ vertical-align: middle;
                         </div>
                         <div class="form-field">
                             <div class="lbl">Foto/video <span class="hint">(opcional, hasta 100MB)</span></div>
-                            <input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/*,video/*">
+                            <input type="file" id="revMedia" class="tm-file-input" name="media" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,video/mp4,video/quicktime,video/webm">
                             <label for="revMedia" class="tm-file-pick" id="revMediaPick">📷 Agrega una foto o video</label>
                             <div class="tm-file" id="revMediaChosen" hidden>
                                 <div class="tm-file-thumb" id="revMediaThumb"></div>
@@ -2162,6 +2164,7 @@ vertical-align: middle;
             renderPreview();
 
             /* Photo/video: thumbnail + Remove in the form, full media in the preview card. */
+            var UPLOAD_EXT = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/heic':'heic','image/heif':'heif','video/mp4':'mp4','video/quicktime':'mov','video/webm':'webm'}; // keep in sync with UPLOAD_TYPES in api/upload.js
             var MEDIA_MAX_MB = 100; // keep in sync with MAX_BYTES in api/upload.js
             var mediaInput = $('revMedia'), mediaFile = null, mediaUrl = '';
             function fmtSize(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
@@ -2199,6 +2202,7 @@ vertical-align: middle;
                 mediaInput.closest('.form-field').classList.remove('has-error');
                 if (!f) return; // picker cancelled - keep whatever was chosen before
                 if (!/^(image|video)\//.test(f.type)) { clearMedia(); return fail('Ese archivo no es una foto ni un video.', 'revMedia'); }
+                if (!UPLOAD_EXT[f.type]) { clearMedia(); return fail('Usa una foto JPG, PNG, WebP, GIF, HEIC o un video MP4, MOV, WebM.', 'revMedia'); }
                 if (f.size > MEDIA_MAX_MB * 1048576) { clearMedia(); return fail('La foto/video debe pesar menos de ' + MEDIA_MAX_MB + 'MB - prueba con un clip más corto.', 'revMedia'); }
                 if (mediaUrl) URL.revokeObjectURL(mediaUrl);
                 mediaFile = f;
@@ -2270,7 +2274,7 @@ vertical-align: middle;
                     submitBtn.textContent = 'Subiendo… 0%';
                     try {
                         var blobClient = await import('/js/blob-upload.js');
-                        var safeName = mediaFile.name.replace(/[^\w.\-]+/g, '_').slice(-80) || 'upload';
+                        var safeName = crypto.randomUUID() + '.' + UPLOAD_EXT[mediaFile.type]; // random name: nothing user-chosen is stored
                         var blob = await blobClient.upload('testimonials/' + safeName, mediaFile, {
                             access: 'public',
                             handleUploadUrl: '/api/upload',
@@ -2443,15 +2447,45 @@ vertical-align: middle;
             function showDone(sport, url, already) {
                 var app = APPS[sport];
                 form.hidden = true;
+                shareSport = sport;
                 $('freeDone').hidden = false;
                 $('freeDoneIcon').textContent = app.icon;
                 $('freeDoneTitle').textContent = already ? 'Bienvenido de nuevo, entrenador.' : 'Ya estás dentro, entrenador.';
                 $('freeDoneMsg').textContent = (already ? 'Ya reclamaste ' : 'Tu ') + app.name + (already ? '. Aquí está tu enlace otra vez. ' : ' gratis está listo. ') + 'Guarda este enlace: es tu app.';
-                $('freeOpen').href = url;
+                var hasUrl = !!url;
+                $('freeOpen').style.display = hasUrl ? '' : 'none';
+                $('freeUrl').parentNode.style.display = hasUrl ? '' : 'none';
+                if (!hasUrl) $('freeDoneMsg').textContent = 'Ya reclamaste {app}. Por seguridad, el enlace solo se vuelve a mostrar en el dispositivo con el que te registraste. Escribe a j@valenciasolution.net y te lo reenviamos.'.replace('{app}', app.name);
+                $('freeOpen').href = url || '#';
                 $('freeOpen').textContent = 'Abrir ' + app.name + ' →';
-                $('freeUrl').value = url;
+                $('freeUrl').value = url || '';
                 $('freeCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+            /* Share with an assistant coach: sends the sign-up page (never this coach's licence link).
+               Club sign-ups keep the club's tag, e.g. club-milton.share, so /api/qr still credits the club. */
+            var shareSport = '';
+            function shareLink() {
+                var src = signupSource.source || '';
+                src = /^club-/.test(src) ? (src.split('.')[0] + '.share').slice(0, 40) : 'share';
+                var q = new URLSearchParams({ src: src });
+                if (shareSport) q.set('sport', shareSport);
+                return location.origin + (location.pathname.replace(/\/+$/, '') || '/') + '?' + q.toString() + '#freeCard';
+            }
+            $('freeShare').addEventListener('click', function () {
+                var btn = this, url = shareLink(), app = APPS[shareSport];
+                var text = 'Uso {app} en la banca. Es gratis para los primeros 1.000 entrenadores hasta el 31 de diciembre, sin tarjeta. Consigue el tuyo:'.replace('{app}', app ? app.name : 'Notepad');
+                if (navigator.share) {
+                    navigator.share({ title: app ? app.name : 'Notepad', text: text, url: url }).catch(function () {});
+                    return;
+                }
+                var done = function () {
+                    btn.textContent = 'Enlace copiado ✓';
+                    setTimeout(function () { btn.textContent = '👥 Compartir con tu entrenador asistente'; }, 2200);
+                };
+                var manual = function () { window.prompt('Copia este enlace y envíaselo a tu entrenador asistente:', url); };
+                if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + url).then(done, manual);
+                else manual();
+            });
             $('freeCopy').addEventListener('click', function () {
                 var inp = $('freeUrl');
                 inp.select();

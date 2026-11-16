@@ -12,7 +12,9 @@
 
 import { APPS, appLink } from "./_lib/apps.js";
 import { metaCommand, signLicense } from "./_lib/license.js";
-import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
+import crypto from "node:crypto";
+import { RegisterSchema, bodyOf, parse } from "./_lib/schemas.js";
+import { rateLimit, safeEqual, sameOrigin, tooMany } from "./_lib/security.js";
 
 const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
 const OFFER_CAP = 1000;
@@ -21,6 +23,28 @@ const OFFER_CAP = 1000;
 const EMAILS_KEY = "site:signups:emails";
 const LIST_KEY = "site:signups";
 const LIC_KEY = "site:signups:lic"; // HASH email -> {app, token}
+
+// Repeat sign-ups only get their link back in the browser that claimed it.
+// Without this, anyone who knows a coach's email could fetch that coach's
+// licence. The cookie holds an HMAC of the email, never the email itself.
+const CLAIM_COOKIE = "vs_claim";
+const CLAIM_SEC = 400 * 24 * 60 * 60;
+function claimMac(email) {
+  const secret = String(process.env.LICENSE_PRIVATE_KEY || "");
+  if (!secret) throw new Error("LICENSE_NOT_CONFIGURED");
+  const k = crypto.createHash("sha256").update(`vs-claim-cookie:${secret}`).digest();
+  return crypto.createHmac("sha256", k).update(email).digest("base64url");
+}
+const claimCookie = (email) =>
+  `${CLAIM_COOKIE}=${claimMac(email)}; Path=/api/register; HttpOnly; Secure; SameSite=Strict; Max-Age=${CLAIM_SEC}`;
+function hasClaimCookie(req, email) {
+  const raw = String((req.headers && req.headers.cookie) || "");
+  for (const part of raw.split(";")) {
+    const i = part.indexOf("=");
+    if (i > 0 && part.slice(0, i).trim() === CLAIM_COOKIE && safeEqual(part.slice(i + 1).trim(), claimMac(email))) return true;
+  }
+  return false;
+}
 
 // One licence per coach: reuse it on repeat sign-ins so the log stays clean.
 async function licenceFor(email, sport) {
@@ -75,10 +99,6 @@ function status(claimed) {
   };
 }
 
-function clean(v, max) {
-  return String(v == null ? "" : v).replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
-}
-
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
@@ -113,33 +133,18 @@ export default async function handler(req, res) {
     return;
   }
 
-  let body = req.body;
-  if (typeof body === "string") {
-    try { body = JSON.parse(body); } catch { body = null; }
-  }
-  body = body || {};
-
   // Honeypot: real people never fill this hidden field.
-  if (clean(body.website, 200)) {
+  if (String(bodyOf(req).website || "").trim()) {
     res.status(200).json({ ok: true });
     return;
   }
-
-  const sport = clean(body.sport, 20).toLowerCase();
-  const name = clean(body.name, 80);
-  const email = clean(body.email, 120).toLowerCase();
-  const role = clean(body.role, 80);
-  const club = clean(body.club, 100);
-  const city = clean(body.city, 80);
-  const marketingOptIn = body.marketingOptIn === true;
-  // Where they came from: ?src= on the link, else the referring site.
-  const source = clean(body.source, 40).toLowerCase().replace(/[^a-z0-9._-]/g, "");
-  const referrer = clean(body.referrer, 100).toLowerCase();
-
-  if (!APPS[sport] || !name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-    res.status(400).json({ error: "Please pick a sport and enter your name and a valid email." });
+  const p = parse(RegisterSchema, req);
+  if (!p.ok) {
+    res.status(400).json({ error: "Please pick a sport and enter your name and a valid email.", fields: p.issues });
     return;
   }
+  // source: ?src= on the link, else the referring site.
+  const { sport, name, email, role, club, city, marketingOptIn, source, referrer } = p.data;
 
   if (!isOpenByDate()) {
     res.status(410).json({ error: "This offer has ended.", ...status(OFFER_CAP) });
@@ -163,6 +168,11 @@ export default async function handler(req, res) {
         } catch { /* skip */ }
       }
       const priorSport = prior && APPS[prior.sport] ? prior.sport : sport;
+      if (!hasClaimCookie(req, email)) {
+        // Same answer whether or not the email exists in the list beyond this point.
+        res.status(200).json({ ok: true, already: true, sport: priorSport, appName: APPS[priorSport].name, appUrl: null });
+        return;
+      }
       const token = await licenceFor(email, priorSport);
       res.status(200).json({ ok: true, already: true, sport: priorSport, appName: APPS[priorSport].name, appUrl: appLink(priorSport, token) });
       return;
@@ -189,6 +199,7 @@ export default async function handler(req, res) {
     await pipeline([["RPUSH", LIST_KEY, JSON.stringify(entry)]]);
     const token = await licenceFor(email, sport);
 
+    res.setHeader("Set-Cookie", claimCookie(email));
     res.status(200).json({
       ok: true, sport, appName: APPS[sport].name, appUrl: appLink(sport, token),
       ...status(Number(claimed)),

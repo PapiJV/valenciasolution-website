@@ -12,7 +12,8 @@
 
 import QRCode from "qrcode";
 import { APPS } from "./_lib/apps.js";
-import { isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
+import { QrSchema, parse } from "./_lib/schemas.js";
+import { adminHtml, esc, isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
 
 const SITE = "https://www.valenciasolution.net";
 const LANGS = { en: "", fr: "/fr", es: "/es" };
@@ -22,20 +23,9 @@ const COPY = {
   es: { scan: "Escanea para obtener tu", any: "Coaching Notepad gratis", sub: "Gratis para los primeros 1.000 entrenadores · sin suscripción" },
 };
 
-const esc = (s) =>
-  String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
 const slugify = (s) =>
   String(s || "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
-
-function parseBody(req) {
-  let b = req.body;
-  if (typeof b === "string") {
-    try { b = JSON.parse(b); } catch { b = Object.fromEntries(new URLSearchParams(b)); }
-  }
-  return b && typeof b === "object" ? b : {};
-}
 
 function linkFor({ slug, sport, lang }) {
   const q = new URLSearchParams({ src: `club-${slug}` });
@@ -58,13 +48,14 @@ async function printCard(res, code) {
   const svg = await QRCode.toString(url, { type: "svg", errorCorrectionLevel: "M", margin: 1 });
   const t = COPY[code.lang] || COPY.en;
   const app = code.sport && APPS[code.sport];
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  const nonce = adminHtml(res);
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>QR – ${esc(code.club)}</title><style>${STYLE}</style>
 <div class="print"><h1>${esc(t.scan)}</h1><h2>${esc(app ? app.name : t.any)}</h2>${svg}
 <div class="club">${esc(code.club)}</div><div class="sub">${esc(t.sub)}</div><div class="url">${esc(url)}</div></div>
-<div class="card noprint" style="margin-top:16px"><button onclick="print()">Print this card</button>
-<a class="btn" style="background:#1a1a2e" href="/api/qr">Back to club codes</a></div>`);
+<div class="card noprint" style="margin-top:16px"><button id="printBtn" type="button">Print this card</button>
+<a class="btn" style="background:#1a1a2e" href="/api/qr">Back to club codes</a></div>
+<script nonce="${nonce}">document.getElementById('printBtn').addEventListener('click', function () { window.print(); });</script>`);
 }
 
 async function listPage(res, notice) {
@@ -87,7 +78,7 @@ async function listPage(res, notice) {
   } catch { /* storage down: still let the admin make a code */ }
   codes = codes.map((c) => ({ ...c, signups: bySource[c.slug] || 0 })).sort((a, b) => b.signups - a.signups || String(b.at).localeCompare(String(a.at)));
   const opts = `<option value="">Any sport (coach picks)</option>` + Object.entries(APPS).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  adminHtml(res);
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Club QR codes</title><style>${STYLE}</style>
 ${notice ? `<div class="card"><strong>${esc(notice)}</strong></div>` : ""}
@@ -106,7 +97,7 @@ ${codes.map((c) => `<tr><td>${esc(c.club)}</td><td>${esc(c.sport ? (APPS[c.sport
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   res.setHeader("Referrer-Policy", "same-origin"); // no-referrer would send Origin: null on form posts and fail sameOrigin()
-  if (!isAdmin(req, process.env.REVIEWS_ADMIN_KEY)) {
+  if (!(await isAdmin(req, process.env.REVIEWS_ADMIN_KEY))) {
     res.redirect(303, "/api/admin?next=/api/qr");
     return;
   }
@@ -115,8 +106,10 @@ export default async function handler(req, res) {
     const p = slugify(req.query && req.query.print);
     if (p) {
       const [raw] = await redisPipeline([["HGET", "site:qr", p]]).catch(() => [null]);
-      if (raw) {
-        await printCard(res, { slug: p, ...JSON.parse(raw) });
+      let code = null;
+      try { code = raw ? JSON.parse(raw) : null; } catch { /* corrupt entry: fall through to the list */ }
+      if (code) {
+        await printCard(res, { slug: p, ...code });
         return;
       }
     }
@@ -133,11 +126,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  const b = parseBody(req);
-  const club = String(b.club || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 60);
+  const p = parse(QrSchema, req);
+  const { club, sport, lang } = p.ok ? p.data : { club: "", sport: "", lang: "en" };
   const slug = slugify(club);
-  const sport = APPS[b.sport] ? b.sport : "";
-  const lang = LANGS[b.lang] !== undefined ? b.lang : "en";
   if (!slug) {
     await listPage(res, "Enter a club name.");
     return;

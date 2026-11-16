@@ -5,7 +5,7 @@
 // Gated by REVIEWS_ADMIN_KEY (same key as /api/reviews). Fails closed.
 // Sign in at /api/admin, or send "Authorization: Bearer <key>" from scripts.
 
-import { isAdmin } from "./_lib/security.js";
+import { adminHtml, esc, isAdmin } from "./_lib/security.js";
 
 function creds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -25,10 +25,6 @@ async function redis(command) {
   return (await res.json()).result;
 }
 
-const esc = (s) =>
-  String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
 // CSV cell: quote, double quotes, and neutralise spreadsheet formulas.
 const csvCell = (v) => {
   let s = String(v == null ? "" : v);
@@ -45,10 +41,10 @@ export default async function handler(req, res) {
   }
   const adminKey = process.env.REVIEWS_ADMIN_KEY;
   if (!adminKey) {
-    res.status(501).json({ error: "REVIEWS_ADMIN_KEY is not set." });
+    res.status(503).json({ error: "Admin is unavailable." });
     return;
   }
-  if (!isAdmin(req, adminKey)) {
+  if (!(await isAdmin(req, adminKey))) {
     const f = String(req.query.format || "");
     if (f === "json" || f === "csv") res.status(401).json({ error: "Unauthorized." });
     else res.redirect(303, "/api/admin?next=/api/signups");
@@ -104,7 +100,8 @@ export default async function handler(req, res) {
     <td>${esc(sourceOf(r))}</td>
   </tr>`).join("\n");
 
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  adminHtml(res);
+  res.setHeader("Referrer-Policy", "same-origin");
   res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
 <title>Free offer sign-ups (${list.length})</title>
 <style>

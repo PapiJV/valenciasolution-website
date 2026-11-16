@@ -7,6 +7,8 @@
 // Upstash integration) or UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN.
 // If neither is set the route answers 501 and the form falls back to email.
 
+import crypto from "node:crypto";
+import { ReviewSchema, parse } from "./_lib/schemas.js";
 import { rateLimit, sameOrigin, tooMany } from "./_lib/security.js";
 
 const MAX_REVIEWS = 500;
@@ -47,33 +49,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  let body = req.body;
-  if (typeof body === "string") {
-    try {
-      body = JSON.parse(body);
-    } catch {
-      body = null;
-    }
-  }
-  const name = String((body && body.name) || "").trim().slice(0, 80);
-  const role = String((body && body.role) || "").trim().slice(0, 80);
-  const club = String((body && body.club) || "").trim().slice(0, 100);
-  const product = String((body && body.product) || "").trim().slice(0, 40);
-  const headline = String((body && body.headline) || "").trim().slice(0, 90);
-  const consent = Boolean(body && body.consent === true);
-  const access = ["purchased", "free"].includes(body && body.access) ? body.access : "";
-  const message = String((body && body.message) || "").trim().slice(0, 800);
-  const email = String((body && body.email) || "").trim().slice(0, 120);
-  const media = String((body && body.media) || "").trim().slice(0, 500);
-  const rating = Math.max(1, Math.min(5, parseInt((body && body.rating), 10) || 0));
-
-  if (!name || message.length < 10 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    res.status(400).json({ error: "Missing or invalid fields." });
+  const p = parse(ReviewSchema, req);
+  if (!p.ok) {
+    res.status(400).json({ error: "Missing or invalid fields.", fields: p.issues });
     return;
   }
+  const { name, role, club, product, headline, consent, access, message, email, media, rating } = p.data;
 
   try {
-    const id = `r_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const id = `r_${Date.now().toString(36)}_${crypto.randomBytes(4).toString("hex")}`;
     const entry = { id, name, role, club, product, headline, message, email, media, rating, consent, access, at: new Date().toISOString() };
     await redisPipeline([
       ["RPUSH", "site:reviews", JSON.stringify(entry)],
