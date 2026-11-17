@@ -3,7 +3,10 @@
 //
 //   GET  /api/reviews              -> HTML table with Approve / Hide
 //   GET  /api/reviews?format=json  -> { count, reviews }
-//   POST /api/reviews  { id, action: "approve" | "hide" | "pending" }
+//   POST /api/reviews  { id, action: "approve" | "hide" | "pending" | "free" | "notfree" }
+//
+// "free" / "notfree" set an admin override for the "Free access" label (hash
+// site:reviews:access), for coaches who got free access but didn't tick it.
 //
 // Sign in at /api/admin (sets an HttpOnly cookie). Scripts can instead send
 // "Authorization: Bearer <REVIEWS_ADMIN_KEY>". The key never goes in the URL.
@@ -20,6 +23,7 @@ import { BLOB_HOST_RE, ReviewStatusSchema, parse } from "./_lib/schemas.js";
 import { adminHtml, esc, isAdmin, sameOrigin } from "./_lib/security.js";
 
 const STATUS_KEY = "site:reviews:status";
+const ACCESS_KEY = "site:reviews:access";
 
 // Only our own Blob uploads are rendered as media; anything else is plain text.
 const isBlobUrl = (u) => {
@@ -92,6 +96,12 @@ async function setStatus(req, res, adminKey) {
       res.status(404).json({ error: "Review not found." });
       return;
     }
+    if (action === "free" || action === "notfree") {
+      if (action === "free") await redis(["HSET", ACCESS_KEY, id, "free"]);
+      else await redis(["HDEL", ACCESS_KEY, id]);
+      res.status(200).json({ ok: true, id, access: action === "free" ? "free" : entry.access || "" });
+      return;
+    }
     if (action === "approve" && entry.consent !== true) {
       res.status(409).json({ error: "This coach didn't give permission to publish." });
       return;
@@ -127,19 +137,26 @@ export default async function handler(req, res) {
     return;
   }
 
-  let rows, statusFlat;
+  let rows, statusFlat, accessFlat;
   try {
     rows = (await redis(["LRANGE", "site:reviews", "0", "-1"])) || [];
     statusFlat = (await redis(["HGETALL", STATUS_KEY])) || [];
+    accessFlat = (await redis(["HGETALL", ACCESS_KEY])) || [];
   } catch (e) {
     storageError(res, e);
     return;
   }
   const status = {};
   for (let i = 0; i + 1 < statusFlat.length; i += 2) status[statusFlat[i]] = statusFlat[i + 1];
+  const accessOverride = {};
+  for (let i = 0; i + 1 < accessFlat.length; i += 2) accessOverride[accessFlat[i]] = accessFlat[i + 1];
 
   const reviews = parseRows(rows)
-    .map((r) => ({ ...r, wall: status[r.id || r.at] || "" }))
+    .map((r) => {
+      const key = r.id || r.at;
+      const forced = accessOverride[key] === "free";
+      return { ...r, wall: status[key] || "", access: forced ? "free" : r.access, freeOverride: forced };
+    })
     .reverse(); // newest first
 
   res.setHeader("Cache-Control", "no-store");
@@ -170,6 +187,21 @@ export default async function handler(req, res) {
         <button data-id="${id}" data-action="hide"${r.wall === "hidden" ? " disabled" : ""}>Hide</button>
       </div>`;
   };
+  const accessCell = (r) => {
+    const id = esc(r.id || r.at);
+    const label =
+      r.access === "free"
+        ? `<br><b style="color:#0a8">FREE ACCESS — tag shown on wall</b>`
+        : r.access === "purchased"
+          ? `<br><span class="muted">Bought</span>`
+          : "";
+    // Coach ticked "free" themselves: nothing to toggle. Otherwise the admin can force the label.
+    if (r.access === "free" && !r.freeOverride) return label;
+    const btn = r.freeOverride
+      ? `<button data-id="${id}" data-action="notfree">Remove free-access tag</button>`
+      : `<button data-id="${id}" data-action="free">Mark as free access</button>`;
+    return `${label}<div class="acts acts-free">${btn}</div>`;
+  };
   const trophies = (n) => "🏆".repeat(Math.max(0, Math.min(5, Number(n) || 0)));
   const waiting = reviews.filter((r) => r.consent === true && !r.wall).length;
   const trs = reviews
@@ -178,7 +210,7 @@ export default async function handler(req, res) {
     <td>${wallCell(r)}</td>
     <td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td>
     <td>${trophies(r.rating)}</td>
-    <td>${esc(r.product || "—")}${r.access === "free" ? `<br><b style="color:#0a8">FREE ACCESS — tag shown on wall</b>` : r.access === "purchased" ? `<br><span class="muted">Bought</span>` : ""}</td>
+    <td>${esc(r.product || "—")}${accessCell(r)}</td>
     <td><b>${esc(r.name)}</b>${r.role ? `<br><span class="muted">${esc(r.role)}</span>` : ""}${r.club ? `<br><span class="muted">${esc(r.club)}</span>` : ""}</td>
     <td>${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${esc(r.message)}</td>
     <td>${mediaCell(r.media)}</td>
@@ -227,6 +259,7 @@ ${reviews.length ? `<table>
     if (!b || b.disabled) return;
     var cell = b.closest('td');
     cell.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+    var isAccess = b.dataset.action === 'free' || b.dataset.action === 'notfree';
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -235,6 +268,7 @@ ${reviews.length ? `<table>
     }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (x) {
         if (!x.ok) throw new Error(x.j.error || 'Failed');
+        if (isAccess) { location.reload(); return; }
         var st = x.j.status, pill = cell.querySelector('.st');
         pill.className = 'st st-' + (st || 'pending');
         pill.textContent = st === 'approved' ? 'On the wall' : st === 'hidden' ? 'Hidden' : 'Waiting';

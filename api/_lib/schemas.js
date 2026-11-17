@@ -66,7 +66,7 @@ export const ActivateSchema = z.object({
 
 export const ReviewStatusSchema = z.object({
   id: z.string().min(1).max(80),
-  action: z.enum(["approve", "hide", "pending"]),
+  action: z.enum(["approve", "hide", "pending", "free", "notfree"]),
 });
 
 export const AdminLoginSchema = z.object({
