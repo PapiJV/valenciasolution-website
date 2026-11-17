@@ -204,6 +204,10 @@ vertical-align: middle;
             border: 1px solid var(--border);
         }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+        .hero-demo-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; text-decoration: none; }
+        .hero-demo-link:hover { color: var(--accent); }
+        .hero-demo-link .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.6rem; padding-left: 2px; }
+        .hero p.hero-note { font-size: 0.85rem; margin: 14px auto 0; opacity: 0.8; }
         .btn-watch { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--text); border: 1px solid transparent; }
         .btn-watch:hover { color: var(--accent); transform: translateY(-2px); }
         .btn-watch .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.72rem; padding-left: 2px; }
@@ -1207,12 +1211,13 @@ vertical-align: middle;
     <section class="hero" id="hero">
         <div class="hero-content">
             <a class="hero-offer" href="#free">🎁 Offre limitée : obtenez un Notepad gratuit. Les 1000 premiers entraîneurs →</a><br>
-            <h1><span class="hero-badge">Applications d’entraînement pour 10 sports</span><br>Pointez la caméra. <span>Reconnaissez chaque joueur.</span></h1>
-            <p>Votre Notepad lit les numéros de chandail en direct, affiche les noms à l’écran pendant que vous filmez et ouvre les statistiques de chaque joueur d’un simple toucher. Plans de pratique, statistiques en direct et bilan de saison dans la même app, conçue pour le bord du terrain. <strong>Payez une fois. Elle est à vous. Aucun abonnement.</strong></p>
+            <h1><span class="hero-badge">Applications d’entraînement pour 10 sports</span><br>Les joueurs entrent en jeu.<br><span>Vous, vous coachez.</span></h1>
+            <p>Votre Notepad lit les numéros de chandail tout seul et affiche chaque nom et chaque statistique à l’écran pendant que vous filmez. Aucun marquage. Aucun bloc-notes papier. <strong>Gratuit pour les 1000 premiers entraîneurs — à vous pour toujours.</strong></p>
             <div class="hero-buttons">
-                <a href="#free" class="btn btn-primary">Essayez le scanner gratuitement →</a>
-                <a href="#demo" class="btn btn-watch"><span class="play-dot">▶</span> Regarder la démo</a>
+                <a href="#free" class="btn btn-primary">Obtenez votre Notepad gratuit →</a>
             </div>
+            <a href="#demo" class="hero-demo-link"><span class="play-dot" aria-hidden="true">▶</span> ou regardez la démo de 90 secondes</a>
+            <p class="hero-note">Scanner de chandails sur Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</p>
             <figure class="hero-proof" id="heroProof" hidden></figure>
         </div>
         <div class="scroll-indicator">
@@ -1220,63 +1225,6 @@ vertical-align: middle;
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
         </div>
-    </section>
-    <!-- Demo video -->
-    <section class="demo" id="demo">
-        <div class="section-header">
-            <div class="section-label">Voyez-le en action</div>
-            <h2>Regardez la démo de 90 secondes</h2>
-            <p>Un tour rapide des 10 Notepads au bord du terrain — planifiez, dirigez le match et analysez après.</p>
-        </div>
-        <div class="demo-frame">
-            <video controls preload="metadata" playsinline poster="images/og-scanner-fr.png">
-                <source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
-<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
-                Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
-            </video>
-        </div>
-            <p class="demo-note">Narration en anglais</p>
-    </section>
-    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
-    <section class="services scanner" id="scanner">
-        <div class="section-header">
-            <div class="section-label">Scanner de chandails</div>
-            <h2>Votre caméra devient votre entraîneur adjoint</h2>
-            <p>Filmez une pratique ou un match, et votre Notepad identifie les joueurs pour vous.</p>
-            <p style="color:#fff;font-size:17px;font-weight:700;">Les joueurs entrent en jeu. On s&rsquo;occupe du reste &mdash; suivi automatique des chandails, statistiques instantanées, directement à vous. Sur Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</p>
-        </div>
-        <figure class="scanner-clip">
-            <img src="media/scanner-demo-fr.gif" width="900" height="506" loading="lazy" alt="Le scanner de chandails lit le numéro 9 et l’associe à Bryce T. avec ses statistiques.">
-            <figcaption>Un aperçu du scanner de chandails intégré.</figcaption>
-        </figure>
-        <div class="scanner-grid">
-            <div class="service-card">
-                <div class="service-icon icon-1">🔢</div>
-                <h3>Lecture des chandails</h3>
-                <p>Lit les numéros de chandail et les associe à votre effectif. Touchez un joueur pour voir sa fiche et ses statistiques de la saison.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-2">🏷️</div>
-                <h3>Noms en direct</h3>
-                <p>Les noms suivent les joueurs à l’écran pendant que vous filmez, donc chaque séquence est identifiée sur le moment.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-3">📋</div>
-                <h3>Effectif à partir de la vidéo</h3>
-                <p>Appuyez simplement sur Enregistrer. Votre Notepad crée l’effectif à partir des numéros qu’il voit.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-4">🎯</div>
-                <h3>Caméra de suivi</h3>
-                <p>La caméra garde l’action dans le cadre, pour que vous puissiez coacher au lieu de filmer.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-1">🎬</div>
-                <h3>Faits saillants et échange de vidéos</h3>
-                <p>Montez des faits saillants, créez des listes de lecture et échangez vos vidéos avec d’autres équipes.</p>
-            </div>
-        </div>
-        <p class="scanner-note">Fonctionne sur votre téléphone ou votre tablette. Vos vidéos restent sur votre appareil, sauf si vous choisissez de les partager.<br><strong>Offert sur les Notepads Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</strong></p>
     </section>
     <!-- Free launch offer: ends Dec 31, 2026 11:59 pm ET or at 1000 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
@@ -1384,7 +1332,64 @@ vertical-align: middle;
             </div>
         </div>
     </section>
-    <!-- Section 2: What's Inside -->
+    <!-- Demo video -->
+    <section class="demo" id="demo">
+        <div class="section-header">
+            <div class="section-label">Voyez-le en action</div>
+            <h2>Regardez la démo de 90 secondes</h2>
+            <p>Un tour rapide des 10 Notepads au bord du terrain — planifiez, dirigez le match et analysez après.</p>
+        </div>
+        <div class="demo-frame">
+            <video controls preload="metadata" playsinline poster="images/og-scanner-fr.png">
+                <source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
+<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
+                Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
+            </video>
+        </div>
+            <p class="demo-note">Narration en anglais</p>
+    </section>
+    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
+    <section class="services scanner" id="scanner">
+        <div class="section-header">
+            <div class="section-label">Scanner de chandails</div>
+            <h2>Votre caméra devient votre entraîneur adjoint</h2>
+            <p>Filmez une pratique ou un match, et votre Notepad identifie les joueurs pour vous.</p>
+            <p style="color:#fff;font-size:17px;font-weight:700;">Pointez la caméra sur le match. Il repère chaque chandail, l’associe à votre alignement et vous montre les statistiques. Sur Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</p>
+        </div>
+        <figure class="scanner-clip">
+            <img src="media/scanner-demo-fr.gif" width="900" height="506" loading="lazy" alt="Le scanner de chandails lit le numéro 9 et l’associe à Bryce T. avec ses statistiques.">
+            <figcaption>Un aperçu du scanner de chandails intégré.</figcaption>
+        </figure>
+        <div class="scanner-grid">
+            <div class="service-card">
+                <div class="service-icon icon-1">🔢</div>
+                <h3>Lecture des chandails</h3>
+                <p>Lit les numéros de chandail et les associe à votre effectif. Touchez un joueur pour voir sa fiche et ses statistiques de la saison.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-2">🏷️</div>
+                <h3>Noms en direct</h3>
+                <p>Les noms suivent les joueurs à l’écran pendant que vous filmez, donc chaque séquence est identifiée sur le moment.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-3">📋</div>
+                <h3>Effectif à partir de la vidéo</h3>
+                <p>Appuyez simplement sur Enregistrer. Votre Notepad crée l’effectif à partir des numéros qu’il voit.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-4">🎯</div>
+                <h3>Caméra de suivi</h3>
+                <p>La caméra garde l’action dans le cadre, pour que vous puissiez coacher au lieu de filmer.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-1">🎬</div>
+                <h3>Faits saillants et échange de vidéos</h3>
+                <p>Montez des faits saillants, créez des listes de lecture et échangez vos vidéos avec d’autres équipes.</p>
+            </div>
+        </div>
+        <p class="scanner-note">Fonctionne sur votre téléphone ou votre tablette. Vos vidéos restent sur votre appareil, sauf si vous choisissez de les partager.<br><strong>Offert sur les Notepads Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</strong></p>
+    </section>
+        <!-- Section 2: What's Inside -->
     <section class="services" id="features">
         <div class="section-header">
             <div class="section-label">Chaque Notepad</div>

@@ -204,6 +204,10 @@ vertical-align: middle;
             border: 1px solid var(--border);
         }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+        .hero-demo-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; text-decoration: none; }
+        .hero-demo-link:hover { color: var(--accent); }
+        .hero-demo-link .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.6rem; padding-left: 2px; }
+        .hero p.hero-note { font-size: 0.85rem; margin: 14px auto 0; opacity: 0.8; }
         .btn-watch { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--text); border: 1px solid transparent; }
         .btn-watch:hover { color: var(--accent); transform: translateY(-2px); }
         .btn-watch .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.72rem; padding-left: 2px; }
@@ -1207,12 +1211,13 @@ vertical-align: middle;
     <section class="hero" id="hero">
         <div class="hero-content">
             <a class="hero-offer" href="#free">🎁 Por tiempo limitado: obtén un Notepad gratis. Primeros 1000 entrenadores →</a><br>
-            <h1><span class="hero-badge">Apps de entrenamiento para 10 deportes</span><br>Apunta la cámara. <span>Reconoce a cada jugador.</span></h1>
-            <p>Tu Notepad lee los números de camiseta al instante, muestra los nombres en pantalla mientras grabas y abre las estadísticas de cada jugador con un toque. Planes de práctica, estadísticas en vivo y números de temporada en la misma app, hecha para la banca. <strong>Paga una vez. Es tuya. Sin suscripción.</strong></p>
+            <h1><span class="hero-badge">Apps de entrenamiento para 10 deportes</span><br>Los jugadores entran.<br><span>Tú solo entrenas.</span></h1>
+            <p>Tu Notepad lee los números de camiseta por sí solo y muestra cada nombre y estadística en pantalla mientras grabas. Sin etiquetar. Sin portapapeles. <strong>Gratis para los primeros 1000 entrenadores — tuyo para siempre.</strong></p>
             <div class="hero-buttons">
-                <a href="#free" class="btn btn-primary">Prueba el escáner gratis →</a>
-                <a href="#demo" class="btn btn-watch"><span class="play-dot">▶</span> Ver la demo</a>
+                <a href="#free" class="btn btn-primary">Obtén tu Notepad gratis →</a>
             </div>
+            <a href="#demo" class="hero-demo-link"><span class="play-dot" aria-hidden="true">▶</span> o mira la demo de 90 segundos</a>
+            <p class="hero-note">Escáner de camisetas en Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</p>
             <figure class="hero-proof" id="heroProof" hidden></figure>
         </div>
         <div class="scroll-indicator">
@@ -1220,63 +1225,6 @@ vertical-align: middle;
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
         </div>
-    </section>
-    <!-- Demo video -->
-    <section class="demo" id="demo">
-        <div class="section-header">
-            <div class="section-label">Míralo en acción</div>
-            <h2>Mira la demo de 90 segundos</h2>
-            <p>Un recorrido rápido de los 10 Notepads en la banca — planifica, dirige el partido y revisa después.</p>
-        </div>
-        <div class="demo-frame">
-            <video controls preload="metadata" playsinline poster="images/og-scanner-es.png">
-                <source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
-<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
-                Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
-            </video>
-        </div>
-            <p class="demo-note">Narración en inglés</p>
-    </section>
-    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
-    <section class="services scanner" id="scanner">
-        <div class="section-header">
-            <div class="section-label">Escáner de camisetas</div>
-            <h2>Tu cámara ahora es tu asistente</h2>
-            <p>Graba una práctica o un partido y tu Notepad identifica a los jugadores por ti.</p>
-            <p style="color:#fff;font-size:17px;font-weight:700;">Los jugadores entran a la cancha. Nosotros nos encargamos del resto &mdash; seguimiento automático de camisetas, estadísticas al instante, directo a ti. En Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</p>
-        </div>
-        <figure class="scanner-clip">
-            <img src="media/scanner-demo-es.gif" width="900" height="506" loading="lazy" alt="El escáner de camisetas lee el número 9 y lo vincula con Bryce T. y sus estadísticas.">
-            <figcaption>Un vistazo al escáner de camisetas integrado.</figcaption>
-        </figure>
-        <div class="scanner-grid">
-            <div class="service-card">
-                <div class="service-icon icon-1">🔢</div>
-                <h3>Escaneo de camisetas</h3>
-                <p>Lee los números de camiseta y los vincula con tu plantel. Toca a un jugador para ver su ficha y sus estadísticas de la temporada.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-2">🏷️</div>
-                <h3>Nombres en vivo</h3>
-                <p>Los nombres siguen a los jugadores en pantalla mientras grabas, así cada clip queda etiquetado al momento.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-3">📋</div>
-                <h3>Plantel desde el video</h3>
-                <p>Solo presiona grabar. Tu Notepad arma el plantel con los números que ve.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-4">🎯</div>
-                <h3>Cámara de seguimiento</h3>
-                <p>La cámara mantiene la acción en cuadro, para que dirijas en lugar de grabar.</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon icon-1">🎬</div>
-                <h3>Jugadas destacadas e intercambio de video</h3>
-                <p>Arma jugadas destacadas, crea listas de reproducción e intercambia video con otros equipos.</p>
-            </div>
-        </div>
-        <p class="scanner-note">Funciona en tu teléfono o tableta. Tu video se queda en tu dispositivo, a menos que decidas compartirlo.<br><strong>Disponible en Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</strong></p>
     </section>
     <!-- Free launch offer: ends Dec 31, 2026 11:59 pm ET or at 1000 sign-ups (enforced by /api/register) -->
     <section class="free" id="free">
@@ -1384,7 +1332,64 @@ vertical-align: middle;
             </div>
         </div>
     </section>
-    <!-- Section 2: What's Inside -->
+    <!-- Demo video -->
+    <section class="demo" id="demo">
+        <div class="section-header">
+            <div class="section-label">Míralo en acción</div>
+            <h2>Mira la demo de 90 segundos</h2>
+            <p>Un recorrido rápido de los 10 Notepads en la banca — planifica, dirige el partido y revisa después.</p>
+        </div>
+        <div class="demo-frame">
+            <video controls preload="metadata" playsinline poster="images/og-scanner-es.png">
+                <source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
+<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
+                Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
+            </video>
+        </div>
+            <p class="demo-note">Narración en inglés</p>
+    </section>
+    <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
+    <section class="services scanner" id="scanner">
+        <div class="section-header">
+            <div class="section-label">Escáner de camisetas</div>
+            <h2>Tu cámara ahora es tu asistente</h2>
+            <p>Graba una práctica o un partido y tu Notepad identifica a los jugadores por ti.</p>
+            <p style="color:#fff;font-size:17px;font-weight:700;">Apunta la cámara al partido. Encuentra cada camiseta, la vincula con tu plantel y te pone las estadísticas enfrente. En Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</p>
+        </div>
+        <figure class="scanner-clip">
+            <img src="media/scanner-demo-es.gif" width="900" height="506" loading="lazy" alt="El escáner de camisetas lee el número 9 y lo vincula con Bryce T. y sus estadísticas.">
+            <figcaption>Un vistazo al escáner de camisetas integrado.</figcaption>
+        </figure>
+        <div class="scanner-grid">
+            <div class="service-card">
+                <div class="service-icon icon-1">🔢</div>
+                <h3>Escaneo de camisetas</h3>
+                <p>Lee los números de camiseta y los vincula con tu plantel. Toca a un jugador para ver su ficha y sus estadísticas de la temporada.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-2">🏷️</div>
+                <h3>Nombres en vivo</h3>
+                <p>Los nombres siguen a los jugadores en pantalla mientras grabas, así cada clip queda etiquetado al momento.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-3">📋</div>
+                <h3>Plantel desde el video</h3>
+                <p>Solo presiona grabar. Tu Notepad arma el plantel con los números que ve.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-4">🎯</div>
+                <h3>Cámara de seguimiento</h3>
+                <p>La cámara mantiene la acción en cuadro, para que dirijas en lugar de grabar.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon icon-1">🎬</div>
+                <h3>Jugadas destacadas e intercambio de video</h3>
+                <p>Arma jugadas destacadas, crea listas de reproducción e intercambia video con otros equipos.</p>
+            </div>
+        </div>
+        <p class="scanner-note">Funciona en tu teléfono o tableta. Tu video se queda en tu dispositivo, a menos que decidas compartirlo.<br><strong>Disponible en Baloncesto, Voleibol, Fútbol americano, Lacrosse, Hockey y Fútbol.</strong></p>
+    </section>
+        <!-- Section 2: What's Inside -->
     <section class="services" id="features">
         <div class="section-header">
             <div class="section-label">Cada Notepad</div>
