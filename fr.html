@@ -1151,6 +1151,33 @@ vertical-align: middle;
 <style>
 .product-demo-link { display: block; text-align: center; margin: 8px 0 4px; font-size: 0.85rem; color: var(--text-muted); text-decoration: underline; text-underline-offset: 3px; }
 .product-demo-link:hover { color: var(--text); }
+.hero-proof { max-width: 560px; margin: 28px auto 0; text-align: center; }
+.hero-proof-trophies { font-size: 0.95rem; letter-spacing: 2px; margin-bottom: 6px; }
+.hero-proof blockquote { color: var(--text); font-size: 1.02rem; font-weight: 600; line-height: 1.5; margin: 0 0 6px; }
+.hero-proof figcaption { color: var(--text-muted); font-size: 0.85rem; }
+.more-fields { margin-bottom: 18px; border: 1px solid var(--border); border-radius: 10px; padding: 0 14px; }
+.more-fields summary { cursor: pointer; padding: 12px 0; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+.more-fields summary:hover, .more-fields[open] summary { color: var(--text); }
+.more-fields summary .hint { font-weight: 400; }
+.more-fields summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.own { max-width: 760px; margin: 64px auto 0; text-align: center; scroll-margin-top: 90px; }
+.own h3 { font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; margin-bottom: 10px; }
+.own-lead { color: var(--text-muted); margin: 0 auto 26px; max-width: 560px; line-height: 1.6; }
+.own-lead a { color: var(--accent); }
+.own-head, .own-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 10px; align-items: center; }
+.own-head { padding: 0 14px 8px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.own-head span:first-child, .own-sport { text-align: left; }
+.own-grid { display: grid; gap: 8px; }
+.own-row { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
+.own-sport { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.own-sport b { font-size: 1.3rem; line-height: 1; }
+.own-btn { display: block; padding: 10px 8px; border-radius: 8px; font-size: 0.88rem; font-weight: 700; text-decoration: none; text-align: center; white-space: nowrap; transition: all 0.2s; }
+.own-buy { background: var(--accent); color: #fff; }
+.own-buy:hover { transform: translateY(-1px); }
+.own-club { border: 1px solid var(--border); color: var(--text); }
+.own-club:hover { border-color: var(--text-muted); background: rgba(255,255,255,0.05); }
+.own-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 480px) { .own-head, .own-row { grid-template-columns: 1fr 0.9fr 1.1fr; gap: 6px; } .own-row { padding: 8px 10px; } .own-sport { gap: 6px; font-size: 0.9rem; } .own-btn { font-size: 0.8rem; padding: 10px 4px; } }
 </style>
 <!-- Vercel Web Analytics (cookie-free page views) -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
@@ -1166,7 +1193,7 @@ vertical-align: middle;
             <li><a href="#features">Fonctionnalités</a></li>
             <li><a href="#products">Produits</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li><a href="#reviews">Avis</a></li>
+            <li id="navReviews" hidden><a href="#reviews">Avis</a></li>
         </ul>
         <div class="lang-switch" aria-label="Langue">
             <a href="/" hreflang="en" lang="en">EN</a>
@@ -1184,9 +1211,9 @@ vertical-align: middle;
             <p>Votre Notepad lit les numéros de chandail en direct, affiche les noms à l’écran pendant que vous filmez et ouvre les statistiques de chaque joueur d’un simple toucher. Plans de pratique, statistiques en direct et bilan de saison dans la même app, conçue pour le bord du terrain. <strong>Payez une fois. Elle est à vous. Aucun abonnement.</strong></p>
             <div class="hero-buttons">
                 <a href="#free" class="btn btn-primary">Essayez le scanner gratuitement →</a>
-                <a href="#products" class="btn btn-secondary">Trouvez votre sport</a>
                 <a href="#demo" class="btn btn-watch"><span class="play-dot">▶</span> Regarder la démo</a>
             </div>
+            <figure class="hero-proof" id="heroProof" hidden></figure>
         </div>
         <div class="scroll-indicator">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1272,6 +1299,7 @@ vertical-align: middle;
                     <li><span>✅</span>L’app complète, pas un essai : cahier de jeux, statistiques en direct, alignements et vidéo, plus le scanner de chandails dans 6 sports</li>
                     <li><span>💳</span>Aucune carte de crédit. Rien à annuler.</li>
                     <li><span>♾️</span>Elle reste à vous après la fin de l’offre</li>
+                    <li><span>🧾</span>Remplace la planchette à pince, la feuille de statistiques papier et la facture mensuelle d’app de coaching</li>
                 </ul>
             </div>
 
@@ -1304,6 +1332,8 @@ vertical-align: middle;
                             <input type="email" id="frEmail" name="email" maxlength="120" autocomplete="email" placeholder="vous@courriel.com" required>
                         </div>
                     </div>
+                    <details class="more-fields">
+                        <summary>Ajoutez les détails de votre équipe <span class="hint">(facultatif)</span></summary>
                     <div class="form-row">
                         <div class="form-field">
                             <label for="frRole">Rôle <span class="hint">(facultatif)</span></label>
@@ -1318,6 +1348,7 @@ vertical-align: middle;
                         <label for="frCity">Ville <span class="hint">(facultatif)</span></label>
                         <input type="text" id="frCity" name="city" maxlength="80" autocomplete="address-level2" placeholder="Toronto, ON">
                     </div>
+                    </details>
                     <div class="hp" aria-hidden="true"><label for="frWebsite">Website</label><input type="text" id="frWebsite" name="website" tabindex="-1" autocomplete="off"></div>
                     <label class="tm-consent">
                         <input type="checkbox" id="frOptIn" name="marketingOptIn">
@@ -1348,7 +1379,7 @@ vertical-align: middle;
                 <div class="free-closed" id="freeClosed" hidden>
                     <h3 id="freeClosedTitle">Cette offre est terminée</h3>
                     <p id="freeClosedMsg">Toutes les places gratuites ont été réclamées. Vous pouvez quand même essayer n’importe quel Notepad gratuitement dans la démo, ou vous procurer l’app complète ci-dessous.</p>
-                    <a class="btn btn-primary" href="#products">Voir les Notepads</a>
+                    <a class="btn btn-primary" href="#pricing">Voir les tarifs</a>
                 </div>
             </div>
         </div>
@@ -1477,7 +1508,7 @@ vertical-align: middle;
         <div class="section-header">
             <div class="section-label">Nos produits</div>
             <h2>Choisissez votre sport. Obtenez toute la trousse.</h2>
-            <p>Dix sports, une seule façon de coacher. Chaque Notepad comprend cahier de jeux, plans de pratique, statistiques en direct, effectif et suivi de la saison, sur tout téléphone, tablette ou ordinateur doté d’un navigateur à jour. Payez une fois. Elle est à vous. Aucun abonnement.<br>📷 <strong>Scanner vidéo inclus</strong> sur les Notepads Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</p>
+            <p>Dix sports, une seule façon de coacher. Chaque Notepad comprend cahier de jeux, plans de pratique, statistiques en direct, effectif et suivi de la saison, sur tout téléphone, tablette ou ordinateur doté d’un navigateur à jour. Obtenez le vôtre gratuitement tant que l’offre de lancement dure.<br>📷 <strong>Scanner vidéo inclus</strong> sur les Notepads Basketball, Volleyball, Football, Crosse, Hockey et Soccer.</p>
         </div>
         <div class="products-grid">
             <!-- Basketball -->
@@ -1500,8 +1531,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=basketball&amp;src=card-basketball#freeCard" class="product-btn btn-basketball" data-claim="basketball" rel="nofollow" aria-label="Obtenez-le gratuitement: Basketball Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://basketball-notepad-demo-5xv6.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Basketball Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="product-btn btn-basketball-buy" aria-label="À vous pour 49,99 $ CA: Basketball Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="product-btn btn-basketball-clubs" aria-label="Pour les clubs — 499 $ CA: Basketball Notepad">Pour les clubs — 499 $ CA</a>
                     
                 </div>
             </div>
@@ -1525,8 +1554,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=volleyball&amp;src=card-volleyball#freeCard" class="product-btn btn-volleyball" data-claim="volleyball" rel="nofollow" aria-label="Obtenez-le gratuitement: Volleyball Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://volleyball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Volleyball Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="product-btn btn-volleyball-buy" aria-label="À vous pour 49,99 $ CA: Volleyball Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="product-btn btn-volleyball-clubs" aria-label="Pour les clubs — 499 $ CA: Volleyball Notepad">Pour les clubs — 499 $ CA</a>
                     
                 </div>
             </div>
@@ -1549,8 +1576,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=lacrosse&amp;src=card-lacrosse#freeCard" class="product-btn btn-lacrosse" data-claim="lacrosse" rel="nofollow" aria-label="Obtenez-le gratuitement: Lacrosse Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://lacrosse-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Lacrosse Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="product-btn btn-lacrosse-buy" aria-label="À vous pour 49,99 $ CA: Lacrosse Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="product-btn btn-lacrosse-clubs" aria-label="Pour les clubs — 499 $ CA: Lacrosse Notepad">Pour les clubs — 499 $ CA</a>
                     
                 </div>
             </div>
@@ -1576,8 +1601,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=football&amp;src=card-football#freeCard" class="product-btn btn-football" data-claim="football" rel="nofollow" aria-label="Obtenez-le gratuitement: Football Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://football-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Football Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="product-btn btn-football-buy" aria-label="À vous pour 49,99 $ CA: Football Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="product-btn btn-football-clubs" aria-label="Pour les clubs — 499 $ CA: Football Notepad">Pour les clubs — 499 $ CA</a>
                     
                 </div>
             </div>
@@ -1601,8 +1624,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=baseball&amp;src=card-baseball#freeCard" class="product-btn btn-baseball" data-claim="baseball" rel="nofollow" aria-label="Obtenez-le gratuitement: Baseball Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://baseball-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Baseball Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="product-btn btn-baseball-buy" aria-label="À vous pour 49,99 $ CA: Baseball Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="product-btn btn-baseball-clubs" aria-label="Pour les clubs — 499 $ CA: Baseball Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
             <!-- Curling -->
@@ -1625,8 +1646,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=curling&amp;src=card-curling#freeCard" class="product-btn btn-curling" data-claim="curling" rel="nofollow" aria-label="Obtenez-le gratuitement: Curling Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://curling-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Curling Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="product-btn btn-curling-buy" aria-label="À vous pour 49,99 $ CA: Curling Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="product-btn btn-curling-clubs" aria-label="Pour les clubs — 499 $ CA: Curling Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
             <!-- Hockey -->
@@ -1651,8 +1670,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=hockey&amp;src=card-hockey#freeCard" class="product-btn btn-hockey" data-claim="hockey" rel="nofollow" aria-label="Obtenez-le gratuitement: Hockey Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://hockey-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Hockey Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/eVq00c3fM5Fw626dbL1RC0e" target="_blank" rel="noopener" class="product-btn btn-hockey-buy" aria-label="À vous pour 49,99 $ CA: Hockey Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/aFa00c5nUec276ab3D1RC0f" target="_blank" rel="noopener" class="product-btn btn-hockey-clubs" aria-label="Pour les clubs — 499 $ CA: Hockey Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
             <!-- Cricket -->
@@ -1676,8 +1693,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=cricket&amp;src=card-cricket#freeCard" class="product-btn btn-cricket" data-claim="cricket" rel="nofollow" aria-label="Obtenez-le gratuitement: Cricket Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://cricket-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Cricket Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/14A00ceYu4Bsduy8Vv1RC0g" target="_blank" rel="noopener" class="product-btn btn-cricket-buy" aria-label="À vous pour 49,99 $ CA: Cricket Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/5kQaEQ6rYaZQgGK5Jj1RC0h" target="_blank" rel="noopener" class="product-btn btn-cricket-clubs" aria-label="Pour les clubs — 499 $ CA: Cricket Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
             <!-- Soccer -->
@@ -1702,8 +1717,6 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=soccer&amp;src=card-soccer#freeCard" class="product-btn btn-soccer" data-claim="soccer" rel="nofollow" aria-label="Obtenez-le gratuitement: Soccer Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://soccer-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Soccer Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/5kQ00c03Ac3U0HMdbL1RC0i" target="_blank" rel="noopener" class="product-btn btn-soccer-buy" aria-label="À vous pour 49,99 $ CA: Soccer Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/7sY6oA8A60lc1LQ0oZ1RC0j" target="_blank" rel="noopener" class="product-btn btn-soccer-clubs" aria-label="Pour les clubs — 499 $ CA: Soccer Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
             <!-- Rugby -->
@@ -1727,12 +1740,28 @@ vertical-align: middle;
                     </div>
                     <a href="?sport=rugby&amp;src=card-rugby#freeCard" class="product-btn btn-rugby" data-claim="rugby" rel="nofollow" aria-label="Obtenez-le gratuitement: Rugby Notepad">Obtenez-le gratuitement →</a>
                     <a href="https://rugby-notepad-demo.vercel.app" target="_blank" rel="noopener" class="product-demo-link" aria-label="ou explorez la démo d'abord: Rugby Notepad">ou explorez la démo d'abord</a>
-                    <a href="https://buy.stripe.com/3cIbIUcQm5Fw6262x71RC0k" target="_blank" rel="noopener" class="product-btn btn-rugby-buy" aria-label="À vous pour 49,99 $ CA: Rugby Notepad">À vous pour 49,99 $ CA</a>
-                    <a href="https://buy.stripe.com/aFadR2aIe0lc76a7Rr1RC0l" target="_blank" rel="noopener" class="product-btn btn-rugby-clubs" aria-label="Pour les clubs — 499 $ CA: Rugby Notepad">Pour les clubs — 499 $ CA</a>
                 </div>
             </div>
         </div>
-        <p class="price-terms">Prix en dollars canadiens (CAD). Les taxes applicables sont calculées et ajoutées au paiement. Achat unique — aucun abonnement. Après le paiement, vous êtes dirigé directement vers votre app. <strong>Toutes les ventes sont finales</strong> — consultez nos <a href="/terms">Conditions de vente</a>.</p>
+        <div class="own" id="pricing">
+            <div class="section-label">À vous pour de bon</div>
+            <h3>Payez une fois. Gardez-le pour toujours.</h3>
+            <p class="own-lead">Un seul paiement remplace la planchette à pince, la feuille de statistiques papier et la facture mensuelle d’app de coaching. <a href="/no-subscription-coaching-app">Voyez comment le paiement unique se compare →</a></p>
+            <div class="own-head" aria-hidden="true"><span>Sport</span><span>Un entraîneur</span><span>Tout le club</span></div>
+            <div class="own-grid">
+                <div class="own-row"><span class="own-sport"><b>🏀</b>Basketball</span><a href="https://buy.stripe.com/3cI00cg2y4BsfCG3Bb1RC08" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Basketball Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/28EcMY2bI0lc3TY5Jj1RC09" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Basketball Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🏐</b>Volleyball</span><a href="https://buy.stripe.com/9B600ccQm7NEgGKb3D1RC02" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Volleyball Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/9B6dR22bIaZQ0HM9Zz1RC03" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Volleyball Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🥍</b>Crosse</span><a href="https://buy.stripe.com/14AeV63fM6JA1LQ9Zz1RC06" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Lacrosse Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/14A9AM5nU5FwgGK9Zz1RC07" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Lacrosse Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🏈</b>Football</span><a href="https://buy.stripe.com/fZu7sE6rYgkaduy8Vv1RC04" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Football Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/5kQ3co6rY9VMbmq2x71RC05" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Football Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>⚾</b>Baseball</span><a href="https://buy.stripe.com/bJe5kw17E3xogGK8Vv1RC0m" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Baseball Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/4gM7sE17E4Bscqu7Rr1RC0n" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Baseball Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🥌</b>Curling</span><a href="https://buy.stripe.com/9B6cMY03A1pgaim3Bb1RC0p" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Curling Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/3cI14gaIefg6duy1t31RC0o" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Curling Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🏒</b>Hockey</span><a href="https://buy.stripe.com/eVq00c3fM5Fw626dbL1RC0e" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Hockey Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/aFa00c5nUec276ab3D1RC0f" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Hockey Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🏏</b>Cricket</span><a href="https://buy.stripe.com/14A00ceYu4Bsduy8Vv1RC0g" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Cricket Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/5kQaEQ6rYaZQgGK5Jj1RC0h" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Cricket Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>⚽</b>Soccer</span><a href="https://buy.stripe.com/5kQ00c03Ac3U0HMdbL1RC0i" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Soccer Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/7sY6oA8A60lc1LQ0oZ1RC0j" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Soccer Notepad">Club 499 $ CA</a></div>
+                <div class="own-row"><span class="own-sport"><b>🏉</b>Rugby</span><a href="https://buy.stripe.com/3cIbIUcQm5Fw6262x71RC0k" target="_blank" rel="noopener" class="own-btn own-buy" aria-label="À vous pour 49,99 $ CA: Rugby Notepad">49,99 $ CA</a><a href="https://buy.stripe.com/aFadR2aIe0lc76a7Rr1RC0l" target="_blank" rel="noopener" class="own-btn own-club" aria-label="Pour les clubs — 499 $ CA: Rugby Notepad">Club 499 $ CA</a></div>
+            </div>
+            <p class="price-terms"><strong>Essayez avant d’acheter.</strong> Chaque Notepad offre une démo gratuite : ouvrez-la, dirigez-y une pratique et ne payez que lorsque vous êtes certain.<br>Prix en dollars canadiens (CAD). Les taxes applicables sont calculées et ajoutées au paiement. Achat unique — aucun abonnement. Après le paiement, vous êtes dirigé directement vers votre app. <strong>Toutes les ventes sont finales</strong> — consultez nos <a href="/terms">Conditions de vente</a>.</p>
+        </div>
     </section>
     <!-- Section 4: Contact -->
     <section class="contact" id="contact">
@@ -1764,7 +1793,8 @@ vertical-align: middle;
     <!--  /api/reviews and they load from /api/testimonials.   -->
     <!--  To pin one by hand instead:                                   -->
     <!--  Copy the <div class="review-card"> template below into        -->
-    <!--  #reviewsGrid and delete #reviewsEmpty.                         -->
+    <!--  #reviewsGrid, then remove "hidden" from #reviewsGrid,          -->
+    <!--  #reviewsHeadWall and #navReviews and add it to #reviewsHeadEmpty. -->
     <!--  Trophies: filled = 🏆   empty = <span class="t-empty">🏆</span>  -->
     <!--  Submissions land in /api/reviews (private list). Only  -->
     <!--  publish entries where "OK to publish" = yes.                   -->
@@ -1786,15 +1816,17 @@ vertical-align: middle;
     <!-- ============================================================= -->
     <section class="reviews" id="reviews">
         <div class="reviews-inner">
-            <div class="section-header">
+            <div class="section-header" id="reviewsHeadWall" hidden>
                 <div class="section-label">Ce que disent les entraîneurs</div>
                 <h2>De vrais entraîneurs. De vrais commentaires.</h2>
-                <p>Les premiers entraîneurs utilisent ces apps pendant de vraies saisons en ce moment. Les témoignages sont publiés ici au fur et à mesure — sans tri sélectif.</p>
                 <p class="tm-disclosure">Certains entraîneurs et clubs ont reçu un accès gratuit à un Notepad. Leurs témoignages portent la mention <span class="review-free">Accès gratuit</span>. Les témoignages reflètent les propres mots et opinions de vrais entraîneurs; les résultats individuels peuvent varier.</p>
             </div>
-            <div class="reviews-grid" id="reviewsGrid" data-limit="3">
-                <div class="reviews-empty" id="reviewsEmpty">
-                    </div>
+            <div class="section-header" id="reviewsHeadEmpty">
+                <div class="section-label">À votre tour</div>
+                <h2>Vous avez coaché avec un Notepad ? Dites-nous comment ça s’est passé.</h2>
+                <p>Deux minutes. Vos mots aident le prochain entraîneur à se décider, et ils nous disent quoi bâtir ensuite.</p>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid" data-limit="3" hidden>
             </div>
             <p class="reviews-more" id="reviewsMore" hidden><a href="/testimonials" class="btn btn-secondary">Lire tous les témoignages →</a></p>
 
@@ -2067,12 +2099,27 @@ vertical-align: middle;
             fetch('/api/testimonials').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
                 var list = d && d.testimonials;
                 if (!list || !list.length) return;
-                var empty = document.getElementById('reviewsEmpty');
-                if (empty) empty.remove();
+                grid.hidden = false;
+                ['reviewsHeadWall', 'navReviews'].forEach(function (id) { var n = document.getElementById(id); if (n) n.hidden = false; });
+                var headEmpty = document.getElementById('reviewsHeadEmpty');
+                if (headEmpty) headEmpty.hidden = true;
+                /* Hero proof: the newest approved testimonial, with the Free-access label when it applies. */
+                var hp = document.getElementById('heroProof'), first = list[0];
+                if (hp && first && first.message && first.name) {
+                    var stars = Math.max(1, Math.min(5, first.rating | 0));
+                    hp.appendChild(el('div', 'hero-proof-trophies', '🏆'.repeat(stars)));
+                    var msg = String(first.headline || first.message).replace(/\*\*/g, '');
+                    if (msg.length > 140) msg = msg.slice(0, 137).replace(/\s+\S*$/, '') + '…';
+                    hp.appendChild(el('blockquote', '', quote(msg)));
+                    var cap = el('figcaption', '', [first.name, first.role, first.club].filter(Boolean).join(' · '));
+                    if (first.access === 'free') { cap.appendChild(document.createTextNode(' ')); cap.appendChild(el('span', 'review-free', FREE)); }
+                    hp.appendChild(cap);
+                    hp.hidden = false;
+                }
                 (LIMIT ? list.slice(0, LIMIT) : list).forEach(function (t) { grid.appendChild(card(t)); });
                 var more = document.getElementById('reviewsMore');
                 if (more) more.hidden = false;
-            }).catch(function () { /* keep the empty-state message */ });
+            }).catch(function () { /* keep the invitation heading */ });
         })();
     </script>
     <script>
@@ -2393,6 +2440,7 @@ vertical-align: middle;
             })();
             var form = $('freeForm');
             if (!form) return;
+            var offerClosed = false;
             // QR deep link: ?sport=basketball preselects the sport and jumps straight to the form.
             var wanted = (new URLSearchParams(location.search).get('sport') || '').toLowerCase();
             var preset = APPS[wanted] && form.querySelector('input[name="sport"][value="' + wanted + '"]');
@@ -2404,6 +2452,7 @@ vertical-align: middle;
             /* Product cards: "Claim it free" picks that sport in the form and jumps to it. */
             document.querySelectorAll('[data-claim]').forEach(function (a) {
             a.addEventListener('click', function (e) {
+            if (offerClosed) return; // offer over: follow the link to pricing
             var s = a.getAttribute('data-claim');
             var r = document.querySelector('#freeForm input[name="sport"][value="' + s + '"]');
             var card = document.getElementById('freeCard');
@@ -2426,7 +2475,9 @@ vertical-align: middle;
                 var hb = document.querySelector('.hero-offer');
                 if (hb) { hb.style.display = 'none'; if (hb.nextElementSibling && hb.nextElementSibling.tagName === 'BR') hb.nextElementSibling.style.display = 'none'; }
                 var cta = document.querySelector('.nav-cta');
-                if (cta) { cta.textContent = 'Obtenir un Notepad'; cta.setAttribute('href', '#products'); }
+                if (cta) { cta.textContent = 'Obtenir un Notepad'; cta.setAttribute('href', '#pricing'); }
+                offerClosed = true;
+                document.querySelectorAll('[data-claim]').forEach(function (a) { a.textContent = 'À vous pour 49,99 $ CA →'; a.setAttribute('href', '#pricing'); a.removeAttribute('aria-label'); });
             }
 
             var timer;
