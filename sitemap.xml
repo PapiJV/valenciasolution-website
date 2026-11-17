@@ -31,6 +31,16 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://www.valenciasolution.net/refund</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.valenciasolution.net/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
     <loc>https://www.valenciasolution.net/basketball-coaching-app</loc>
     <lastmod>2026-11-15</lastmod>
     <changefreq>monthly</changefreq>
