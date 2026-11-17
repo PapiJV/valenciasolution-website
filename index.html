@@ -209,6 +209,10 @@ color: var(--text);
 border: 1px solid var(--border);
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+.hero-demo-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; text-decoration: none; }
+.hero-demo-link:hover { color: var(--accent); }
+.hero-demo-link .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.6rem; padding-left: 2px; }
+.hero p.hero-note { font-size: 0.85rem; margin: 14px auto 0; opacity: 0.8; }
 .btn-watch { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--text); border: 1px solid transparent; }
 .btn-watch:hover { color: var(--accent); transform: translateY(-2px); }
 .btn-watch .play-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.72rem; padding-left: 2px; }
@@ -1402,40 +1406,19 @@ transition: color 0.2s, background 0.2s;
 <section class="hero" id="hero">
 <div class="hero-content">
 <a class="hero-offer" href="#free">🎁 Limited time: get a Notepad free. First 1,000 coaches →</a><br>
-<h1><span class="hero-badge">Coaching Apps for 10 Sports</span><br>Point your camera. <span>Know every player.</span></h1>
-<p>Your Notepad reads jersey numbers on the fly, puts names on screen while you record, and pulls up each player's stats with a tap. Practice plans, live stats and season numbers in the same app, built for the sideline. <strong>Free for the first 1,000 coaches — yours to keep, forever.</strong></p>
+<h1><span class="hero-badge">Coaching Apps for 10 Sports</span><br>Players walk on.<br><span>You just coach.</span></h1>
+<p>Your Notepad reads jersey numbers on its own and puts every name and stat on screen while you record. No tagging. No clipboard. <strong>Free for the first 1,000 coaches — yours to keep.</strong></p>
 <div class="hero-buttons">
 <a href="#free" class="btn btn-primary">Claim your free Notepad →</a>
-<a href="#demo" class="btn btn-watch"><span class="play-dot">▶</span> Watch the demo</a>
 </div>
+<a href="#demo" class="hero-demo-link"><span class="play-dot" aria-hidden="true">▶</span> or watch the 90-second demo</a>
+<p class="hero-note">Jersey scanner on Basketball, Volleyball, Football, Lacrosse, Hockey &amp; Soccer.</p>
 <figure class="hero-proof" id="heroProof" hidden></figure>
 </div>
 <div class="scroll-indicator">
 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 <path d="M12 5v14M5 12l7 7 7-7"/>
 </svg>
-</div>
-</section>
-<!-- Demo video -->
-<section class="demo" id="demo">
-<div class="section-header">
-<div class="section-label">See it in action</div>
-<h2>Watch the 90-second demo</h2>
-<p>A quick tour of all 10 Notepads on the sideline — plan, run the game, and review after.</p>
-</div>
-<div class="demo-frame">
-<video controls preload="metadata" playsinline poster="images/og-scanner.png">
-<source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
-<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
-Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
-</video>
-</div>
-</section>
-<section class="scanner-demo" id="scanner" style="padding:60px 20px;text-align:center;background:#0a0a0f;">
-<div style="max-width:860px;margin:0 auto;">
-<h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-0.02em;">Watch it <span style="background:linear-gradient(135deg,#ff6b35,#00d4aa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">scan.</span></h2>
-<p style="color:#fff;font-size:17px;font-weight:700;margin:0 auto 28px;max-width:560px;">Players walk on. We&rsquo;ve got your back from there &mdash; automatic jersey tracking, instant stats, straight to you. On Basketball, Volleyball, Football, Lacrosse, Hockey &amp; Soccer.</p>
-<img src="media/scanner-demo.gif" width="900" height="506" loading="lazy" alt="The jersey scanner reads a player's number and matches it to your roster across basketball, volleyball, football and lacrosse." style="width:100%;max-width:860px;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 18px 50px rgba(0,0,0,0.45);">
 </div>
 </section>
 <!-- Jersey scanner (Basketball, Volleyball, Football, Lacrosse, Hockey, Soccer) -->
@@ -1541,6 +1524,28 @@ Your browser does not support video playback. <a href="media/valenciasolution-de
 <a class="btn btn-primary" href="#pricing">See pricing</a>
 </div>
 </div>
+</div>
+</section>
+<!-- Demo video -->
+<section class="demo" id="demo">
+<div class="section-header">
+<div class="section-label">See it in action</div>
+<h2>Watch the 90-second demo</h2>
+<p>A quick tour of all 10 Notepads on the sideline — plan, run the game, and review after.</p>
+</div>
+<div class="demo-frame">
+<video controls preload="metadata" playsinline poster="images/og-scanner.png">
+<source src="media/valenciasolution-demo-10-sports.mp4" type="video/mp4">
+<track kind="captions" src="media/valenciasolution-demo-10-sports.en.vtt" srclang="en" label="English">
+Your browser does not support video playback. <a href="media/valenciasolution-demo-10-sports.mp4">Download the demo</a>.
+</video>
+</div>
+</section>
+<section class="scanner-demo" id="scanner" style="padding:60px 20px;text-align:center;background:#0a0a0f;">
+<div style="max-width:860px;margin:0 auto;">
+<h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;margin-bottom:12px;letter-spacing:-0.02em;">Watch it <span style="background:linear-gradient(135deg,#ff6b35,#00d4aa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">scan.</span></h2>
+<p style="color:#fff;font-size:17px;font-weight:700;margin:0 auto 28px;max-width:560px;">Point your camera at the game. It finds every jersey, matches it to your roster and puts the stats in front of you. On Basketball, Volleyball, Football, Lacrosse, Hockey &amp; Soccer.</p>
+<img src="media/scanner-demo.gif" width="900" height="506" loading="lazy" alt="The jersey scanner reads a player's number and matches it to your roster across basketball, volleyball, football and lacrosse." style="width:100%;max-width:860px;height:auto;border-radius:16px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 18px 50px rgba(0,0,0,0.45);">
 </div>
 </section>
 <!-- Section 2: What's Inside -->
