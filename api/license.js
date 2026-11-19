@@ -1,0 +1,138 @@
+// Admin: issue a Notepad licence by hand (club giveaways, existing customers,
+// replacements). Same admin session as /api/reviews.
+//
+//   GET  /api/license          -> form + recent licences
+//   POST /api/license  app, tier, note   -> shows the ready-to-send app link
+//   POST /api/license  action=revoke|restore lid   /  action=enforce lid=on|off
+//
+// Env: REVIEWS_ADMIN_KEY, LICENSE_PRIVATE_KEY, KV_REST_API_URL / KV_REST_API_TOKEN.
+
+import { APPS, appLink } from "./_lib/apps.js";
+import { DEVICE_LIMITS, metaCommand, signLicense } from "./_lib/license.js";
+import { LicenseActionSchema, parse } from "./_lib/schemas.js";
+import { adminHtml, esc, isAdmin, redisPipeline, sameOrigin } from "./_lib/security.js";
+
+async function recent() {
+  try {
+    const [rows] = await redisPipeline([["LRANGE", "site:licenses", "-25", "-1"]]);
+    return (rows || []).map((r) => { try { return JSON.parse(r); } catch { return null; } }).filter(Boolean).reverse();
+  } catch {
+    return [];
+  }
+}
+
+// Every tracked licence with its device count, most devices first.
+async function deviceTable() {
+  try {
+    const [metaFlat, revokedList, enforce] = await redisPipeline([
+      ["HGETALL", "site:lic:meta"], ["SMEMBERS", "site:lic:revoked"], ["GET", "site:lic:enforce"],
+    ]);
+    const meta = [];
+    for (let i = 0; i < (metaFlat || []).length; i += 2) {
+      try { meta.push({ lid: metaFlat[i], ...JSON.parse(metaFlat[i + 1]) }); } catch { /* skip */ }
+    }
+    const counts = meta.length ? await redisPipeline(meta.map((m) => ["HLEN", `site:lic:dev:${m.lid}`])) : [];
+    const revoked = new Set(revokedList || []);
+    const list = meta
+      .map((m, i) => ({ ...m, devices: counts[i] || 0, limit: DEVICE_LIMITS[m.tier] || DEVICE_LIMITS.individual, revoked: revoked.has(m.lid) }))
+      .sort((a, b) => b.devices - a.devices || String(b.at).localeCompare(String(a.at)));
+    return { list, enforce: enforce === "on" };
+  } catch {
+    return { list: [], enforce: false };
+  }
+}
+
+const act = (action, lid, label, color) =>
+  `<form method="post" action="/api/license" style="margin:0"><input type="hidden" name="action" value="${action}">` +
+  `<input type="hidden" name="lid" value="${esc(lid)}"><button type="submit" style="margin:0;padding:4px 8px;width:auto;background:${color}">${label}</button></form>`;
+
+async function render(res, issued, notice) {
+  const rows = await recent();
+  const { list, enforce } = await deviceTable();
+  const opts = Object.entries(APPS).map(([k, v]) => `<option value="${k}">${esc(v.name)}</option>`).join("");
+  const nonce = adminHtml(res);
+  res.setHeader("Referrer-Policy", "same-origin"); // no-referrer would send Origin: null on form posts and fail sameOrigin()
+  res.status(200).send(`<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Issue licence</title>
+<style>body{font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#f7f7fb;color:#1a1a2e;padding:16px}
+.card{background:#fff;border:1px solid #e2e2ec;border-radius:12px;padding:20px;max-width:640px;margin:0 auto 16px}
+label{display:block;font-weight:600;margin:10px 0 4px}select,input,textarea,button{font:inherit;width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #c9c9d6}
+button{background:#ff6b35;color:#fff;border:0;font-weight:600;margin-top:14px;cursor:pointer}textarea{height:96px;font-family:ui-monospace,monospace;font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px;border-bottom:1px solid #eee;text-align:left}</style>
+${notice ? `<div class="card"><strong>${esc(notice)}</strong></div>` : ""}
+${issued ? `<div class="card"><h2>Licence ready: ${esc(APPS[issued.app].name)} (${esc(issued.tier)})</h2>
+<p>Send this link. Opening it once unlocks the app on that device, offline after that.</p>
+<textarea readonly id="issuedLink">${esc(issued.link)}</textarea></div>
+<script nonce="${nonce}">document.getElementById('issuedLink').addEventListener('click', function () { this.select(); });</script>` : ""}
+<form class="card" method="post" action="/api/license"><h2>Issue a licence</h2>
+<label>Notepad</label><select name="app" required>${opts}</select>
+<label>Tier</label><select name="tier"><option value="comp">Comp (club giveaway)</option><option value="individual">Individual (paid)</option><option value="club">Club (paid)</option></select>
+<label>Note (who it's for)</label><input name="note" maxlength="80" placeholder="e.g. Riverside Hawks U14 / jane@club.ca">
+<button type="submit">Create link</button></form>
+<div class="card"><h2>Devices per licence</h2>
+<p>Device limits are <strong>${enforce ? "ON" : "OFF (counting only)"}</strong>. Limits when on: individual ${DEVICE_LIMITS.individual}, club ${DEVICE_LIMITS.club}, free ${DEVICE_LIMITS.free}, comp ${DEVICE_LIMITS.comp}. A device counts once it opens the app online.</p>
+${act("enforce", enforce ? "off" : "on", enforce ? "Turn limits OFF" : "Turn limits ON", enforce ? "#6b6b80" : "#c0392b")}
+<table style="margin-top:12px"><tr><th>App</th><th>Tier</th><th>Who</th><th>Devices</th><th></th></tr>
+${list.map((m) => `<tr style="${m.revoked ? "opacity:.5" : m.devices > m.limit ? "background:#fff1ec" : ""}"><td>${esc(m.app)}</td><td>${esc(m.tier)}</td><td>${esc(m.who)}</td>` +
+  `<td><strong>${m.devices}</strong> / ${m.limit}${m.revoked ? " (revoked)" : ""}</td>` +
+  `<td>${m.revoked ? act("restore", m.lid, "Restore", "#2e7d32") : act("revoke", m.lid, "Revoke", "#c0392b")}</td></tr>`).join("") || '<tr><td colspan="5">No devices yet.</td></tr>'}
+</table></div>
+<div class="card"><h2>Recent licences</h2><table><tr><th>When</th><th>App</th><th>Tier</th><th>Source</th><th>Ref / email</th></tr>
+${rows.map((r) => `<tr><td>${esc((r.at || "").slice(0, 16).replace("T", " "))}</td><td>${esc(r.app)}</td><td>${esc(r.tier)}</td><td>${esc(r.source)}</td><td>${esc(r.email || r.note || r.ref)}</td></tr>`).join("")}
+</table></div>`);
+}
+
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+  if (!(await isAdmin(req, process.env.REVIEWS_ADMIN_KEY))) {
+    res.redirect(303, "/api/admin?next=/api/license");
+    return;
+  }
+  if (req.method === "GET") {
+    await render(res, null);
+    return;
+  }
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
+    res.status(405).json({ error: "Method not allowed." });
+    return;
+  }
+  if (!sameOrigin(req)) {
+    res.status(403).json({ error: "Forbidden." });
+    return;
+  }
+  const p = parse(LicenseActionSchema, req, { action: "issue" });
+  if (!p.ok) {
+    res.status(400).json({ error: "Invalid request." });
+    return;
+  }
+  const b = p.data;
+  try {
+    if (b.action === "revoke" || b.action === "restore") {
+      await redisPipeline([[b.action === "revoke" ? "SADD" : "SREM", "site:lic:revoked", b.lid]]);
+      await render(res, null, b.action === "revoke" ? "Licence revoked: it stops working the next time a device opens the app online." : "Licence restored.");
+      return;
+    }
+    if (b.action === "enforce") {
+      const on = b.lid === "on";
+      await redisPipeline([on ? ["SET", "site:lic:enforce", "on"] : ["DEL", "site:lic:enforce"]]);
+      await render(res, null, on ? "Device limits are ON. New devices beyond a licence's limit are refused." : "Device limits are OFF. Devices are counted only.");
+      return;
+    }
+  } catch {
+    res.status(502).json({ error: "Storage request failed." });
+    return;
+  }
+  const { app, tier, note } = b;
+  try {
+    const { token, payload } = signLicense({ app, tier, ref: note || "admin" });
+    await redisPipeline([metaCommand(payload, note || "admin"), [
+      "RPUSH", "site:licenses",
+      JSON.stringify({ at: new Date().toISOString(), source: "admin", app, tier, lid: payload.lid, note }),
+    ]]);
+    await render(res, { app, tier, link: appLink(app, token) });
+  } catch (e) {
+    console.error("license issue failed", e && e.message);
+    res.status(503).json({ error: "Could not issue licence." });
+  }
+}

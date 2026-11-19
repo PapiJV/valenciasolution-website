@@ -87,7 +87,7 @@
         .nav-links a:hover { color: var(--text); }
         .nav-cta {
             background: var(--accent);
-            color: #fff;
+            color: #0a0a0f;
             padding: 10px 24px;
             border-radius: 8px;
             text-decoration: none;
@@ -171,7 +171,7 @@
         }
         .btn-primary {
             background: var(--accent);
-            color: #fff;
+            color: #0a0a0f;
         }
         .btn-primary:hover { background: #e55a2b; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3); }
         .btn-secondary {
@@ -703,7 +703,7 @@
         .t-empty { filter: grayscale(1); opacity: 0.3; }
         .review-product { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; margin-bottom: 12px; }
         .review-headline { color: var(--text); font-size: 1.08rem; font-weight: 800; line-height: 1.35; margin-bottom: 8px; }
-        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; }
+        .review-text { color: var(--text); font-size: 0.98rem; line-height: 1.65; margin-bottom: 18px; opacity: 0.92; white-space: pre-line; }
         .review-author { color: var(--text); font-size: 0.9rem; font-weight: 700; }
         .review-role { color: var(--text-muted); font-size: 0.82rem; font-weight: 400; }
         .reviews-more { text-align: center; margin-top: 28px; }
@@ -784,7 +784,7 @@
         .form-field input[type=text], .form-field input[type=email], .form-field textarea {
             width: 100%;
             background: var(--bg-light);
-            border: 1px solid var(--border);
+            border: 1px solid #6b6b80;
             border-radius: 10px;
             padding: 12px 14px;
             font-size: 1rem;
@@ -792,7 +792,7 @@
             color: var(--text);
             transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .form-field input::placeholder, .form-field textarea::placeholder { color: #55556a; }
+        .form-field input::placeholder, .form-field textarea::placeholder { color: #9a9aaa; }
         .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,107,53,0.15); }
         .form-field textarea { resize: vertical; min-height: 130px; line-height: 1.55; }
         .form-field.has-error input, .form-field.has-error textarea { border-color: #ff6b6b; }
@@ -988,7 +988,15 @@
             .nav-links.open ~ .lang-switch { display: flex; }
             .lang-switch a { flex: 1; text-align: center; padding: 12px 0; font-size: 0.9rem; }
         }
-    </style>
+    
+/* Accessibility: skip link, screen-reader text, visible keyboard focus */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: -9999px; top: 12px; z-index: 10000; background: var(--accent); color: #0a0a0f; padding: 10px 16px; border-radius: 8px; font-weight: 700; text-decoration: none; }
+.skip-link:focus { left: 12px; }
+.form-field input:focus-visible, .form-field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tm-consent[hidden] { display: none; }
+.tm-consent a { color: var(--text); }
+</style>
     <style>
         .tm-page { padding-top: 230px; min-height: 70vh; } /* clears the fixed nav (~137px) */
         @media (max-width: 900px) { .tm-page { padding-top: 160px; } } /* mobile nav ~86px */
@@ -1006,7 +1014,7 @@
       "name": "ValenciaSolution",
       "url": "https://www.valenciasolution.net/",
       "logo": "https://www.valenciasolution.net/images/logo.png",
-      "email": "valenciasolution.net@gmail.com",
+      "email": "j@valenciasolution.net",
       "telephone": "+1-647-794-2878",
       "address": {
         "@type": "PostalAddress",
@@ -1056,7 +1064,7 @@
 </head>
 <body>
     <nav>
-        <div class="logo"><img src="images/logo.png" alt="Valencia Solution" width="120" height="120"></div>
+        <div class="logo"><img src="images/logo.png" alt="ValenciaSolution" width="120" height="120"></div>
         <ul class="nav-links">
             <li><a href="/#hero">Home</a></li>
             <li><a href="/#features">Features</a></li>
@@ -1122,7 +1130,7 @@
                         <li><a href="/#contact">Contact</a></li>
                     </ul>
                     <address class="ft-contact">
-                        <a href="mailto:valenciasolution.net@gmail.com">valenciasolution.net@gmail.com</a><br>
+                        <a href="mailto:j@valenciasolution.net">j@valenciasolution.net</a><br>
                         <a href="tel:+16477942878">+1 (647) 794-2878</a>
                     </address>
                 </div>
@@ -1131,8 +1139,11 @@
                     <ul>
                         <li><a href="/terms">Terms of Sale</a></li>
                         <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/refund">Refund Policy</a></li>
+                        <li><a href="/cookies">Cookie Policy</a></li>
                         <li><a href="/privacy#emails">Email Preferences</a></li>
-                        <li><a href="mailto:valenciasolution.net@gmail.com?subject=Unsubscribe">Unsubscribe</a></li>
+                        <li><a href="mailto:j@valenciasolution.net?subject=Unsubscribe">Unsubscribe</a></li>
+                    <li><a href="mailto:j@valenciasolution.net?subject=Delete%20my%20data">Delete my data</a></li>
                     </ul>
                 </div>
             </div>
@@ -1208,6 +1219,17 @@
                 if (text) e.textContent = text;
                 return e;
             }
+            function richText(cls, m) {
+                /* **bold** -> <strong>, built with DOM nodes (no innerHTML). Line breaks kept via CSS. */
+                var box = el('div', cls), s = quote(m), re = /\*\*([^*\n]+)\*\*/g, last = 0, x;
+                while ((x = re.exec(s))) {
+                    if (x.index > last) box.appendChild(document.createTextNode(s.slice(last, x.index)));
+                    box.appendChild(el('strong', '', x[1]));
+                    last = re.lastIndex;
+                }
+                if (last < s.length) box.appendChild(document.createTextNode(s.slice(last)));
+                return box;
+            }
             function card(t) {
                 var c = el('div', 'review-card');
                 var n = Math.max(1, Math.min(5, t.rating | 0));
@@ -1220,11 +1242,11 @@
                     var isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp)(\?|$)/i.test(t.media);
                     var v = el(isVideo ? 'video' : 'img');
                     if (isVideo) { v.src = t.media + '#t=0.1'; v.controls = true; v.playsInline = true; v.preload = 'metadata'; }
-                    else { v.src = t.media; v.alt = ''; v.loading = 'lazy'; }
+                    else { v.src = t.media; v.alt = 'Photo shared by ' + (t.name || 'a coach'); v.loading = 'lazy'; }
                     m.appendChild(v);
                     c.appendChild(m);
                 }
-                c.appendChild(el('div', 'review-text', quote(t.message)));
+                c.appendChild(richText('review-text', t.message));
                 var a = el('div', 'review-author', t.name);
                 var role = [t.role, t.club].filter(Boolean).join(' · ');
                 if (role) { a.appendChild(document.createTextNode(' ')); a.appendChild(el('span', 'review-role', '· ' + role)); }
