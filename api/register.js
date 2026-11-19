@@ -10,14 +10,14 @@
 //   site:signups         LIST  JSON entries (read via /api/signups?key=...)
 // Env: KV_REST_API_URL / KV_REST_API_TOKEN (or UPSTASH_REDIS_REST_*).
 
-import { APPS, appLink } from "./_lib/apps.js";
+import { APPS, FREE_OFFER_CAP, appLink } from "./_lib/apps.js";
 import { metaCommand, signLicense } from "./_lib/license.js";
 import crypto from "node:crypto";
 import { RegisterSchema, bodyOf, parse } from "./_lib/schemas.js";
 import { rateLimit, safeEqual, sameOrigin, tooMany } from "./_lib/security.js";
 
 const OFFER_ENDS_AT = "2027-01-01T04:59:59Z"; // Dec 31, 2026 11:59:59 pm Toronto (EST)
-const OFFER_CAP = 1000;
+const OFFER_CAP = FREE_OFFER_CAP;
 
 
 const EMAILS_KEY = "site:signups:emails";

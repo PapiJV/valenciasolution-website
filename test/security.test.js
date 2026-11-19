@@ -227,7 +227,7 @@ describe("9. Zod validation", () => {
     });
   }
   test("review accepts a valid payload and our own Blob media", async () => {
-    const r = await call(review, { method: "POST", ip: freshIp(), body: { ...good, media: "https://abc123.public.blob.vercel-storage.com/testimonials/1.jpg" } });
+    const r = await call(review, { method: "POST", ip: freshIp(), body: { ...good, media: "https://teststore.public.blob.vercel-storage.com/testimonials/1.jpg" } });
     assert.equal(r.statusCode, 200);
   });
   test("register rejects unknown sport / long fields", async () => {
@@ -421,5 +421,235 @@ describe("15/16. transport + error hygiene", () => {
     const r = await call(license, { method: "POST", headers: { cookie }, body: { app: "hockey" } });
     assert.equal(r.statusCode, 503);
     assert.doesNotMatch(JSON.stringify(r.body), /LICENSE_PRIVATE_KEY/);
+  });
+});
+
+// ---------------------------------------------------------------- FOLLOW-UP FIXES
+const helpers = await import("./helpers.js");
+const { rateLimit, isOwnBlobUrl, blobStoreHost } = await import("../api/_lib/security.js");
+const { MAX_REVIEWS, APPROVED_KEY } = await import("../api/_lib/reviews.js");
+const { APPS, FREE_OFFER_CAP } = await import("../api/_lib/apps.js");
+
+const OWN = "https://teststore.public.blob.vercel-storage.com/testimonials/123e4567-e89b-12d3-a456-426614174000-AbC.jpg";
+let mailSeq = 0;
+const reviewBody = (patch = {}) => ({ name: "Coach", message: "Great app for my team!", email: `c${mailSeq++}@example.com`, rating: 5, consent: true, ...patch });
+const submit = (patch) => call(review, { method: "POST", ip: freshIp(), body: reviewBody(patch) });
+const listRows = () => (db.get("site:reviews")?.v || []).map((x) => JSON.parse(x));
+const approvedHash = () => db.get(APPROVED_KEY)?.v || new Map();
+async function setReview(cookie, id, action) {
+  return call(reviews, { method: "POST", headers: { cookie }, body: { id, action } });
+}
+
+describe("17. approved testimonials survive spam (list trim)", () => {
+  test(`approved entry stays on the wall after ${MAX_REVIEWS + 20} spam submissions`, async () => {
+    assert.equal((await submit({ name: "Real Coach" })).statusCode, 200);
+    const id = listRows()[0].id;
+    const cookie = await session();
+    assert.equal((await setReview(cookie, id, "approve")).statusCode, 200);
+    for (let i = 0; i < MAX_REVIEWS + 20; i++) assert.equal((await submit({ name: `spam ${i}` })).statusCode, 200);
+    assert.equal(listRows().length, MAX_REVIEWS);
+    assert.ok(!listRows().some((r) => r.id === id), "trimmed from the list");
+    const wall = await call(testimonials, {});
+    assert.deepEqual(wall.body.testimonials.map((t) => t.name), ["Real Coach"]);
+    const adm = await call(reviews, { headers: { cookie }, query: { format: "json" } });
+    assert.ok(adm.body.reviews.some((r) => r.id === id && r.wall === "approved"));
+    assert.equal((await setReview(cookie, id, "hide")).statusCode, 200, "id lookup finds hash-only entry");
+    assert.equal((await call(testimonials, {})).body.testimonials.length, 0);
+  });
+
+  test("entries approved before this change (status only) are copied to the hash before the trim", async () => {
+    assert.equal((await submit({ name: "Old Approved" })).statusCode, 200);
+    const id = listRows()[0].id;
+    db.set("site:reviews:status", { v: new Map([[id, "approved"]]) });
+    for (let i = 0; i < MAX_REVIEWS + 5; i++) await submit({ name: `spam ${i}` });
+    assert.ok(approvedHash().has(id));
+    assert.deepEqual((await call(testimonials, {})).body.testimonials.map((t) => t.name), ["Old Approved"]);
+  });
+
+  test("if the copy step fails, the trim is skipped and the review is still saved", async () => {
+    await submit({ name: "Old Approved" });
+    const id = listRows()[0].id;
+    db.set("site:reviews:status", { v: new Map([[id, "approved"]]) });
+    for (let i = 0; i < MAX_REVIEWS - 1; i++) await submit();
+    assert.equal(listRows().length, MAX_REVIEWS);
+    helpers.failCommands.add("HSET");
+    const r = await submit({ name: "Extra" });
+    assert.equal(r.statusCode, 200);
+    assert.equal(listRows().length, MAX_REVIEWS + 1, "not trimmed");
+    assert.equal(listRows()[0].id, id);
+  });
+});
+
+describe("18. approve / hide keep site:reviews:approved in sync", () => {
+  test("approve stores the full entry, hide and pending remove it", async () => {
+    await submit({ name: "A" });
+    const id = listRows()[0].id;
+    const cookie = await session();
+    assert.equal((await setReview(cookie, id, "approve")).statusCode, 200);
+    assert.equal(JSON.parse(approvedHash().get(id)).name, "A");
+    assert.equal(db.get("site:reviews:status").v.get(id), "approved");
+    assert.equal((await setReview(cookie, id, "hide")).statusCode, 200);
+    assert.ok(!approvedHash().has(id));
+    assert.equal(db.get("site:reviews:status").v.get(id), "hidden");
+    await setReview(cookie, id, "approve");
+    assert.equal((await setReview(cookie, id, "pending")).statusCode, 200);
+    assert.ok(!approvedHash().has(id));
+    assert.ok(!db.get("site:reviews:status").v.has(id));
+  });
+  test("approve without consent is refused and stores nothing", async () => {
+    await submit({ consent: false });
+    const id = listRows()[0].id;
+    assert.equal((await setReview(await session(), id, "approve")).statusCode, 409);
+    assert.ok(!approvedHash().has(id));
+  });
+});
+
+describe("19. wall reads the union of list + approved hash", () => {
+  test("deduped by id, newest first, hash-only entries included", async () => {
+    const mk = (id, at, name) => ({ id, at, name, message: "Great app for my team!", email: "x@example.com", rating: 5, consent: true });
+    const a = mk("r_a", "2026-01-01T00:00:00.000Z", "A"), b = mk("r_b", "2026-03-01T00:00:00.000Z", "B"), c = mk("r_c", "2026-02-01T00:00:00.000Z", "C");
+    db.set("site:reviews", { v: [JSON.stringify(b)] });
+    db.set(APPROVED_KEY, { v: new Map([["r_a", JSON.stringify(a)], ["r_b", JSON.stringify(b)], ["r_c", JSON.stringify(c)]]) });
+    db.set("site:reviews:status", { v: new Map([["r_a", "approved"], ["r_b", "approved"], ["r_c", "approved"]]) });
+    db.set("site:reviews:access", { v: new Map([["r_a", "free"]]) });
+    const r = await call(testimonials, {});
+    assert.deepEqual(r.body.testimonials.map((t) => t.name), ["B", "C", "A"]);
+    assert.equal(r.body.testimonials[2].access, "free", "free-access override still applies");
+    assert.ok(!JSON.stringify(r.body).includes("x@example.com"));
+    const cookie = await session();
+    const adm = await call(reviews, { headers: { cookie }, query: { format: "json" } });
+    assert.deepEqual(adm.body.reviews.map((x) => x.id), ["r_b", "r_c", "r_a"]);
+  });
+  test("hash entries still need status 'approved' to show", async () => {
+    db.set(APPROVED_KEY, { v: new Map([["r_x", JSON.stringify({ id: "r_x", at: "2026-01-01T00:00:00Z", name: "X", consent: true })]]) });
+    db.set("site:reviews:status", { v: new Map([["r_x", "hidden"]]) });
+    assert.equal((await call(testimonials, {})).body.testimonials.length, 0);
+  });
+});
+
+describe("20. per-email review limit", () => {
+  test("3 per email per day across IPs; raw email never stored in keys", async () => {
+    const email = "Same.Coach@Example.com";
+    for (let i = 0; i < 3; i++) assert.equal((await submit({ email })).statusCode, 200);
+    assert.equal((await submit({ email })).statusCode, 429);
+    assert.equal((await submit({ email: "other@example.com" })).statusCode, 200);
+    const keys = [...db.keys()].filter((k) => k.startsWith("site:rl:review-email:"));
+    assert.equal(keys.length, 2);
+    for (const k of keys) assert.ok(!k.toLowerCase().includes("example.com"), k);
+  });
+});
+
+describe("21. rate limiter is atomic", () => {
+  const r = () => helpers.req({ ip: freshIp() });
+  test("SET NX EX / INCR / TTL go through /multi-exec and keep a TTL", async () => {
+    const out = await rateLimit(r(), { bucket: "t", limit: 2, windowSec: 60, scope: "global" });
+    assert.equal(out.ok, true);
+    assert.deepEqual(helpers.endpointLog, ["/multi-exec"]);
+    assert.deepEqual(helpers.redisLog.map((c) => c[0]), ["SET", "INCR", "TTL"]);
+    assert.ok(db.get("site:rl:t:all").exp > Date.now());
+  });
+  test("TTL < 0 sends EXPIRE key windowSec", async () => {
+    db.set("site:rl:t:all", { v: "3", exp: 0 }); // stuck key without TTL
+    const out = await rateLimit(r(), { bucket: "t", limit: 10, windowSec: 60, scope: "global" });
+    assert.equal(out.ok, true);
+    assert.ok(helpers.redisLog.some((c) => c[0] === "EXPIRE" && c[1] === "site:rl:t:all" && c[2] === "60"));
+    assert.ok(db.get("site:rl:t:all").exp > Date.now());
+  });
+  for (const [label, reply] of [
+    ["per-command error", () => [{ result: "OK" }, { error: "ERR boom" }, { result: 60 }]],
+    ["discarded transaction", () => ({ error: "ERR discarded" })],
+    ["short reply", () => [{ result: "OK" }]],
+  ]) {
+    test(`${label}: fails closed, or open with failOpen`, async () => {
+      helpers.setMultiOverride(reply);
+      const closed = await rateLimit(r(), { bucket: "t", limit: 10, windowSec: 60 });
+      assert.equal(closed.ok, false);
+      assert.equal(closed.error, true);
+      const open = await rateLimit(r(), { bucket: "t", limit: 10, windowSec: 60, failOpen: true });
+      assert.equal(open.ok, true);
+    });
+  }
+  test("login lockout counters also use /multi-exec and always have a TTL", async () => {
+    await login(freshIp(), "wrong");
+    assert.ok(helpers.endpointLog.includes("/multi-exec"));
+    const lockKeys = [...db.keys()].filter((k) => k.startsWith("site:lock:admin:"));
+    assert.equal(lockKeys.length, 2);
+    for (const k of lockKeys) assert.ok(db.get(k).exp > Date.now(), k);
+  });
+  test("a lockout counter stuck without TTL gets one back", async () => {
+    db.set("site:lock:admin:all", { v: String(LOCKOUT.global), exp: 0 });
+    assert.equal((await login(freshIp())).statusCode, 429);
+    assert.ok(db.get("site:lock:admin:all").exp > Date.now());
+  });
+});
+
+describe("22. media locked to our own Blob store", () => {
+  test("store host derived from BLOB_READ_WRITE_TOKEN like @vercel/blob", () => {
+    assert.equal(blobStoreHost(), "teststore.public.blob.vercel-storage.com");
+  });
+  test("own store /testimonials/ URL accepted on submit", async () => {
+    assert.equal((await submit({ media: OWN })).statusCode, 200);
+  });
+  for (const [label, url] of [
+    ["another store", OWN.replace("teststore", "otherstore")],
+    ["http", OWN.replace("https:", "http:")],
+    ["wrong path", OWN.replace("/testimonials/", "/other/")],
+    ["path traversal", "https://teststore.public.blob.vercel-storage.com/testimonials/../x.jpg"],
+    ["credentials", OWN.replace("https://", "https://u:p@")],
+    ["port", OWN.replace(".com/", ".com:8443/")],
+    ["lookalike host", OWN.replace("teststore.public", "teststore.public.blob.vercel-storage.com.evil")],
+  ]) {
+    test(`rejects ${label}`, async () => {
+      assert.equal(isOwnBlobUrl(url), false);
+      assert.equal((await submit({ media: url })).statusCode, 400);
+    });
+  }
+  for (const [label, token] of [["missing", undefined], ["malformed", "not-a-token"], ["bad store id", "vercel_blob_rw_te.st_x"]]) {
+    test(`${label} token: no media accepted (fail closed)`, async () => {
+      if (token === undefined) delete process.env.BLOB_READ_WRITE_TOKEN;
+      else process.env.BLOB_READ_WRITE_TOKEN = token;
+      assert.equal(blobStoreHost(), "");
+      assert.equal(isOwnBlobUrl(OWN), false);
+      assert.equal((await submit({ media: OWN })).statusCode, 400);
+    });
+  }
+  test("wall drops media from other stores; admin shows it as text with exact-host CSP", async () => {
+    const other = OWN.replace("teststore", "otherstore");
+    const mk = (id, media) => JSON.stringify({ id, at: `2026-01-0${id.slice(-1)}T00:00:00Z`, name: id, message: "Great app!", email: "x@example.com", rating: 5, consent: true, media });
+    db.set("site:reviews", { v: [mk("r_1", other), mk("r_2", OWN)] });
+    db.set("site:reviews:status", { v: new Map([["r_1", "approved"], ["r_2", "approved"]]) });
+    const wall = (await call(testimonials, {})).body.testimonials;
+    assert.equal(wall.find((t) => t.name === "r_1").media, "");
+    assert.equal(wall.find((t) => t.name === "r_2").media, OWN);
+    const cookie = await session();
+    const page = await call(reviews, { headers: { cookie } });
+    assert.ok(!page.body.includes(`src="${other}"`));
+    assert.ok(page.body.includes(other), "shown as escaped text");
+    assert.ok(page.body.includes(`<img src="${OWN}"`));
+    const csp = page.headers["content-security-policy"];
+    assert.match(csp, /img-src 'self' data: https:\/\/teststore\.public\.blob\.vercel-storage\.com(;|$)/);
+    assert.match(csp, /media-src https:\/\/teststore\.public\.blob\.vercel-storage\.com(;|$)/);
+    assert.doesNotMatch(csp, /\*\./);
+  });
+  test("admin CSP allows no Blob host when the token is missing", async () => {
+    const cookie = await session();
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    const csp = (await call(reviews, { headers: { cookie } })).headers["content-security-policy"];
+    assert.match(csp, /media-src 'none'/);
+    assert.doesNotMatch(csp, /vercel-storage/);
+  });
+});
+
+describe("23. sign-ups admin page", () => {
+  test(`shows the real cap (${FREE_OFFER_CAP}) and every sport`, async () => {
+    const cookie = await session();
+    const page = await call(signups, { headers: { cookie } });
+    assert.equal(page.statusCode, 200);
+    assert.match(page.body, /— 0 \/ 1000<\/h1>/);
+    assert.equal(Object.keys(APPS).length, 10);
+    for (const s of Object.keys(APPS)) assert.ok(page.body.includes(`</b>${s}</div>`), s);
+  });
+  test("register uses the same cap", async () => {
+    assert.equal((await call(register, {})).body.cap, FREE_OFFER_CAP);
   });
 });

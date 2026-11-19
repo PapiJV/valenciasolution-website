@@ -3,6 +3,7 @@
 
 import { z } from "zod";
 import { APPS } from "./apps.js";
+import { isOwnBlobUrl } from "./security.js";
 
 const CTRL = /[\u0000-\u001f\u007f]/g;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -18,19 +19,8 @@ const tag = (max) =>
 const email = z.string().trim().toLowerCase().max(120).regex(EMAIL_RE);
 const sport = z.string().trim().toLowerCase().refine((s) => Object.hasOwn(APPS, s), "unknown sport");
 
-// Only files our own Blob store issued (see /api/upload).
-export const BLOB_HOST_RE = /^[a-z0-9]+\.public\.blob\.vercel-storage\.com$/;
-const blobUrl = z
-  .string()
-  .max(500)
-  .refine((u) => {
-    try {
-      const x = new URL(u);
-      return x.protocol === "https:" && BLOB_HOST_RE.test(x.hostname) && x.pathname.startsWith("/testimonials/");
-    } catch {
-      return false;
-    }
-  }, "media must be an uploaded file");
+// Only files our own Blob store issued (see /api/upload and isOwnBlobUrl).
+const blobUrl = z.string().max(500).refine(isOwnBlobUrl, "media must be an uploaded file");
 
 export const ReviewSchema = z.object({
   name: text(80).pipe(z.string().min(1)),

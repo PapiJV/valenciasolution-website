@@ -43,6 +43,10 @@ export const PAYMENT_LINKS = {
   plink_1UJBCd2acRxanCPyKx6hzsDO: "rugby",
 };
 
+// Free Notepad launch offer: number of free spots (used by /api/register and
+// the /api/signups admin page).
+export const FREE_OFFER_CAP = 1000;
+
 export const CLUB_MIN_CENTS = 20000; // anything >= CA$200 pre-tax is the club tier
 
 export function appLink(app, token) {

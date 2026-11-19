@@ -26,6 +26,38 @@ export async function redisPipeline(commands) {
   });
 }
 
+// Atomic MULTI/EXEC over Upstash REST (POST /multi-exec). Success is an array
+// of {result} / {error}, one per command; a transaction discarded as a whole
+// comes back as a single {error} object. Anything else is treated as failure.
+export async function redisMulti(commands) {
+  const { url, token } = redisCreds();
+  const res = await fetch(`${url}/multi-exec`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(commands),
+  });
+  if (!res.ok) throw new Error(`REDIS_${res.status}`);
+  const out = await res.json();
+  if (!Array.isArray(out) || out.length !== commands.length) throw new Error("REDIS_TX");
+  return out.map((r) => {
+    if (!r || typeof r !== "object" || r.error || !("result" in r)) throw new Error("REDIS_CMD");
+    return r.result;
+  });
+}
+
+// SET NX EX + INCR + TTL in one transaction, so the key can't expire between
+// SET and INCR (INCR would then recreate it with no TTL and block forever).
+// A key that somehow has no TTL (e.g. left by older code) gets one back.
+async function windowIncr(key, windowSec) {
+  const [, count, ttl] = await redisMulti([
+    ["SET", key, "0", "EX", String(windowSec), "NX"],
+    ["INCR", key],
+    ["TTL", key],
+  ]);
+  if (Number(ttl) < 0) await redisPipeline([["EXPIRE", key, String(windowSec)]]);
+  return { count: Number(count), ttl: Number(ttl) < 0 ? windowSec : Number(ttl) };
+}
+
 const sha256 = (s) => crypto.createHash("sha256").update(String(s)).digest();
 
 // Constant-time string compare (hashing first makes lengths equal).
@@ -46,19 +78,22 @@ const ipTag = (req) => sha256(`ip:${clientIp(req)}`).toString("hex").slice(0, 24
 /**
  * Fixed-window counter. Returns { ok, retryAfter }.
  * scope "ip" counts per visitor, "global" counts across everyone.
+ * identity (e.g. an email) counts per that value instead; it is hashed into
+ * the key, never stored raw.
  * failOpen: when Redis is missing or down, let the request through
  * (the route's own storage call then reports the error).
  */
-export async function rateLimit(req, { bucket, limit, windowSec, scope = "ip", failOpen = false }) {
-  const who = scope === "global" ? "all" : ipTag(req);
+export async function rateLimit(req, { bucket, limit, windowSec, scope = "ip", identity, failOpen = false }) {
+  const who =
+    identity != null
+      ? `id_${sha256(`rl-id:${bucket}:${String(identity).trim().toLowerCase()}`).toString("hex").slice(0, 32)}`
+      : scope === "global"
+        ? "all"
+        : ipTag(req);
   const key = `site:rl:${bucket}:${who}`;
   try {
-    const [, count, ttl] = await redisPipeline([
-      ["SET", key, "0", "EX", String(windowSec), "NX"],
-      ["INCR", key],
-      ["TTL", key],
-    ]);
-    if (Number(count) > limit) return { ok: false, retryAfter: Math.max(1, Number(ttl) || windowSec) };
+    const { count, ttl } = await windowIncr(key, windowSec);
+    if (count > limit) return { ok: false, retryAfter: Math.max(1, ttl || windowSec) };
     return { ok: true, retryAfter: 0 };
   } catch {
     return failOpen ? { ok: true, retryAfter: 0 } : { ok: false, retryAfter: 60, error: true };
@@ -147,6 +182,9 @@ export async function loginLocked(req) {
   const [ipKey, allKey] = lockKeys(req);
   try {
     const [ip, all, ipTtl, allTtl] = await redisPipeline([["GET", ipKey], ["GET", allKey], ["TTL", ipKey], ["TTL", allKey]]);
+    // A counter with no TTL (-1) would lock forever: give it its window back.
+    const heal = [[ipKey, ipTtl], [allKey, allTtl]].filter(([, t]) => Number(t) === -1);
+    if (heal.length) await redisPipeline(heal.map(([k]) => ["EXPIRE", k, String(LOCKOUT.windowSec)]));
     if (Number(ip) >= LOCKOUT.perIp) return { locked: true, retryAfter: Math.max(1, Number(ipTtl) || LOCKOUT.windowSec) };
     if (Number(all) >= LOCKOUT.global) return { locked: true, retryAfter: Math.max(1, Number(allTtl) || LOCKOUT.windowSec) };
     return { locked: false, retryAfter: 0 };
@@ -156,11 +194,8 @@ export async function loginLocked(req) {
 }
 
 export async function recordLoginFailure(req) {
-  const w = String(LOCKOUT.windowSec);
-  const cmds = [];
-  for (const k of lockKeys(req)) cmds.push(["SET", k, "0", "EX", w, "NX"], ["INCR", k]);
   try {
-    await redisPipeline(cmds);
+    for (const k of lockKeys(req)) await windowIncr(k, LOCKOUT.windowSec);
   } catch {
     /* loginLocked() already fails closed when Redis is down */
   }
@@ -199,19 +234,50 @@ export async function isAdmin(req, adminKey) {
   }
 }
 
+// ---- Our own Vercel Blob store ----
+// @vercel/blob 2.8.0 (dist/chunk-*.js) derives the store id as
+// BLOB_READ_WRITE_TOKEN.split("_")[3] and builds public URLs as
+// https://<storeId>.public.blob.vercel-storage.com/<pathname>. Hostnames are
+// compared lower-case (URL parsing lower-cases them). Missing or malformed
+// token -> "" -> no media is accepted or shown (fail closed).
+export function blobStoreHost() {
+  const t = String(process.env.BLOB_READ_WRITE_TOKEN || "").trim();
+  if (!t.startsWith("vercel_blob_rw_")) return "";
+  const storeId = t.split("_")[3] || "";
+  if (!/^[A-Za-z0-9]{1,63}$/.test(storeId)) return "";
+  return `${storeId.toLowerCase()}.public.blob.vercel-storage.com`;
+}
+
+// https only, exact store host, no credentials or port, under /testimonials/.
+export function isOwnBlobUrl(u) {
+  const host = blobStoreHost();
+  if (!host || typeof u !== "string" || !u || u.length > 500) return false;
+  try {
+    const x = new URL(u);
+    return (
+      x.protocol === "https:" && !x.username && !x.password && x.port === "" &&
+      x.hostname === host && x.pathname.startsWith("/testimonials/")
+    );
+  } catch {
+    return false;
+  }
+}
+
 // ---- Admin HTML pages ----
 // Strict per-response CSP with a script nonce. Browsers enforce every CSP
 // header they receive, so this tightens (never loosens) vercel.json's policy.
+// Media is only loaded from our own Blob store (exact host), else not at all.
 export function adminHtml(res) {
   const nonce = crypto.randomBytes(16).toString("base64");
+  const blob = blobStoreHost();
   res.setHeader(
     "Content-Security-Policy",
     [
       "default-src 'none'",
       `script-src 'nonce-${nonce}'`,
       "style-src 'unsafe-inline'",
-      "img-src 'self' data: https://*.public.blob.vercel-storage.com",
-      "media-src https://*.public.blob.vercel-storage.com",
+      `img-src 'self' data:${blob ? ` https://${blob}` : ""}`,
+      `media-src ${blob ? `https://${blob}` : "'none'"}`,
       "connect-src 'self'",
       "form-action 'self'",
       "base-uri 'none'",
