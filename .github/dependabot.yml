@@ -1,0 +1,9 @@
+# Weekly checks for outdated or vulnerable dependencies.
+# Dependabot opens a pull request when an update is available.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
