@@ -42,6 +42,8 @@ function safeMedia(u) {
 }
 
 export default async function handler(req, res) {
+  // Crawlable (robots.txt allows it) so Google can render /testimonials, but the JSON itself is never indexed.
+  res.setHeader("X-Robots-Tag", "noindex");
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     res.status(405).json({ error: "Method not allowed." });
