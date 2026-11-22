@@ -23,8 +23,14 @@ export function setEnv() {
 // ---- in-memory Redis ----
 export const db = new Map(); // key -> { v, exp }
 export const redisLog = [];
+export const endpointLog = []; // "/pipeline" | "/multi-exec" | "/" per request
 let redisDown = false;
 export const setRedisDown = (v) => { redisDown = v; };
+// Commands named here answer {error} (per-command failure).
+export const failCommands = new Set();
+// When set, /multi-exec answers with this function's return value instead.
+let multiOverride = null;
+export const setMultiOverride = (fn) => { multiOverride = fn; };
 
 function live(k) {
   const e = db.get(k);
@@ -69,7 +75,8 @@ function run([cmd, ...a]) {
       const en = Number(a[2]) < 0 ? n + Number(a[2]) : Number(a[2]);
       return e.v.slice(st, en + 1);
     }
-    case "HSET": { const h = get(a[0], () => new Map()).v; const had = h.has(a[1]); h.set(a[1], String(a[2])); return had ? 0 : 1; }
+    case "HSET": { const h = get(a[0], () => new Map()).v; let n = 0; for (let i = 1; i + 1 < a.length; i += 2) { if (!h.has(a[i])) n++; h.set(a[i], String(a[i + 1])); } return n; }
+    case "EXPIRE": { const e = live(a[0]); if (!e) return 0; e.exp = Date.now() + Number(a[1]) * 1000; return 1; }
     case "HGET": { const e = live(a[0]); return e && e.v.has(a[1]) ? e.v.get(a[1]) : null; }
     case "HDEL": { const e = live(a[0]); return e && e.v.delete(a[1]) ? 1 : 0; }
     case "HEXISTS": { const e = live(a[0]); return e && e.v.has(a[1]) ? 1 : 0; }
@@ -89,8 +96,19 @@ globalThis.fetch = async (url, opts = {}) => {
   if (u.startsWith(REDIS_URL)) {
     if (redisDown) return json(503, { error: "down" });
     const body = JSON.parse(opts.body);
-    if (u.endsWith("/pipeline")) return json(200, body.map((c) => ({ result: run(c) })));
-    return json(200, { result: run(body) });
+    const one = (c) => {
+      if (failCommands.has(String(c[0]).toUpperCase())) { redisLog.push(c); return { error: "ERR injected" }; }
+      return { result: run(c) };
+    };
+    if (u.endsWith("/pipeline")) { endpointLog.push("/pipeline"); return json(200, body.map(one)); }
+    if (u.endsWith("/multi-exec")) {
+      endpointLog.push("/multi-exec");
+      if (multiOverride) { body.forEach((c) => redisLog.push(c)); return json(200, multiOverride(body)); }
+      return json(200, body.map(one));
+    }
+    endpointLog.push("/");
+    const r = one(body);
+    return json(r.error ? 400 : 200, r);
   }
   if (u.startsWith("https://api.stripe.com/v1/checkout/sessions/")) {
     const id = decodeURIComponent(u.split("/").pop().split("?")[0]);
@@ -103,6 +121,9 @@ globalThis.fetch = async (url, opts = {}) => {
 export function reset() {
   db.clear();
   redisLog.length = 0;
+  endpointLog.length = 0;
+  failCommands.clear();
+  multiOverride = null;
   stripeSessions.clear();
   redisDown = false;
 }

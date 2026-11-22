@@ -14,26 +14,16 @@
 // Approved entries (with "OK to publish" ticked) appear on the public wall via
 // /api/testimonials. Status lives in the hash site:reviews:status, keyed by
 // the entry id (or its `at` timestamp for entries saved before ids existed).
+// Approving also stores a full copy in site:reviews:approved (Hide / pending
+// removes it), so spam that trims the list can't knock it off the wall.
 //
 // Env: REVIEWS_ADMIN_KEY  (set any random string in the Vercel project).
 //      KV_REST_API_URL / KV_REST_API_TOKEN  (or UPSTASH_REDIS_REST_*).
 // Fails closed: if REVIEWS_ADMIN_KEY is unset the route is unavailable.
 
-import { BLOB_HOST_RE, ReviewStatusSchema, parse } from "./_lib/schemas.js";
-import { adminHtml, esc, isAdmin, sameOrigin } from "./_lib/security.js";
-
-const STATUS_KEY = "site:reviews:status";
-const ACCESS_KEY = "site:reviews:access";
-
-// Only our own Blob uploads are rendered as media; anything else is plain text.
-const isBlobUrl = (u) => {
-  try {
-    const x = new URL(u);
-    return x.protocol === "https:" && BLOB_HOST_RE.test(x.hostname);
-  } catch {
-    return false;
-  }
-};
+import { ACCESS_KEY, APPROVED_KEY, REVIEWS_KEY, STATUS_KEY, hashOf, mergeReviews, reviewId } from "./_lib/reviews.js";
+import { ReviewStatusSchema, parse } from "./_lib/schemas.js";
+import { adminHtml, esc, isAdmin, isOwnBlobUrl, sameOrigin } from "./_lib/security.js";
 
 function redisCreds() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
@@ -52,17 +42,6 @@ async function redis(command) {
   if (!res.ok) throw new Error(`REDIS_${res.status}`);
   return (await res.json()).result;
 }
-
-const parseRows = (rows) =>
-  rows
-    .map((s) => {
-      try {
-        return JSON.parse(s);
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
 
 const storageError = (res, e) => {
   if (e.message === "NOT_CONFIGURED") {
@@ -89,8 +68,10 @@ async function setStatus(req, res, adminKey) {
   }
   const { id, action } = p.data;
   try {
-    const entry = parseRows((await redis(["LRANGE", "site:reviews", "0", "-1"])) || []).find(
-      (r) => (r.id || r.at) === id,
+    // The list, plus approved entries kept after the list was trimmed.
+    const kept = await redis(["HGET", APPROVED_KEY, id]);
+    const entry = mergeReviews((await redis(["LRANGE", REVIEWS_KEY, "0", "-1"])) || [], kept ? [id, kept] : []).find(
+      (r) => reviewId(r) === id,
     );
     if (!entry) {
       res.status(404).json({ error: "Review not found." });
@@ -106,8 +87,16 @@ async function setStatus(req, res, adminKey) {
       res.status(409).json({ error: "This coach didn't give permission to publish." });
       return;
     }
-    if (action === "pending") await redis(["HDEL", STATUS_KEY, id]);
-    else await redis(["HSET", STATUS_KEY, id, action === "approve" ? "approved" : "hidden"]);
+    if (action === "approve") {
+      // Keep a full copy first, so trimming the list can never drop it.
+      await redis(["HSET", APPROVED_KEY, id, JSON.stringify(entry)]);
+      await redis(["HSET", STATUS_KEY, id, "approved"]);
+    } else {
+      // Status first: the wall stops showing it even if the HDEL fails.
+      if (action === "pending") await redis(["HDEL", STATUS_KEY, id]);
+      else await redis(["HSET", STATUS_KEY, id, "hidden"]);
+      await redis(["HDEL", APPROVED_KEY, id]);
+    }
     res.status(200).json({ ok: true, id, status: action === "pending" ? "" : action === "approve" ? "approved" : "hidden" });
   } catch (e) {
     storageError(res, e);
@@ -137,27 +126,25 @@ export default async function handler(req, res) {
     return;
   }
 
-  let rows, statusFlat, accessFlat;
+  let rows, statusFlat, accessFlat, approvedFlat;
   try {
-    rows = (await redis(["LRANGE", "site:reviews", "0", "-1"])) || [];
+    rows = (await redis(["LRANGE", REVIEWS_KEY, "0", "-1"])) || [];
     statusFlat = (await redis(["HGETALL", STATUS_KEY])) || [];
     accessFlat = (await redis(["HGETALL", ACCESS_KEY])) || [];
+    approvedFlat = (await redis(["HGETALL", APPROVED_KEY])) || [];
   } catch (e) {
     storageError(res, e);
     return;
   }
-  const status = {};
-  for (let i = 0; i + 1 < statusFlat.length; i += 2) status[statusFlat[i]] = statusFlat[i + 1];
-  const accessOverride = {};
-  for (let i = 0; i + 1 < accessFlat.length; i += 2) accessOverride[accessFlat[i]] = accessFlat[i + 1];
+  const status = hashOf(statusFlat);
+  const accessOverride = hashOf(accessFlat);
 
-  const reviews = parseRows(rows)
-    .map((r) => {
-      const key = r.id || r.at;
-      const forced = accessOverride[key] === "free";
-      return { ...r, wall: status[key] || "", access: forced ? "free" : r.access, freeOverride: forced };
-    })
-    .reverse(); // newest first
+  // Newest first; includes approved entries the list has already trimmed.
+  const reviews = mergeReviews(rows, approvedFlat).map((r) => {
+    const key = reviewId(r);
+    const forced = accessOverride[key] === "free";
+    return { ...r, wall: status[key] || "", access: forced ? "free" : r.access, freeOverride: forced };
+  });
 
   res.setHeader("Cache-Control", "no-store");
 
@@ -166,11 +153,11 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Only render https links (Vercel Blob URLs); anything else is shown as text.
+  // Only our own Blob store's uploads get a preview; anything else is escaped text.
   const mediaCell = (u) => {
     const url = String(u || "");
     if (!url) return "—";
-    if (!isBlobUrl(url)) return esc(url);
+    if (!isOwnBlobUrl(url)) return esc(url);
     const isVideo = /\.(mp4|mov|m4v|webm|ogv|3gp|avi|mkv)(\?|$)/i.test(url);
     const thumb = isVideo
       ? `<video src="${esc(url)}" preload="metadata" muted playsinline controls></video>`
