@@ -29,8 +29,13 @@
 </style>
 <script>
   // JS redirect (not meta refresh) so Facebook's crawler keeps THIS page's preview card.
-  var dest = "https://www.valenciasolution.net/" + (location.search || "") + "#free";
-  location.replace(dest);
+  // Tracking params ride in the fragment so crawlers never see a /?src=… duplicate of the homepage.
+  var keep = new URLSearchParams();
+  new URLSearchParams(location.search).forEach(function (v, k) {
+    if (k === "src" || k === "sport" || k.indexOf("utm_") === 0) keep.append(k, v);
+  });
+  var frag = keep.toString();
+  location.replace("https://www.valenciasolution.net/" + (frag ? "#" + frag : "#free"));
 </script>
 <!-- Vercel Web Analytics (cookie-free page views) -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
