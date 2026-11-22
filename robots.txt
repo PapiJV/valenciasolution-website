@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /api/testimonials
 Disallow: /api/
 
 Sitemap: https://www.valenciasolution.net/sitemap.xml
